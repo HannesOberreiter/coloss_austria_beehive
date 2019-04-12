@@ -41,8 +41,9 @@ SHAPEFILE.NAME <- "bezirke_95_geo" # Folder and Name need to be the same!
 # Load Excel File
 data.full <- read_excel( FILE.NAME, sheet = SHEET.NAME, skip = 5 ) #Skip first 5 rows, as they are empty
 # Load Maps
-map.disctricts <- readOGR(dsn=paste(SCRIPT.DIR, SHAPEFILE.NAME), layer = SHAPEFILE.NAME)
-map.fortify <- fortify(map.disctricts, region="name")
+SHAPEFILE.FOLDER <- gsub(" ", "", paste(SCRIPT.DIR, SHAPEFILE.NAME, sep = "/"), fixed = TRUE)
+map.disctricts <- readOGR( dsn = SHAPEFILE.FOLDER, layer = SHAPEFILE.NAME )
+map.fortify <- fortify( map.disctricts, region = "name" )
 
 # remove empty ones
 data.full <- data.full %>% drop_na(longitude, latitude)
