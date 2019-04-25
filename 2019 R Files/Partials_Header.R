@@ -35,6 +35,27 @@ FILE.NAME <- "Daten.xlsx"
 SHEET.NAME <- "Winterverluste"
 # Load Excel File
 D.FULL <- read_excel( FILE.NAME, sheet = SHEET.NAME, skip = 5 ) #Skip first 5 rows, as they are empty
+# Drop NA Rows sometimes error while importing from Excel
+D.FULL <- D.FULL[ rowSums( is.na( D.FULL )) != ncol( D.FULL ), ]
+
+# Remove Columns we dont want/need
+cremove <- c(
+  "https://geocode.localfocus.nl/", 
+  "eingew<Loss", 
+  "eingew<Loss+Schwach", 
+  "MaxSympt", 
+  "Datum Abgeschickt", 
+  "Letzte Seite", 
+  "Zufallsgeneratorstartwert",
+  "Start-Sprache",
+  "Datum letzte Aktivität",
+  "Datum gestartet",
+  "IP-Adresse",
+  "Weiterleitungs-URL",
+  "Kontakt"
+  )
+# One of then it works even when the column is not in the file
+D.FULL <- select(D.FULL, -one_of( cremove ))
 
 # Change names to be more efficient and readable
 D.FULL <- D.FULL %>%
