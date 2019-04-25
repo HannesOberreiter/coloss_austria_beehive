@@ -22,6 +22,7 @@ F_GLM_FACTOR <- function( x, f, xf ){
   ANOVA.FULL <- anova( GLM.FULL, test = "F" )
   print( paste( "ANOVA TEST --> ", f ))
   print( ANOVA.FULL ) 
+  write.csv( ANOVA.FULL, file = paste(f, "_ANOVA.csv", sep = "" ) )
   
   # Here we use the better one
   DFRESIDUAL.FULL <- SUMMARY.FULL$df.residual
