@@ -49,7 +49,7 @@ for (cache.loop in D.DISTRICT$Bezirk){
 D.RESULT
 
 # Save result to csv file
-write.csv( D.RESULT, file="Result_Test_Coords.csv" )
+write.csv( D.RESULT, file="Test_Coords.csv" )
 
 # Plot the wrong coords on a map
 ggplot( MF_DISTRICTS, aes(x = long, y = lat)) + 
