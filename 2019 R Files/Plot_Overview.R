@@ -55,7 +55,7 @@ p1 <- ggplot( data = D.PLOT ) +
   geom_bar( colour = "black", alpha = 1, fill = "black", show.legend = FALSE, stat = "identity", linetype = "solid") + 
   geom_text( aes( label = paste(np, "%", sep = "" )), angle = 40, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
   xlab("Operation size") + ylab("Number of beekeepers (n)") + 
-  ggtitle("(1) Numbers of participates in given operation size groups") +
+  ggtitle("(A) Numbers of participates in given operation size groups") +
   theme_classic() + 
   theme(
     plot.title = element_text(hjust = 0), 
@@ -69,8 +69,8 @@ p1 <- ggplot( data = D.PLOT ) +
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 650, 50 ),
-    limits = c( 0, 650 )
+    breaks = seq( 0, 750, 50 ),
+    limits = c( 0, 750 )
   )
 
 p2 <- ggplot( data = D.PLOT ) +
@@ -78,7 +78,7 @@ p2 <- ggplot( data = D.PLOT ) +
   geom_bar( colour = "black", alpha = 1, fill = "black", show.legend = FALSE, stat = "identity", linetype = "solid") + 
   geom_text( aes( label = paste(n_hp, "%", sep = "" )), angle = 40, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
   xlab("Operation size") + ylab("Number of hives (n)") + 
-  ggtitle("(2) Number of hives in given operation size groups") +
+  ggtitle("(B) Number of hives in given operation size groups") +
   theme_classic() + 
   theme(
     plot.title = element_text(hjust = 0), 
@@ -92,16 +92,16 @@ p2 <- ggplot( data = D.PLOT ) +
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 5500, 500 ),
-    limits = c( 0, 5500 )
+    breaks = seq( 0, 6000, 500 ),
+    limits = c( 0, 6000 )
   )
 
 p3 <- ggplot( data = D.PLOT2 ) +
   aes( x = loss_group, y = n) + 
   geom_bar( colour = "black", alpha = 1, fill = "black", show.legend = FALSE, stat = "identity", linetype = "solid") + 
   geom_text( aes( label = paste(np, "%", sep = "" )), angle = 40, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
-  xlab("Operation size") + ylab("Number of beekeepers (n)") + 
-  ggtitle("(3) Distribution of losses") +
+  xlab("Loss per Company [%]") + ylab("Number of beekeepers (n)") + 
+  ggtitle("(C) Distribution of losses") +
   theme_classic() + 
   theme(
     plot.title = element_text(hjust = 0), 
@@ -115,8 +115,8 @@ p3 <- ggplot( data = D.PLOT2 ) +
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 700, 50 ),
-    limits = c( 0, 700 )
+    breaks = seq( 0, 750, 50 ),
+    limits = c( 0, 750 )
   )
 
 p4 <- ggplot() + 
@@ -129,7 +129,7 @@ p4 <- ggplot() +
   xlab( "" ) + ylab( "" ) + labs( colour = "Number of beekeepers (n)", size = "Number of beekeepers (n)" ) +
   #guides( size = "none" ) +
   scale_size_continuous(range = c(0.5, 3)) + 
-  ggtitle("(4) Rough main winter apiary location of participating beekeepers") +
+  ggtitle("(D) Rough main winter apiary location of participating beekeepers") +
   theme_classic() +
   theme(
     legend.position="bottom", 
