@@ -39,7 +39,12 @@ F_GLM_FACTOR <- function( x, f, xf ){
   ANOVA.FULL <- anova( GLM.FULL, test = "F" )
   print( paste( "ANOVA TEST --> ", f ))
   print( ANOVA.FULL ) 
-  write.csv( ANOVA.FULL, file = paste(f, "_ANOVA.csv", sep = "" ) )
+  # Save Summary to ANOVA Folder
+  write.csv( ANOVA.FULL, file = paste("./ANOVA/", paste(f, "_ANOVA.csv", sep = "" ), sep = "" ) )
+  
+  ANOVA.CHISQ <- anova( GLM.FULL, test = "Chisq" )
+  write.csv( ANOVA.CHISQ, file = paste("./ANOVA/", paste(f, "_CHISQ.csv", sep = "" ), sep = "" ) )
+  
   
   # Here we use the better one
   DFRESIDUAL.FULL <- SUMMARY.FULL$df.residual
@@ -57,41 +62,103 @@ F_GLM_FACTOR <- function( x, f, xf ){
   return( CACHE.BIND <- cbind( lowerlim = CACHE.LOWERLIM, middle = CACHE.ODDS, upperlim = CACHE.UPPERLIM ) )
 }
 
-# Extract our N into a DF
+#### Extract our N into a DF #### 
 # x = Dataframe, f = level, c = Name for Factor
 ##############################
 F_EXTRACT_N <- function( x, f, c ){
   x$ff = get( f, pos = x ) 
-  D.CACHE <- x %>% 
+  F.CACHE <- x %>% 
     group_by( ff ) %>% 
     summarize(
       c = c,
       n = n(),
       hives_winter = sum(hives_winter),
-      lost_a = sum(lost_a),
-      lost_b = sum(lost_b),
-      lost_c = sum(lost_c),
+      lost_a = sum(lost_a, na.rm = FALSE),
+      lost_b = sum(lost_b, na.rm = FALSE),
+      lost_c = sum(lost_c, na.rm = FALSE),
       hives_lost_rate = sum( hives_lost_e ) / sum( hives_winter ) * 100
     )
-  print( D.CACHE )
-  D.CACHE <- D.CACHE %>% na.omit()
-  return( D.CACHE )
+  print( F.CACHE )
+  F.CACHE <- F.CACHE %>% na.omit()
+  return( F.CACHE )
 }
 
-F_GLM_RETURN <- function( x, f, xf ){
-  x$ff = get( f, pos = x ) 
-  print(x$ff)
-  GLM.FULL <- glm( 
-    cbind( hives_lost_e, hives_spring_e ) ~ as.factor( ff ) , # F*** it, we need to use "Bundesland" here
-    family = quasibinomial( link = "logit" ), 
-    data = x, na.action = na.omit )
+#### Combination Calcuation #### 
+# x = Dataframe, d = col numbers, itn = iternations, CacheList = "nice" names of cols, ColComb1 = our single intereger array of all treatments collumns
+##############################
+F_COMBINATION <- function( x, d, itn, CacheList, ColComb1 ){
+  # our dummy dataframe, which will be returned
+  D.COMB <- 
+    setNames( 
+      data.frame( matrix( ncol = 14, nrow = 0)), 
+      c( "t", "c", "colnames", "n", "lowerlim", "middle", "upperlim", "c_min", "c_1q", "c_median", "c_mean", "c_3q", "c_max", "c_n")
+    )
+  
+  # loop through column numbers
+  for(i in d){
+    # save col numbers to a second variable, we use later
+    d1 <- ColComb1
+    
+    # save our df to our cache variable
+    CACHE.COMB <- x
+    # temporary colnames, to check later if values are ordered to correct treatments in df
+    coln <- ""
+    # loop for multiple combination, single treatment method is only single run
+    for( n in 1:itn ){
+      # remove selected treatment(s) from the list of treatment columns
+      d1 <- d1 [ d1 != i[ n ] ]
+      # subsetting our dataframe, were only our selected treatments are given
+      CACHE.COMB <- CACHE.COMB[ CACHE.COMB[, i[n]] == 1 , ]
+      coln <- paste( coln, colnames(CACHE.COMB[i[n]]), sep = " ")
+    }
+    
+    # if no data is available we skip it
+    if( nrow( CACHE.COMB ) == 0 ) next
+    
+    # count numbers without given treatment, if it is bigger than 0 it means there are other treatments in combination
+    CACHE.COMB$comb_count <- rowSums(CACHE.COMB[ , d1 ], na.rm = TRUE)
+    # only get the count 0 ones, because then we are sure there is no combination
+    CACHE.COMB <- CACHE.COMB[CACHE.COMB[, "comb_count"] == 0, ]
+    # get loss probability for combination
+    CACHE.BIND <- c(NA,NA,NA)
+    
+    if( nrow( CACHE.COMB ) > 10) CACHE.BIND <- F_GLM_SINGLE( CACHE.COMB )
+    
+    # Nice name for out Combination
+    if( itn == 1 ) cname <- CacheList$X3[CacheList$ColComb1 == i[1] ]
+    if( itn == 2 ) cname <- paste(CacheList$X3[CacheList$ColComb1 == i[1] ], CacheList$X3[CacheList$ColComb1 == i[2] ], sep = " AND ")
+    if( itn == 3 ) cname <- paste(CacheList$X3[CacheList$ColComb1 == i[1] ], paste(CacheList$X3[CacheList$ColComb1 == i[2] ], CacheList$X3[CacheList$ColComb1 == i[3] ], sep = " AND "), sep = " AND ")
+    if( itn == 4 ) cname <- paste(CacheList$X3[CacheList$ColComb1 == i[1] ], paste(CacheList$X3[CacheList$ColComb1 == i[2] ], paste(CacheList$X3[CacheList$ColComb1 == i[3] ], CacheList$X3[CacheList$ColComb1 == i[4] ], sep = " AND "), sep = " AND "), sep = " AND ")
+    
+    # Get Costs of Varroa Treatment per Hive
+    cost <- summary(CACHE.COMB$costs, na.rm = TRUE)
+    # Count rows with values
+    cost_count <- nrow ( CACHE.COMB[!(is.na(CACHE.COMB$costs)), ] ) 
+    
+    # Add row to Dummy DF
+    D.COMB <- D.COMB %>% add_row(
+      t = itn, 
+      c = cname, 
+      colnames = coln,
+      n = nrow( CACHE.COMB ), 
+      lowerlim = CACHE.BIND[1], 
+      middle = CACHE.BIND[2], 
+      upperlim = CACHE.BIND[3],
+      
+      c_min = cost[[1]],
+      c_1q = cost[[2]],
+      c_median = cost[[3]],
+      c_mean = cost[[4]],
+      c_3q = cost[[5]],
+      c_max = cost[[6]],
+      c_n = cost_count
+      )
+  }
+  # Return full DF
+  return (D.COMB)
 }
-
-F_ROUND_ANY <- function(x, accuracy, f=round){
-  return( f ( x / accuracy ) * accuracy)
-}
-
-# Our custom cluster function
+  
+#### Our custom cluster function #### 
 # x = subseted Dataframe (lat, long), you need to do beforehand the logic what data you want
 ##############################
 F_MAP_CLUSTER <- function( x ){
@@ -119,4 +186,19 @@ F_MAP_CLUSTER <- function( x ){
   x <- x %>%
     arrange(n)
   return(x)
+}
+
+#### Unused Function #### 
+##############################
+F_GLM_RETURN <- function( x, f, xf ){
+  x$ff = get( f, pos = x ) 
+  print(x$ff)
+  GLM.FULL <- glm( 
+    cbind( hives_lost_e, hives_spring_e ) ~ as.factor( ff ) , # F*** it, we need to use "Bundesland" here
+    family = quasibinomial( link = "logit" ), 
+    data = x, na.action = na.omit )
+}
+
+F_ROUND_ANY <- function(x, accuracy, f=round){
+  return( f ( x / accuracy ) * accuracy)
 }
