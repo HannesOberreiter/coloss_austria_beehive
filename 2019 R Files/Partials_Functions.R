@@ -6,14 +6,31 @@
 
 # Our Custom Functions
 
-# GLM with Factors
+#### GLM Single #### 
+# x = Dataframe
+##############################
+F_GLM_SINGLE <- function( x )
+{
+  GLM.FULL <- glm( 
+    cbind( hives_lost_e, hives_spring_e ) ~ 1, 
+    family = quasibinomial( link = "logit" ), 
+    data = x, na.action = na.omit )
+  SUMMARY.FULL <- summary( GLM.FULL )
+  GLM.ODDS <- GLM.FULL$fitted.values[1] * 100
+  GLM.LOW <- inv.logit( coef( GLM.FULL) - qt( 0.975, df = GLM.FULL$df.residual ) * SUMMARY.FULL$coefficients[, 2] ) * 100
+  GLM.MAX <- inv.logit( coef( GLM.FULL) + qt( 0.975, df = GLM.FULL$df.residual ) * SUMMARY.FULL$coefficients[, 2] ) * 100
+  return( CACHE.BIND <- cbind( lowerlim = GLM.LOW, middle = GLM.ODDS, upperlim = GLM.MAX ) )
+}
+
+
+#### GLM with Factors #### 
 # x = Dataframe, f = factor as string, xf is factor from dataframe
 ##############################
 F_GLM_FACTOR <- function( x, f, xf ){
   x$ff <- get( f, pos = x ) 
   #print(x$ff)
   GLM.FULL <- glm( 
-    cbind( hives_lost_e, hives_spring_e ) ~ as.factor( ff ) , # F*** it, we need to use "Bundesland" here
+    cbind( hives_lost_e, hives_spring_e ) ~ as.factor( ff ) , # F*** it, we need to use example "Bundesland" here
     family = quasibinomial( link = "logit" ), 
     data = x, na.action = na.omit )
   SUMMARY.FULL <- summary( GLM.FULL )
