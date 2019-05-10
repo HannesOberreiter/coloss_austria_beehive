@@ -66,6 +66,7 @@ D.FULL <- D.FULL %>%
   rename( "lost_c" = "[c) ... verloren (tote Völker, leere Beuten)?]" ) %>%
   rename( "hives_winter" = "Wie viele Bienenvölker haben Sie 2018 eingewintert?" ) %>%
   rename( "hives_lost" = "Verlust sumloss" ) %>%
+  rename( "hives_spring_before" = "Vergleich: Wie viele Völker hatten Sie im Frühjahr des Vorjahres (Frühjahr 2018)?" ) %>%
   
   # Operational Factors
   rename( "migratory_beekeeper" = "transportiert-" ) %>%
@@ -80,6 +81,7 @@ D.FULL <- D.FULL %>%
   rename( "varroa_checked" = "Haben Sie im Zeitraum April 2018 bis April 2019 den Varroa-Befall Ihrer Völker bestimmt?  []") %>%
   rename( "varroa_treated" = "Haben Sie im Zeitraum April 2018 - April 2019 Ihre Völker gegen Varroa behandelt?  []") %>%
   rename( "new_frames" = "Brutwaben Ihrer Völker haben Sie 2018 erneuert?") %>%
+  rename( "crippled_bees" = "verkrüppelten Flügeln in den Völkern bemerkt-") %>%
   
   # Yield Factors
   rename( "brassica_napus" = "Raps]") %>%
@@ -348,7 +350,8 @@ D.FULL <- D.FULL %>%
   rename( "T_other_13" = "[Andere Methode][Apr 18]" ) %>%  
   
   # Other
-  rename( "apiaries" = "Wie viele Bienenstände (Standorte) haben Sie?" )
+  rename( "apiaries" = "Wie viele Bienenstände (Standorte) haben Sie?" ) %>%
+  rename( "costs" = "Varroakosten / Volk" )
 
 # Basic Code
 ###############
@@ -357,10 +360,11 @@ D.FULL$Bundesland <- factor( D.FULL$Bundesland,
                              levels = c( "Burgenland", "Kärnten", "Niederösterreich", "Oberösterreich", "Salzburg", "Steiermark", "Tirol", "Vorarlberg", "Wien"))
 
 # ifelse question to prevent NA Errors and wrong numbers
-
-D.FULL$lost_a[is.na(D.FULL$lost_a) & D.FULL$hives_lost == 0] <- 0
-D.FULL$lost_b[is.na(D.FULL$lost_a) & D.FULL$hives_lost == 0] <- 0
-D.FULL$lost_c[is.na(D.FULL$lost_a) & D.FULL$hives_lost == 0] <- 0
+D.FULL$hives_winter[is.na(D.FULL$hives_winter)] <- 0
+D.FULL$hives_lost[is.na(D.FULL$hives_lost)] <- 0
+D.FULL$lost_a[is.na(D.FULL$lost_a)] <- 0
+D.FULL$lost_b[is.na(D.FULL$lost_b)] <- 0
+D.FULL$lost_c[is.na(D.FULL$lost_c)] <- 0
 
 # Add Spring hive amount
 D.FULL$hives_spring <- D.FULL$hives_winter - D.FULL$hives_lost
