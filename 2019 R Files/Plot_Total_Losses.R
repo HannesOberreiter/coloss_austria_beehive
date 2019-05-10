@@ -178,6 +178,8 @@ p3 <- ggplot() +
 gtitle = textGrob( "Probability of loss, Winter 2018/2019" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1, 2 ), c( 1, 3) )
-grid.arrange( p1, p2, p3,
+p1 <- arrangeGrob( p1, p2, p3,
              top = gtitle, 
              layout_matrix = lay)
+# Save File
+ggsave("./img/Plot_Total_Losses.pdf", p1, width = 11, height = 8, units = "in")
