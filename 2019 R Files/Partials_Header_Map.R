@@ -12,9 +12,9 @@ library(stringr)
 library(rgdal)
 library(maptools)
 library(maps)
-library(RColorBrewer)
 ### Error Workaround #####
-if (!require(gpclib)) install.packages("gpclib", type="source")
+library(gpclib)
+#if (!require(gpclib)) install.packages("gpclib", type="source")
 gpclibPermit()
 
 SHAPEFILE.NAME.STATES <- "laender_95_geo" # Folder and Name need to be the same!

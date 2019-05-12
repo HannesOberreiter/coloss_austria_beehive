@@ -21,6 +21,9 @@ library( tidyr )
 library( scales )
 #library( Rcmdr )
 library( boot )
+library( rstudioapi )
+library( colorspace )
+
 
 # Read XLS
 ###############
