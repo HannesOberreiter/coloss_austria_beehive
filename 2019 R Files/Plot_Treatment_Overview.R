@@ -150,7 +150,7 @@ CACHE.COMB <- rbind(CACHE.COMB, CACHE.COMB1)
 
 # D.COMB <- D.COMB[D.COMB$n != 0, ]
 
-write.csv( D.COMB, file = paste("./", "Combination_Treatments.csv", sep = "" ) )
+write.csv( CACHE.COMB, file = paste("./", "Combination_Treatments.csv", sep = "" ) )
 
 
 #### PLOTTING #####
