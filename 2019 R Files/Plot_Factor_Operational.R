@@ -65,7 +65,7 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
   geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
-  facet_wrap( ~ c, strip.position = "bottom", scales = "free_x", ncol = 3  ) +
+  facet_wrap( ~ c, strip.position = "bottom", scales = "free_x", ncol = 5  ) +
   xlab("") + ylab("Probability of loss [%]") + 
   #ggtitle("Loss prob. by operational factors") +
   theme_classic() + 
@@ -92,6 +92,9 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
 gtitle = textGrob( "Loss prob. by operational factors" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1 ) )
-grid.arrange( p1,
+p1 <- arrangeGrob(  p1,
               top = gtitle, 
               layout_matrix = lay)
+
+ggsave("./img/Plot_Operational_Losses.pdf", p1, width = 11, height = 8, units = "in")
+
