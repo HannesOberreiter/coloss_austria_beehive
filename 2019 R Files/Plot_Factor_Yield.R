@@ -76,14 +76,18 @@ for( i in oList){
   # https://www.rdocumentation.org/packages/ggplot2/versions/1.0.0/topics/aes_string
   p_cache <-
     ggplot() + 
-    geom_polygon(data = MF_DISTRICTS, aes( x = MF_DISTRICTS$long, y = MF_DISTRICTS$lat, group = MF_DISTRICTS$group, fill = MF_DISTRICTS$hives_lost ), show.legend = FALSE, color = "black", size = 0.2 ) + 
-    geom_path(data = MF_STATES, aes(x = MF_STATES$long, y = MF_STATES$lat, group = MF_STATES$group), color = "black", size = 0.6 ) + 
-    geom_point(data = D.CACHE[[i[1]]], aes_string(x = D.CACHE[[i[1]]]$longitude, y = D.CACHE[[i[1]]]$latitude, size = D.CACHE[[i[1]]]$n, colour = D.CACHE[[i[1]]]$n) ) + 
+    geom_polygon(data = MF_DISTRICTS, aes( x = MF_DISTRICTS$long, y = MF_DISTRICTS$lat, group = MF_DISTRICTS$group, fill = MF_DISTRICTS$hives_lost ), show.legend = FALSE, color = "Grey", size = 0.2 ) + 
+    geom_path(data = MF_STATES, aes(x = MF_STATES$long, y = MF_STATES$lat, group = MF_STATES$group), color = "Grey", size = 0.6 ) + 
+    #geom_point(data = D.CACHE[[i[1]]], aes_string(x = D.CACHE[[i[1]]]$longitude, y = D.CACHE[[i[1]]]$latitude, size = D.CACHE[[i[1]]]$n, colour = D.CACHE[[i[1]]]$n) ) + 
+    geom_point(data = D.CACHE[[i[1]]], aes_string(x = D.CACHE[[i[1]]]$longitude, y = D.CACHE[[i[1]]]$latitude, size = D.CACHE[[i[1]]]$n), colour = "Black" ) + 
     coord_fixed() +
     xlab( "" ) + ylab( "" ) + labs( colour = "Reports (n)", size = "Reports (n)", fill = "" ) +
-    scale_fill_distiller( palette = "Greys", direction = 1, na.value = "white" ) +
+    scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white" ) +
+    #scale_colour_continuous_sequential( palette = "Grays", aesthetics = "color", na.value = "white", guide = "legend", breaks = c( 1, 5, 10, 15, 20 ), limits = c(0, 20) ) +
+    
+    #scale_fill_distiller( palette = "Greys", direction = 1, na.value = "white" ) +
     # Info, when you want to join the legends for size and colour they need exact the same limits and breaks otherwise it wont work
-    scale_colour_distiller( breaks = c( 1, 5, 10, 15, 20 ), limits = c(0, 20), palette = "Reds", direction = 1, na.value = "white", guide = "legend" ) +
+    # scale_colour_distiller( breaks = c( 1, 5, 10, 15, 20 ), limits = c(0, 20), palette = "Reds", direction = 1, na.value = "white", guide = "legend" ) +
     scale_size_continuous( range = c(0.1, 2), breaks = c( 1, 5, 10, 15, 20 ), limits = c(0, 20) ) + 
     ggtitle(paste(i[2], "- rough location of yield")) +
     theme_classic() +

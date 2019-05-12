@@ -144,7 +144,8 @@ p2 <- ggplot() +
   #geom_path(data = MF_STATES, aes(x = MF_STATES$long, y = MF_STATES$lat, group = MF_STATES$group), color = "black", size = 0.6 ) + 
   #geom_text(data=map_d_text, aes(long, lat, label = loss_total_rate), size=3, color = "white") +
   coord_fixed() +
-  scale_fill_distiller( palette = "Greys", direction = 1, na.value = "white") +
+  scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white" ) +
+  #scale_fill_distiller( palette = "DarkMint", direction = 1, na.value = "white") +
   xlab( "" ) + ylab( "" ) + labs( fill = "Prob. of loss [%]") +
   ggtitle("(B) Austria State - Median") +
   theme_classic() +
@@ -162,7 +163,8 @@ p3 <- ggplot() +
   geom_path(data = MF_STATES, aes(x = MF_STATES$long, y = MF_STATES$lat, group = MF_STATES$group), color = "black", size = 0.6 ) + 
   #geom_text(data=map_d_text, aes(long, lat, label = loss_total_rate), size=3, color = "white") +
   coord_fixed() +
-  scale_fill_distiller( palette = "Greys", direction = 1, na.value = "white") +
+  scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white" ) +
+  # scale_fill_distiller( palette = "Greys", direction = 1, na.value = "grey") +
   xlab( "" ) + ylab( "" ) + labs( fill = "Prob. of loss [%]") +
   ggtitle("(C) Austria District - Median (white = n < 6)") +
   theme_classic() +
