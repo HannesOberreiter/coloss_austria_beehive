@@ -90,19 +90,25 @@ F_COMBINATION <- function( x, d, itn, CacheList, ColComb1 ){
   # our dummy dataframe, which will be returned
   D.COMB <- 
     setNames( 
-      data.frame( matrix( ncol = 14, nrow = 0)), 
-      c( "t", "c", "colnames", "n", "lowerlim", "middle", "upperlim", "c_min", "c_1q", "c_median", "c_mean", "c_3q", "c_max", "c_n")
+      data.frame( matrix( ncol = 25, nrow = 0)), 
+      c( "t", "s1", "c1", "s2", "c2", "s3", "c3", "s4", "c4", "s5", "c5", "s6", "c6", "colnames", "n", "lowerlim", "middle", "upperlim", "c_min", "c_1q", "c_median", "c_mean", "c_3q", "c_max", "c_n")
     )
-  
+  counter <- 1
+  countermax <- length(d)
   # loop through column numbers
   for(i in d){
+    # Progress Bar
+    progress(counter, max.value = countermax, progress.bar = FALSE)
+    counter <- counter + 1
     # save col numbers to a second variable, we use later
     d1 <- ColComb1
-    
     # save our df to our cache variable
     CACHE.COMB <- x
     # temporary colnames, to check later if values are ordered to correct treatments in df
     coln <- ""
+    # reset our name fields
+    cname = list()
+    sname = list()
     # loop for multiple combination, single treatment method is only single run
     for( n in 1:itn ){
       # remove selected treatment(s) from the list of treatment columns
@@ -110,25 +116,25 @@ F_COMBINATION <- function( x, d, itn, CacheList, ColComb1 ){
       # subsetting our dataframe, were only our selected treatments are given
       CACHE.COMB <- CACHE.COMB[ CACHE.COMB[, i[n]] == 1 , ]
       coln <- paste( coln, colnames(CACHE.COMB[i[n]]), sep = " ")
+      # Names for Export
+      cname[n] = as.character( CacheList$X3[ CacheList$ColComb1 == i[n] ])
+      sname[n] = as.character( CacheList$X2[ CacheList$ColComb1 == i[n] ])
     }
     
     # if no data is available we skip it
     if( nrow( CACHE.COMB ) == 0 ) next
-    
+      
     # count numbers without given treatment, if it is bigger than 0 it means there are other treatments in combination
-    CACHE.COMB$comb_count <- rowSums(CACHE.COMB[ , d1 ], na.rm = TRUE)
+    # drop = FALSE tocreate a one-column dataframe and no vector if there is only one column left
+    CACHE.COMB$comb_count <- rowSums(CACHE.COMB[ , d1, drop = FALSE ], na.rm = TRUE)
     # only get the count 0 ones, because then we are sure there is no combination
     CACHE.COMB <- CACHE.COMB[CACHE.COMB[, "comb_count"] == 0, ]
     # get loss probability for combination
     CACHE.BIND <- c(NA,NA,NA)
     
-    if( nrow( CACHE.COMB ) > 10) CACHE.BIND <- F_GLM_SINGLE( CACHE.COMB )
-    
-    # Nice name for out Combination
-    if( itn == 1 ) cname <- CacheList$X3[CacheList$ColComb1 == i[1] ]
-    if( itn == 2 ) cname <- paste(CacheList$X3[CacheList$ColComb1 == i[1] ], CacheList$X3[CacheList$ColComb1 == i[2] ], sep = " AND ")
-    if( itn == 3 ) cname <- paste(CacheList$X3[CacheList$ColComb1 == i[1] ], paste(CacheList$X3[CacheList$ColComb1 == i[2] ], CacheList$X3[CacheList$ColComb1 == i[3] ], sep = " AND "), sep = " AND ")
-    if( itn == 4 ) cname <- paste(CacheList$X3[CacheList$ColComb1 == i[1] ], paste(CacheList$X3[CacheList$ColComb1 == i[2] ], paste(CacheList$X3[CacheList$ColComb1 == i[3] ], CacheList$X3[CacheList$ColComb1 == i[4] ], sep = " AND "), sep = " AND "), sep = " AND ")
+    # if less than 10 rows we skip it
+    if( nrow( CACHE.COMB ) < 10) next
+    if( nrow( CACHE.COMB ) > 9) CACHE.BIND <- F_GLM_SINGLE( CACHE.COMB )
     
     # Get Costs of Varroa Treatment per Hive
     cost <- summary(CACHE.COMB$costs, na.rm = TRUE)
@@ -138,7 +144,20 @@ F_COMBINATION <- function( x, d, itn, CacheList, ColComb1 ){
     # Add row to Dummy DF
     D.COMB <- D.COMB %>% add_row(
       t = itn, 
-      c = cname, 
+      
+      s1 = sname[1],
+      c1 = cname[1],
+      s2 = sname[2],
+      c2 = cname[2],
+      s3 = sname[3],
+      c3 = cname[3],
+      s4 = sname[4],
+      c4 = cname[4],
+      s5 = sname[5],
+      c5 = cname[5],
+      s6 = sname[6],
+      c6 = cname[6],
+      
       colnames = coln,
       n = nrow( CACHE.COMB ), 
       lowerlim = CACHE.BIND[1], 
@@ -152,12 +171,12 @@ F_COMBINATION <- function( x, d, itn, CacheList, ColComb1 ){
       c_3q = cost[[5]],
       c_max = cost[[6]],
       c_n = cost_count
-      )
+    )
   }
   # Return full DF
   return (D.COMB)
 }
-  
+
 #### Our custom cluster function #### 
 # x = subseted Dataframe (lat, long), you need to do beforehand the logic what data you want
 ##############################
