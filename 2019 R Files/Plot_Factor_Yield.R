@@ -50,6 +50,9 @@ D.FACTORS.PLOT <- D.FACTORS
 D.FACTORS.PLOT$ff[ D.FACTORS.PLOT$ff == "Ja" ] <- "Yes"
 D.FACTORS.PLOT$ff[ D.FACTORS.PLOT$ff == "Nein" ] <- "No"
 
+D.FACTORS.PLOT$ff <- factor( D.FACTORS.PLOT$ff, 
+                             levels = c( "Yes", "No", "Uncertain"))
+
 #### DISTRICTS Plot Matrix ####
 # Create DISTRICT DF & calculate loss rates
 D.DISTRICTS <- D.FULL %>% 

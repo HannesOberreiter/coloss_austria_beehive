@@ -9,6 +9,7 @@
 
 # Import Header
 source( "Partials_Header.r" )
+source( "Partials_Header_Treatment.r" )
 
 # Import our Custom Functions
 source( "Partials_Functions.r" )
@@ -18,7 +19,7 @@ source( "Partials_Functions.r" )
 #### Treatment Basic Factors ####
 # List of Factors we want in our Plot
 oList = list(
-  c("varroa_checked", "(A) Checked for varroa mite count"),
+  c("varroa_checked", "(A) Did monitor varroa infestation level"),
   c("varroa_treated", "(B) Did treatmend agains varroa mites"),
   c("crippled_bees", "(C) Amount of crippled bees observed")
 )
@@ -57,48 +58,9 @@ D.FACTORS.PLOT$ff <- factor( D.FACTORS.PLOT$ff,
                              levels = c( "Yes", "No", "Uncertain", "Often", "Seldom", "None", "Don't know"))
 
 #### Treatment Types Overview #####
-# List of Factors we want in our Plot
-oList = list(
-  c("T_drone_", "T_drone_total", "Dronecomb Removal"),
-  c("T_hyperthermia_", "T_hyperthermia_total", "Hyperthermia"),
-  c("T_biotechnical_", "T_biotechnical_total", "Other Biotechnical Method"),
-  c("T_formic_short_", "T_formic_short_total", "Formic Acid - Short Term"),
-  c("T_formic_long_", "T_formic_long_total", "Formic Acid - Long Term"),
-  c("T_lactic_", "T_lactic_total", "Lactic Acid"),
-  c("T_oxalic_trickle_", "T_oxalic_trickle_total", "Oxalic Acid - Trickle"),
-  c("T_oxalic_vapo_", "T_oxalic_vapo_total", "Oxalic Acid - Vaporize"),
-  c("T_oxalic_mix_", "T_oxalic_mix_total", "Oxalic Acid - Mixture"),
-  c("T_thymol_", "T_thymol_total", "Thymol"),
-  #c("T_synthetic_apistan_", "T_apistan_total", "Tau-fluvalinat"),
-  #c("T_synthetic_flumethrin_", "T_flumethrin_total", "Flumethrin"),
-  #c("T_synthetic_amitraz_strips_", "T_amitraz_strips_total", "Amitraz - Strips"),
-  #c("T_synthetic_amitraz_vapo_", "T_amitraz_vapo_total", "Amitraz - Vaporize"),
-  #c("T_synthetic_coumaphos_p_", "T_coumaphos_p_total", "Coumaphos - Perizin"),
-  #c("T_synthetic_coumaphos_c_", "T_coumaphos_c_total", "Coumaphos - Checkmite+"),
-  #c("T_synthetic_synother_", "T_chemical_total", "Other Synthetic"),
-  c("T_synthetic_", "T_synthetic_total", "Synthetic Methods"),
-  c("T_other_", "T_other_total", "Other Method")
-)
 
-# Dummy List
-D.CACHE_T <- list()
-# Loop through our Treatment Types
-for(i in oList){
-  # Get Columns which are starting with List value
-  x <- grepl(i[1], colnames(D.FULL), fixed = TRUE)
-  # sum the row values (means 1 = for 1 month, 2 = 2 months etc.)
-  D.CACHE_T[[i[2]]] <- rowSums(D.FULL[, x], na.rm = TRUE)
-  # create a yes (1) no (2) list too
-  xn <- paste( i[2], "_yn", sep = "")
-  D.CACHE_T[[xn]] <- ifelse((rowSums(D.FULL[, x], na.rm = TRUE)) > 0, 1, 0)
-}
-
-# Convert List to Dataframe
-D.CACHE_T <- data.frame(D.CACHE_T)
-# sum rows by yn column, that way we get amount of different treatments used
-x <- grep("_yn", colnames(D.CACHE_T), fixed = TRUE)
-D.CACHE_T$T_amount <- rowSums(D.CACHE_T[, x], na.rm = TRUE)
-D.FULL <- cbind(D.FULL, D.CACHE_T)
+#D.FULL$T_amount <- D.FULL$T_amount_total
+#summary(D.FULL$T_amount_total)
 
 # Create a summary DF to create the BAR Plot
 D.PLOT_T <- D.FULL %>%
@@ -112,45 +74,13 @@ D.PLOT_T <- D.PLOT_T[(D.PLOT_T$T_amount != 0), ]
 # change to factor otherwise we would need to use continious x axis
 D.PLOT_T$T_amount <- as.factor( D.PLOT_T$T_amount )
 
-# Create Box Plot Model with number of different treatment methods used as factor
-CACHE.M_T <- F_EXTRACT_N( D.FULL, "T_amount", "Amount of diff. Treatments" )
-CACHE.BIND_T <- F_GLM_FACTOR( D.FULL, "T_amount", get( "T_amount", pos = D.FULL ) )
-CACHE.BIND_T <- cbind( CACHE.M_T, CACHE.BIND_T )
-# remove n < 10
-CACHE.BIND_T <- CACHE.BIND_T[(CACHE.BIND_T$n > 10), ]
-# remove 0, this means participants said he uses treatment but did not say what treatment
-CACHE.BIND_T <- CACHE.BIND_T[(CACHE.BIND_T$ff != 0), ]
-CACHE.BIND_T$ff <- as.factor( CACHE.BIND_T$ff )
-
-#### Combinations ####
-D.COMB <- 
-  setNames( 
-    data.frame( matrix( ncol = 6, nrow = 0)), 
-    c( "t", "c", "n", "lowerlim", "middle", "upperlim")
-  )
-
-# Get column number with *_yn in it
-ColComb1 <- grep("_yn", colnames(D.FULL), fixed = TRUE)
-# Calculate every possible combination
-ColComb2 <- combn( ColComb1 , 2, simplify = FALSE )
-ColComb3 <- combn( ColComb1 , 3, simplify = FALSE )
-ColComb4 <- combn( ColComb1 , 4, simplify = FALSE )
-
-# Add to our oList with the names the ColNumber for better inserting later
-CacheList <- data.frame(t(sapply(oList, c)))
-CacheList <- cbind(CacheList, ColComb1)
-
-CACHE.COMB <- F_COMBINATION(D.FULL, ColComb1, 1, CacheList, ColComb1)
-CACHE.COMB1 <- F_COMBINATION(D.FULL, ColComb2, 2, CacheList, ColComb1)
-CACHE.COMB <- rbind(CACHE.COMB, CACHE.COMB1)
-CACHE.COMB1 <- F_COMBINATION(D.FULL, ColComb3, 3, CacheList, ColComb1)
-CACHE.COMB <- rbind(CACHE.COMB, CACHE.COMB1)
-CACHE.COMB1 <- F_COMBINATION(D.FULL, ColComb4, 4, CacheList, ColComb1)
-CACHE.COMB <- rbind(CACHE.COMB, CACHE.COMB1)
-
-# D.COMB <- D.COMB[D.COMB$n != 0, ]
-
-write.csv( CACHE.COMB, file = paste("./", "Combination_Treatments.csv", sep = "" ) )
+#### Varroa Count Histogramm #####
+# Get Columns which are starting with List value
+x <- grepl("(T_vcount_)", colnames(D.FULL), fixed = FALSE, perl = TRUE)
+# sum the col values
+VC_count <- colSums(D.FULL[  , x ], na.rm = TRUE)
+VC_text <- c("April 18", "May", "June", "July", "August", "September", "October", "November", "December", "January", "February", "March", "April 19")
+VC_color <- c("cornflowerblue", "cornflowerblue", "forestgreen", "forestgreen", "forestgreen", "forestgreen", "forestgreen", "grey13", "grey13", "grey13", "cornflowerblue", "cornflowerblue", "cornflowerblue")
 
 
 #### PLOTTING #####
@@ -188,7 +118,7 @@ p2 <- ggplot( data = D.PLOT_T ) +
   geom_bar( colour = "black", alpha = 1, fill = "black", show.legend = FALSE, stat = "identity", linetype = "solid") + 
   geom_text( aes( label = paste(np, "%", sep = "" )), angle = 40, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
   xlab("Number of diff. treatment types") + ylab("Number of beekeepers (n)") + 
-  ggtitle("(D) Different treatment methods per company") +
+  ggtitle("(D) Different treatment methods used per company") +
   theme_classic() + 
   theme(
     plot.title = element_text(hjust = 0), 
@@ -206,17 +136,16 @@ p2 <- ggplot( data = D.PLOT_T ) +
     limits = c( 0, 600 )
   )
 
-p3 <- 
-  ggplot( CACHE.BIND_T, aes( x = ff, y = middle )) +
-  geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
-  #geom_point() +
-  geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 1.0 )+ 
-  xlab("Number of diff. treatment types") + ylab("Probability of loss [%]") + 
-  ggtitle("(E) Different treatment methods to probability of loss") +
-  #geom_text( aes( label = lost_rate ), angle = -90, vjust = 0, color = "black", size = 3 ) +
+
+p3 <- ggplot() +
+  aes( x = VC_text, y = VC_count, fill = VC_color) + 
+  geom_bar( colour = "black", alpha = 1, show.legend = FALSE, stat = "identity", linetype = "solid") + 
+  xlab("Months 2018 - 2019") + ylab("Number of beekeepers (n)") + 
+  ggtitle("(E) Monitoring of Varroa infestation level") +
   theme_classic() + 
+  scale_fill_identity() + # as we use our own colors
   theme(
-    plot.title = element_text(hjust = 0.5), 
+    plot.title = element_text(hjust = 0), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" ),
@@ -224,13 +153,12 @@ p3 <-
     panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
-    labels = paste( CACHE.BIND_T$ff," ( n = ",CACHE.BIND_T$n, " )", sep="" ),
-    limits = c( levels( CACHE.BIND_T$ff ))
+    limits = c( VC_text )
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 100, 5 )
-    #limits = c( 0, 10 )
+    breaks = seq( 0, 1000, 100 )
+    #limits = c( 0, 600 )
   )
 
 

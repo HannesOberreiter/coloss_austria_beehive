@@ -69,8 +69,8 @@ p1 <- ggplot( data = D.PLOT ) +
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 750, 50 ),
-    limits = c( 0, 750 )
+    breaks = seq( 0, 950, 50 ),
+    limits = c( 0, 950 )
   )
 
 p2 <- ggplot( data = D.PLOT ) +
@@ -92,8 +92,8 @@ p2 <- ggplot( data = D.PLOT ) +
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 7000, 500 ),
-    limits = c( 0, 7000 )
+    breaks = seq( 0, 7100, 500 ),
+    limits = c( 0, 7100 )
   )
 
 p3 <- ggplot( data = D.PLOT2 ) +
@@ -106,7 +106,7 @@ p3 <- ggplot( data = D.PLOT2 ) +
   theme(
     plot.title = element_text(hjust = 0), 
     axis.title.x = element_text(colour = "black" ), 
-    axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
+    axis.text.x = element_text(angle = -65, hjust = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" ),
     panel.grid.major.y = element_line( colour = "grey" ),
     panel.grid.minor.y = element_line( colour = "grey" )
@@ -115,21 +115,20 @@ p3 <- ggplot( data = D.PLOT2 ) +
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 800, 50 ),
-    limits = c( 0, 800 )
+    breaks = seq( 0, 900, 50 ),
+    limits = c( 0, 900 )
   )
 
 p4 <- ggplot() + 
   geom_polygon(data = MF_DISTRICTS, aes( x = MF_DISTRICTS$long, y = MF_DISTRICTS$lat, group = MF_DISTRICTS$group ), fill="white", color = "black", size = 0.2 ) + 
   geom_path(data = MF_STATES, aes(x = MF_STATES$long, y = MF_STATES$lat, group = MF_STATES$group), color = "black", size = 0.6 ) + 
   geom_point(data = D.CACHE, aes(x = D.CACHE$longitude, y = D.CACHE$latitude, size = D.CACHE$n) ) + 
-
   #scale_fill_distiller( aesthetics = "colour", direction = 1, na.value = "white", limits = c(min(D.CACHE$n), max(D.CACHE$n))) +
   coord_fixed() +
   xlab( "" ) + ylab( "" ) + labs( colour = "Number of beekeepers (n)", size = "Number of beekeepers (n)" ) +
   #guides( size = "none" ) +
   scale_size_continuous(range = c(0.5, 3)) + 
-  ggtitle("(D) Rough main winter apiary location of participating beekeepers") +
+  ggtitle("(D) Rough location of main winter apiary") +
   theme_classic() +
   theme(
     legend.position="bottom", 
@@ -143,6 +142,9 @@ p4 <- ggplot() +
 gtitle = textGrob( "Distribution of survey data" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1, 2 ), c( 3, 4 ) )
-grid.arrange( p1, p2, p3, p4,
+p1 <- arrangeGrob( p1, p2, p3, p4,
               top = gtitle, 
               layout_matrix = lay)
+
+# Save File
+ggsave("./img/Plot_Overview.pdf", p1, width = 12, height = 8, units = "in")
