@@ -14,6 +14,51 @@ source( "Partials_Header_Map.r" )
 # Import our Custom Functions
 source( "Partials_Functions.r" )
 
+#### Hive Production in season ####
+# Remove NA rows, participants which did not answer spring hives question
+D.FULL.PROD <- D.FULL[ !is.na(D.FULL$hives_production),  ]
+# Create Total Austria production rate
+D.AUSTRIA <- D.FULL.PROD %>% 
+  summarise(Bundesland = "Österreich",
+            n = n(),
+            sd.prod = sd(hives_production),
+            hives_winter = sum(hives_winter),
+            hives_spring_before = sum(hives_spring_before),
+            hives_production = sum(hives_production),
+            production_rate = 
+              as.numeric(
+              format(
+                round(
+                  (
+                    hives_production / hives_winter * 100 ), 1), nsmall = 2))
+  ) %>%
+  mutate(se.prod = sd.prod / sqrt(n),
+         lower.ci.prod = production_rate - qt(1 - (0.05 / 2), n - 1) * se.prod,
+         upper.ci.prod = production_rate + qt(1 - (0.05 / 2), n - 1) * se.prod)
+
+# Create Production rate for states
+D.STATES <- D.FULL.PROD %>% 
+  group_by(Bundesland) %>% 
+  summarise(
+            n = n(),
+            sd.prod = sd(hives_production),
+            hives_winter = sum(hives_winter),
+            hives_spring_before = sum(hives_spring_before),
+            hives_production = sum(hives_production),
+            production_rate = 
+              as.numeric(
+                format(
+                  round(
+                    (
+                      hives_production / hives_winter * 100 ), 1), nsmall = 2))
+  ) %>%
+  mutate(se.prod = sd.prod / sqrt(n),
+         lower.ci.prod = production_rate - qt(1 - (0.05 / 2), n - 1) * se.prod,
+         upper.ci.prod = production_rate + qt(1 - (0.05 / 2), n - 1) * se.prod)
+
+D.STATES.PROD <- rbind(D.AUSTRIA, D.STATES)
+
+
 #### STATES Plot Matrix ####
 D.STATES <- D.FULL %>% 
   group_by(Bundesland) %>% 
@@ -41,14 +86,25 @@ D.STATES$lost_rate_elements =
 
 
 #### DISTRICTS Plot Matrix ####
+# Remove "In more than one district rows"
+D.FULL.DIS <- D.FULL[ D.FULL[, "Bezirk"] != "In mehr als einem Bezirk",  ]
 # Create DISTRICT DF & calculate loss rates
-D.DISTRICTS <- D.FULL %>% 
+D.DISTRICTS <- D.FULL.DIS %>% 
   group_by( Bezirk, Bundesland ) %>% 
-  summarize( n = n(),
-             hives_lost = sum( hives_lost_e ) / sum( hives_winter ) * 100
+  summarize( 
+    n = n(),
+    hives_lost = sum( hives_lost_e ) / sum( hives_winter ) * 100
   )
+# GLM model by district
+CACHE.DIS <- F_GLM_FACTOR( D.FULL.DIS, "Bezirk", D.FULL.DIS$Bezirk )
+# Create DF from matrix
+CACHE.DIS <- as_data_frame(CACHE.DIS)
+# Combine them, to check if order is correct you can check middle vs hive_lost cols
+D.DISTRICTS <- bind_cols( D.DISTRICTS, CACHE.DIS )
 # We only use data when there are aleast 6n
-D.DISTRICTS <- subset( D.DISTRICTS, D.DISTRICTS$n > 5 )
+D.DISTRICTS <- D.DISTRICTS[ D.DISTRICTS[, "n" ] > 5, ]
+# Write file to csv
+write.csv( D.DISTRICTS, file = paste("./", "District_Losses.csv", sep = "" ) )
 
 #### ADD DATA TO MAP_D #####
 MF_DISTRICTS$values = 0
@@ -177,6 +233,33 @@ p3 <- ggplot() +
     panel.grid.major = element_blank()
   )
 
+p4 <- 
+  ggplot( D.STATES.PROD, aes( x = Bundesland, y = production_rate )) +
+  geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
+  #geom_point() +
+  geom_pointrange( aes( ymin = lower.ci.prod, ymax = upper.ci.prod ), size = 0.5 )+ 
+  xlab("") + ylab("Proliferation rate [%]") + 
+  ggtitle("Total proliferation rate of beehives 2018") +
+  #geom_text( aes( label = lost_rate ), angle = -90, vjust = 0, color = "black", size = 3 ) +
+  theme_classic() + 
+  theme(
+    plot.title = element_text(hjust = 0.5), 
+    axis.title.x = element_text(colour = "black" ), 
+    axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
+    axis.line = element_line( linetype = "solid" ),
+    panel.grid.major.y = element_line( colour = "grey" ),
+    panel.grid.minor.y = element_line( colour = "grey" )
+  ) +
+  scale_x_discrete(
+    labels = paste( D.STATES$Bundesland,"\n ( n = ",D.STATES.PROD$n, " )", sep="" ),
+    limits = c( levels( D.STATES$Bundesland ))
+  ) +
+  scale_y_continuous(
+    expand = c( 0 , 0 ),
+    breaks = seq( 0, 30, 5 ),
+    limits = c( 0, 30 )
+  )
+
 gtitle = textGrob( "Probability of loss, Winter 2018/2019" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1, 2 ), c( 1, 3) )
@@ -185,3 +268,5 @@ p1 <- arrangeGrob( p1, p2, p3,
              layout_matrix = lay)
 # Save File
 ggsave("./img/Plot_Total_Losses.pdf", p1, width = 11, height = 8, units = "in")
+ggsave("./img/Plot_Total_Regeneration.pdf", p4, width = 4, height = 4, units = "in")
+
