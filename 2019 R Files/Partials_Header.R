@@ -21,8 +21,9 @@ library( tidyr )
 library( scales )
 #library( Rcmdr )
 library( boot )
-library( rstudioapi )
-library( colorspace )
+library( rstudioapi ) # to set dirname
+library( colorspace ) # better colorpalettes for maps
+library( svMisc ) # only for combination function to get a progress bar
 
 
 # Read XLS
@@ -99,6 +100,20 @@ D.FULL <- D.FULL %>%
   rename( "young_queens" = "\"junge\" Königin-" ) %>%
   
   ## Treatment
+  # Varroa Count Check
+  rename( "T_vcount_01" = "[Bestimmung Varroa-Befall (Milbenfall o.ä. Methode)][Apr 17]" ) %>%
+  rename( "T_vcount_02" = "[Bestimmung Varroa-Befall (Milbenfall o.ä. Methode)][Mai 17]" ) %>%
+  rename( "T_vcount_03" = "[Bestimmung Varroa-Befall (Milbenfall o.ä. Methode)][Jun 17]" ) %>%
+  rename( "T_vcount_04" = "[Bestimmung Varroa-Befall (Milbenfall o.ä. Methode)][Jul 17]" ) %>%
+  rename( "T_vcount_05" = "[Bestimmung Varroa-Befall (Milbenfall o.ä. Methode)][Aug 17]" ) %>%
+  rename( "T_vcount_06" = "[Bestimmung Varroa-Befall (Milbenfall o.ä. Methode)][Sep 17]" ) %>%
+  rename( "T_vcount_07" = "[Bestimmung Varroa-Befall (Milbenfall o.ä. Methode)][Okt 17]" ) %>%
+  rename( "T_vcount_08" = "[Bestimmung Varroa-Befall (Milbenfall o.ä. Methode)][Nov 17]" ) %>%
+  rename( "T_vcount_09" = "[Bestimmung Varroa-Befall (Milbenfall o.ä. Methode)][Dez 17]" ) %>%
+  rename( "T_vcount_10" = "[Bestimmung Varroa-Befall (Milbenfall o.ä. Methode)][Jän 18]" ) %>%
+  rename( "T_vcount_11" = "[Bestimmung Varroa-Befall (Milbenfall o.ä. Methode)][Feb 18]" ) %>%
+  rename( "T_vcount_12" = "[Bestimmung Varroa-Befall (Milbenfall o.ä. Methode)][Mär 18]" ) %>%
+  rename( "T_vcount_13" = "[Bestimmung Varroa-Befall (Milbenfall o.ä. Methode)][Apr 18]" ) %>%
   # Drone Comb removal
   rename( "T_drone_01" = "[Drohnenbrutentnahme][Apr 17]" ) %>%
   rename( "T_drone_02" = "[Drohnenbrutentnahme][Mai 17]" ) %>%
@@ -381,4 +396,5 @@ D.FULL$lost_rate <- D.FULL$hives_lost / D.FULL$hives_winter * 100
 D.FULL$lost_rate_e <- D.FULL$hives_lost_e / D.FULL$hives_winter * 100
 # hives per apiary
 D.FULL$hives_per_apiary <- D.FULL$hives_winter / D.FULL$apiaries
-
+# hive production this season before winter
+D.FULL$hives_production <- D.FULL$hives_winter - D.FULL$hives_spring_before
