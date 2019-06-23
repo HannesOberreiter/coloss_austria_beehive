@@ -5,6 +5,12 @@
 ##############################
 ##############################
 
+# Clear Enviroment
+rm(list=ls())
+# Set Working directory (uses API of RStudio)
+SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
+setwd( SCRIPT.DIR )
+
 ####### OPTERATION FACTOR YIELD ###########
 
 # Import Header
@@ -70,8 +76,18 @@ MF_DISTRICTS = left_join( MF_DISTRICTS, D.DISTRICTS, by = c( "id" = "Bezirk" ), 
 #### MAPS ####
 D.PLOT_LIST <- list()
 D.CACHE <- list()
+# simple counter for legend arrangement
+count <- 0
 
-for( i in oList){
+for(i in oList){
+  
+  # simple counter for legend arrangement
+  count <- count + 1
+  label.fill <- ifelse(count %% 2 == 0, TRUE, FALSE)
+  label.point <- ifelse(count %% 2 == 0, FALSE, TRUE)
+  label.size <- ifelse(count %% 2 == 0, "none", "legend")
+  legen.pos <- ifelse(count %% 2 == 0, "left", "right")
+
   D.FULL$ff <- get( i[1], pos = D.FULL ) 
   D.CA <- subset( D.FULL, D.FULL$ff == "Ja", select = c( "latitude", "longitude" ) )
   D.CACHE[[i[1]]] <- F_MAP_CLUSTER(D.CA)
@@ -79,25 +95,21 @@ for( i in oList){
   # https://www.rdocumentation.org/packages/ggplot2/versions/1.0.0/topics/aes_string
   p_cache <-
     ggplot() + 
-    geom_polygon(data = MF_DISTRICTS, aes( x = MF_DISTRICTS$long, y = MF_DISTRICTS$lat, group = MF_DISTRICTS$group, fill = MF_DISTRICTS$hives_lost ), show.legend = FALSE, color = "Grey", size = 0.2 ) + 
+    geom_polygon(data = MF_DISTRICTS, aes( x = MF_DISTRICTS$long, y = MF_DISTRICTS$lat, group = MF_DISTRICTS$group, fill = MF_DISTRICTS$hives_lost ), show.legend = label.fill, color = "Grey", size = 0.2 ) + 
     geom_path(data = MF_STATES, aes(x = MF_STATES$long, y = MF_STATES$lat, group = MF_STATES$group), color = "Grey", size = 0.6 ) + 
     #geom_point(data = D.CACHE[[i[1]]], aes_string(x = D.CACHE[[i[1]]]$longitude, y = D.CACHE[[i[1]]]$latitude, size = D.CACHE[[i[1]]]$n, colour = D.CACHE[[i[1]]]$n) ) + 
-    geom_point(data = D.CACHE[[i[1]]], aes_string(x = D.CACHE[[i[1]]]$longitude, y = D.CACHE[[i[1]]]$latitude, size = D.CACHE[[i[1]]]$n), colour = "Black" ) + 
-    coord_fixed() +
-    xlab( "" ) + ylab( "" ) + labs( colour = "Reports (n)", size = "Reports (n)", fill = "" ) +
-    scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white" ) +
-    #scale_colour_continuous_sequential( palette = "Grays", aesthetics = "color", na.value = "white", guide = "legend", breaks = c( 1, 5, 10, 15, 20 ), limits = c(0, 20) ) +
-    
-    #scale_fill_distiller( palette = "Greys", direction = 1, na.value = "white" ) +
+    geom_point(data = D.CACHE[[i[1]]], aes_string(x = D.CACHE[[i[1]]]$longitude, y = D.CACHE[[i[1]]]$latitude, size = D.CACHE[[i[1]]]$n), color = "blue", fill = "black", stroke = 0.2, shape = 21, show.legend = label.point ) + 
+    coord_quickmap() +
     # Info, when you want to join the legends for size and colour they need exact the same limits and breaks otherwise it wont work
-    # scale_colour_distiller( breaks = c( 1, 5, 10, 15, 20 ), limits = c(0, 20), palette = "Reds", direction = 1, na.value = "white", guide = "legend" ) +
-    scale_size_continuous( range = c(0.1, 2), breaks = c( 1, 5, 10, 15, 20 ), limits = c(0, 20) ) + 
+    xlab( "" ) + ylab( "" ) + labs( colour = "Reports (n)", size = "Reports (n)", fill = "Loss rate [%]" ) +
+    scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white" ) +
+    scale_size_continuous( range = c(0.1, 2), breaks = c( 1, 5, 10, 15, 20 ), limits = c(0, 20), guide = label.size ) + 
     ggtitle(paste(i[2], "- rough location of yield")) +
     theme_classic() +
     theme(
-      legend.position = "bottom", 
-      legend.box = "horizontal",
-      plot.title = element_text(), 
+      legend.position = legen.pos,
+      legend.box = "vertical",
+      plot.title = element_text(size = 10), 
       axis.text = element_blank(), 
       axis.ticks = element_blank(),
       panel.grid.major = element_blank()
@@ -114,7 +126,7 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
   facet_wrap( ~ c, strip.position = "bottom", scales = "free_x", ncol = 3  ) +
-  xlab("") + ylab("Probability of loss [%]") + 
+  xlab("") + ylab("Loss rate [%]") + 
   #ggtitle("Loss prob. by operational factors") +
   theme_classic() + 
   theme(
@@ -137,13 +149,13 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
     #limits = c( 0, 20 )
   )
 
-gtitle = textGrob( "Loss prob. by yield without migratory beekeepers" , gp=gpar( fontsize = 20 , face = "bold" ) )
+gtitle = textGrob( "Loss rate by yield without migratory beekeepers" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1 ), c( 1 ), c( 2, 3 ), c( 4, 5 ), c( 6, 7 ))
-p1 <- arrangeGrob( p1, D.PLOT_LIST[[1]], D.PLOT_LIST[[2]], D.PLOT_LIST[[3]], D.PLOT_LIST[[4]], D.PLOT_LIST[[5]], D.PLOT_LIST[[6]],
+p_p <- arrangeGrob( p1, D.PLOT_LIST[[1]], D.PLOT_LIST[[2]], D.PLOT_LIST[[3]], D.PLOT_LIST[[4]], D.PLOT_LIST[[5]], D.PLOT_LIST[[6]],
               top = gtitle, 
               layout_matrix = lay)
 
 # Save File
-ggsave("./img/Plot_Factor_Yield.pdf", p1, width = 8, height = 12, units = "in")
+ggsave("./img/Plot_Factor_Yield.pdf", p_p, width = 9, height = 12, units = "in")
 

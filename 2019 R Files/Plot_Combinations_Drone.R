@@ -51,8 +51,8 @@ p1 <-
   #geom_point() +
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 1.0 ) + 
   geom_text( aes( x = xAxisTemp, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
-  xlab("") + ylab("Probability of loss [%]") + 
-  ggtitle("Months of drone brood removal") +
+  xlab("") + ylab("Loss rate [%]") + 
+  ggtitle("Drone brood removal") +
   #geom_text( aes( label = lost_rate ), angle = -90, vjust = 0, color = "black", size = 3 ) +
   theme_classic() + 
   theme(
@@ -69,8 +69,8 @@ p1 <-
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 20, 5 ),
-    limits = c( 0, 20 )
+    breaks = seq( 0, 100, 5 )
+    #limits = c( 0, 20 )
   )
 
-ggsave("./img/Plot_Drone_Removal.pdf", p1, width = 4, height = 4, units = "in")
+ggsave("./img/Plot_Drone_Removal.pdf", p1, width = 4, height = 3, units = "in")

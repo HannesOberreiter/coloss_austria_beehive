@@ -36,9 +36,9 @@ for( i in treatmentList){
   if( length( unique( get( xn, pos = D.FULL ))) == 1) next
   CACHE.M <- F_EXTRACT_N( D.FULL, xn, i[3] )
   
-  # If there are not over 10 n we skip it
+  # If there are not over 19 n we skip it
   testN <- CACHE.M$n[CACHE.M$ff == "1"]
-  if( testN < 15) next
+  if( testN < 20) next
   
   CACHE.BIND <- F_GLM_FACTOR( D.FULL, xn, get( xn, pos = D.FULL ) )
   CACHE.BIND <- cbind( CACHE.M, CACHE.BIND )
@@ -51,13 +51,24 @@ D.FACTORS$ff <- ifelse(D.FACTORS$ff == 0, "No", "Yes")
 D.FACTORS$ff <- factor( D.FACTORS$ff, 
                              levels = c( "Yes", "No", "Uncertain"))
 
+# Creating xAxisLetters and add it to DF
+xAxisMaxLength <- length(unique(D.FACTORS$c))
+# Small function to generate more than 26 letters eg Z AA AB 
+xAxisTemp <- c(LETTERS[1:26], paste0("A",LETTERS[1:26]))
+xAxisTemp <- xAxisTemp[1:xAxisMaxLength]
+xAxisTemp <- c(xAxisTemp, xAxisTemp)
+xAxisTemp <- sort(xAxisTemp)
+D.FACTORS$letter <- paste("(",xAxisTemp,") ", D.FACTORS$c, sep = "")
+
+D.FACTORS.SPRING <- D.FACTORS
+
 p1 <- ggplot( data = D.FACTORS ) +
   aes( x = ff, y = middle ) + 
   geom_bar( colour = "black", alpha = 0.3, fill = "cornflowerblue", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
-  facet_wrap( ~ c, strip.position = "bottom", scales = "free_x", ncol = 5  ) +
-  xlab("") + ylab("Probability of loss [%]") + 
+  facet_wrap( ~ letter, strip.position = "bottom", scales = "free_x", ncol = 5  ) +
+  xlab("") + ylab("Loss rate [%]") + 
   #ggtitle("Loss prob. by operational factors") +
   theme_classic() + 
   theme(
@@ -76,19 +87,18 @@ p1 <- ggplot( data = D.FACTORS ) +
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 35, 5 ),
-    limits = c( 0, 35 )
+    breaks = seq( 0, 100, 5 )
+    #limits = c( 0, 35 )
   )
 
-gtitle = textGrob( "Loss prob. by treatment method - SPRING (April, May)" , gp=gpar( fontsize = 20 , face = "bold" ) )
+gtitle = textGrob( "Loss rate by treatment method - SPRING (April, May)" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1 ) )
 p1 <- arrangeGrob( p1,
               top = gtitle, 
               layout_matrix = lay)
 
-ggsave("./img/P_FACTOR_Treatment_Spring.pdf", p1, width = 12, height = 6, units = "in")
-
+ggsave("./img/P_FACTOR_Treatment_Spring.pdf", p1, width = 12, height = 3, units = "in")
 
 
 #### SUMMER ####
@@ -107,9 +117,9 @@ for( i in treatmentList){
   if( length( unique( get( xn, pos = D.FULL ))) == 1) next
   CACHE.M <- F_EXTRACT_N( D.FULL, xn, i[3] )
   
-  # If there are not over 10 n we skip it
+  # If there are not over 19 n we skip it
   testN <- CACHE.M$n[CACHE.M$ff == "1"]
-  if( testN < 15) next
+  if( testN < 20) next
   
   CACHE.BIND <- F_GLM_FACTOR( D.FULL, xn, get( xn, pos = D.FULL ) )
   CACHE.BIND <- cbind( CACHE.M, CACHE.BIND )
@@ -122,13 +132,24 @@ D.FACTORS$ff <- ifelse(D.FACTORS$ff == 0, "No", "Yes")
 D.FACTORS$ff <- factor( D.FACTORS$ff, 
                         levels = c( "Yes", "No", "Uncertain"))
 
+# Creating xAxisLetters and add it to DF
+xAxisMaxLength <- length(unique(D.FACTORS$c))
+# Small function to generate more than 26 letters eg Z AA AB 
+xAxisTemp <- c(LETTERS[1:26], paste0("A",LETTERS[1:26]))
+xAxisTemp <- xAxisTemp[1:xAxisMaxLength]
+xAxisTemp <- c(xAxisTemp, xAxisTemp)
+xAxisTemp <- sort(xAxisTemp)
+D.FACTORS$letter <- paste("(",xAxisTemp,") ", D.FACTORS$c, sep = "")
+
+D.FACTORS.SUMMER <- D.FACTORS
+
 p1 <- ggplot( data = D.FACTORS ) +
   aes( x = ff, y = middle ) + 
   geom_bar( colour = "black", alpha = 0.3, fill = "forestgreen", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
-  facet_wrap( ~ c, strip.position = "bottom", scales = "free_x", ncol = 4  ) +
-  xlab("") + ylab("Probability of loss [%]") + 
+  facet_wrap( ~ letter, strip.position = "bottom", scales = "free_x", ncol = 4  ) +
+  xlab("") + ylab("Loss rate [%]") + 
   #ggtitle("Loss prob. by operational factors") +
   theme_classic() + 
   theme(
@@ -147,18 +168,18 @@ p1 <- ggplot( data = D.FACTORS ) +
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 35, 5 ),
-    limits = c( 0, 35 )
+    breaks = seq( 0, 100, 5 )
+    #limits = c( 0, 35 )
   )
 
-gtitle = textGrob( "Loss prob. by treatment method - SUMMER (June - October)" , gp=gpar( fontsize = 20 , face = "bold" ) )
+gtitle = textGrob( "Loss rate by treatment method - SUMMER (June - October)" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1 ) )
 p1 <- arrangeGrob( p1,
                    top = gtitle, 
                    layout_matrix = lay)
 
-ggsave("./img/P_FACTOR_Treatment_Summer.pdf", p1, width = 10, height = 10, units = "in")
+ggsave("./img/P_FACTOR_Treatment_Summer.pdf", p1, width = 12, height = 8, units = "in")
 
 
 
@@ -178,9 +199,9 @@ for( i in treatmentList){
   if( length( unique( get( xn, pos = D.FULL ))) == 1) next
   CACHE.M <- F_EXTRACT_N( D.FULL, xn, i[3] )
   
-  # If there are not over 10 n we skip it
+  # If there are not over 19 n we skip it
   testN <- CACHE.M$n[CACHE.M$ff == "1"]
-  if( testN < 15) next
+  if( testN < 20) next
   
   CACHE.BIND <- F_GLM_FACTOR( D.FULL, xn, get( xn, pos = D.FULL ) )
   CACHE.BIND <- cbind( CACHE.M, CACHE.BIND )
@@ -193,13 +214,24 @@ D.FACTORS$ff <- ifelse(D.FACTORS$ff == 0, "No", "Yes")
 D.FACTORS$ff <- factor( D.FACTORS$ff, 
                         levels = c( "Yes", "No", "Uncertain"))
 
+# Creating xAxisLetters and add it to DF
+xAxisMaxLength <- length(unique(D.FACTORS$c))
+# Small function to generate more than 26 letters eg Z AA AB 
+xAxisTemp <- c(LETTERS[1:26], paste0("A",LETTERS[1:26]))
+xAxisTemp <- xAxisTemp[1:xAxisMaxLength]
+xAxisTemp <- c(xAxisTemp, xAxisTemp)
+xAxisTemp <- sort(xAxisTemp)
+D.FACTORS$letter <- paste("(",xAxisTemp,") ", D.FACTORS$c, sep = "")
+
+D.FACTORS.WINTER <- D.FACTORS
+
 p1 <- ggplot( data = D.FACTORS ) +
   aes( x = ff, y = middle ) + 
   geom_bar( colour = "black", alpha = 0.3, fill = "grey13", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
-  facet_wrap( ~ c, strip.position = "bottom", scales = "free_x", ncol = 4  ) +
-  xlab("") + ylab("Probability of loss [%]") + 
+  facet_wrap( ~ letter, strip.position = "bottom", scales = "free_x", ncol = 4  ) +
+  xlab("") + ylab("Loss rate [%]") + 
   #ggtitle("Loss prob. by operational factors") +
   theme_classic() + 
   theme(
@@ -218,16 +250,16 @@ p1 <- ggplot( data = D.FACTORS ) +
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 35, 5 ),
-    limits = c( 0, 35 )
+    breaks = seq( 0, 100, 5 )
+    #limits = c( 0, 35 )
   )
 
-gtitle = textGrob( "Loss prob. by treatment method - WINTER (November - January)" , gp=gpar( fontsize = 20 , face = "bold" ) )
+gtitle = textGrob( "Loss rate by treatment method - WINTER (November - January)" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1 ) )
 p1 <- arrangeGrob( p1,
                    top = gtitle, 
                    layout_matrix = lay)
 
-ggsave("./img/P_FACTOR_Treatment_Winter.pdf", p1, width = 12, height = 6, units = "in")
+ggsave("./img/P_FACTOR_Treatment_Winter.pdf", p1, width = 12, height = 3, units = "in")
 

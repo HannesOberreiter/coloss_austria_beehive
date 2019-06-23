@@ -59,19 +59,27 @@ D.PLOT.HIST <- bind_rows(D.PLOT.HIST[D.PLOT.HIST$group == 0, ], D.PLOST_HIST.CAC
 # create dummy list for our plots
 D.PLOT_LIST = list()
 
+# Used on the title for easier comparison in text
+TitleLettersTemp <- LETTERS[1:27]
+count <- 1
+
 # Plotting via loop, using now treatmentList as this has combinded synthetics
-for( i in treatmentList){
+for( i in treatmentListwMix){
+  
+  ylab.text <- ifelse((count %in% c(1, 5, 9)), "Number of beekeepers (n)", "")
+  count <- count + 1
+  
   # Title of plot
-  title = i[3]
+  title <- paste("(", TitleLettersTemp[count], ") - ", i[3], sep = "")
   # our plot
   p_cache <- ggplot(D.PLOT.HIST[D.PLOT.HIST$ff == i[3], ], aes( x = x, y = y, fill = vc_color)) +
     geom_bar(colour = "black",show.legend = FALSE, stat = "identity", linetype = "solid") + 
-    xlab("") + ylab("Number of beekeepers (n)") + 
+    xlab("") + ylab(ylab.text) + 
     ggtitle(title) +
     scale_fill_identity() + # as we use our own colors
     theme_classic() + 
     theme(
-      plot.title = element_text(hjust = 0), 
+      plot.title = element_text(hjust = 0, size = 10), 
       axis.title.x = element_text(colour = "black" ), 
       axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
       axis.line = element_line( linetype = "solid" ),
@@ -82,7 +90,9 @@ for( i in treatmentList){
       limits = c( VC_text )
     ) +
     scale_y_continuous(
-      expand = c( 0 , 0 )
+      expand = c( 0 , 0 ),
+      # this prevents decimal points happening
+      labels = scales::number_format(accuracy = 1)
       #breaks = seq( 0, 1000, 100 )
       #limits = c( 0, 600 )
     )
@@ -90,13 +100,13 @@ for( i in treatmentList){
   D.PLOT_LIST[[i[1]]] <- p_cache
 }
 
-gtitle = textGrob( "Months different treatment methods used" , gp=gpar( fontsize = 20 , face = "bold" ) )
+gtitle = textGrob( "Treatment method histogram by months" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
-lay <- rbind( c( 1, 2, 3 ), c( 4, 5, 6 ), c( 7, 8, 9 ), c( 10, 11, 12 ))
+lay <- rbind( c( 1, 2, 3, 4 ), c( 5, 6, 7, 8 ), c( 9, 10, 11, 12 ))
 p1 <- arrangeGrob( D.PLOT_LIST[[1]], D.PLOT_LIST[[2]], D.PLOT_LIST[[3]], D.PLOT_LIST[[4]], D.PLOT_LIST[[5]], D.PLOT_LIST[[6]], 
                    D.PLOT_LIST[[7]], D.PLOT_LIST[[8]], D.PLOT_LIST[[9]], D.PLOT_LIST[[10]], D.PLOT_LIST[[11]], D.PLOT_LIST[[12]],
                    top = gtitle, 
                    layout_matrix = lay)
 
 # Save File
-ggsave("./img/Plot_Treatment_Histogramm.pdf", p1, width = 8, height = 12, units = "in")
+ggsave("./img/Plot_Treatment_Histogramm.pdf", p1, width = 12, height = 8, units = "in")

@@ -22,7 +22,6 @@ F_GLM_SINGLE <- function( x )
   return( CACHE.BIND <- cbind( lowerlim = GLM.LOW, middle = GLM.ODDS, upperlim = GLM.MAX ) )
 }
 
-
 #### GLM with Factors #### 
 # x = Dataframe, f = factor as string, xf is factor from dataframe
 ##############################
@@ -90,8 +89,8 @@ F_COMBINATION <- function( x, d, itn, CacheList, ColComb1 ){
   # our dummy dataframe, which will be returned
   D.COMB <- 
     setNames( 
-      data.frame( matrix( ncol = 25, nrow = 0)), 
-      c( "t", "s1", "c1", "s2", "c2", "s3", "c3", "s4", "c4", "s5", "c5", "s6", "c6", "colnames", "n", "lowerlim", "middle", "upperlim", "c_min", "c_1q", "c_median", "c_mean", "c_3q", "c_max", "c_n")
+      data.frame( matrix( ncol = 28, nrow = 0)), 
+      c( "t", "s1", "c1", "s2", "c2", "s3", "c3", "s4", "c4", "s5", "c5", "s6", "c6", "colnames", "short", "n", "lowerlim", "middle", "upperlim", "c_min", "c_1q", "c_median", "c_mean", "c_3q", "c_max", "c_n", "c_ci_upper", "c_ci_lower")
     )
   counter <- 1
   countermax <- length(d)
@@ -109,6 +108,7 @@ F_COMBINATION <- function( x, d, itn, CacheList, ColComb1 ){
     # reset our name fields
     cname = list()
     sname = list()
+    shortname = ""
     # loop for multiple combination, single treatment method is only single run
     for( n in 1:itn ){
       # remove selected treatment(s) from the list of treatment columns
@@ -119,6 +119,7 @@ F_COMBINATION <- function( x, d, itn, CacheList, ColComb1 ){
       # Names for Export
       cname[n] = as.character( CacheList$X3[ CacheList$ColComb1 == i[n] ])
       sname[n] = as.character( CacheList$X2[ CacheList$ColComb1 == i[n] ])
+      shortname <- paste(shortname, CacheList$X4[ CacheList$ColComb1 == i[n] ], sep = " " )
     }
     
     # if no data is available we skip it
@@ -132,14 +133,37 @@ F_COMBINATION <- function( x, d, itn, CacheList, ColComb1 ){
     # get loss probability for combination
     CACHE.BIND <- c(NA,NA,NA)
     
-    # if less than 10 rows we skip it
-    if( nrow( CACHE.COMB ) < 10) next
+    # if less than 20 rows we skip it
+    if( nrow( CACHE.COMB ) < 15) next
     if( nrow( CACHE.COMB ) > 9) CACHE.BIND <- F_GLM_SINGLE( CACHE.COMB )
     
     # Get Costs of Varroa Treatment per Hive
     cost <- summary(CACHE.COMB$costs, na.rm = TRUE)
-    # Count rows with values
-    cost_count <- nrow ( CACHE.COMB[!(is.na(CACHE.COMB$costs)), ] ) 
+    
+    # create cost dataframe without na's
+    cost.df <- CACHE.COMB$costs[!(is.na(CACHE.COMB$costs))]
+    cost.df <- tibble(cost.df)
+    names(cost.df) <- "a"
+    cost.df$b <- 1
+    # send to bootstrap 
+    cost.boot <- F_BOOTSTRAP(cost.df, shortname, 1)
+    
+    
+    # Standard Derivation from mean with 95% square root n, using qt because t-distribution
+    #sd.cost <- sd(CACHE.COMB$costs, na.rm = TRUE)
+    #se.cost = sd.cost / sqrt(cost_count)
+    #Q <- qt(1 - (0.05 / 2), df = cost_count - 1)
+    #lower.ci.cost = cost[[4]] - Q * se.cost
+    #upper.ci.cost = cost[[4]] + Q * se.cost
+    # If lower CI is less than 0 euro then we set it to 0 euro
+    #lower.ci.cost <- ifelse(lower.ci.cost < 0, 0, lower.ci.cost)
+    
+    # Create Histogramm of costs
+    ghisto_DF <- CACHE.COMB[!(is.na(CACHE.COMB$costs)), ]
+    ghisto_Plot <- ggplot(ghisto_DF, aes(x = costs)) + geom_histogram()
+    histo_save <- paste("./histo/Hist_", shortname ,".pdf", sep = "")
+    ggsave(histo_save, ghisto_Plot, width = 5, height = 5, units = "in")
+    
     
     # Add row to Dummy DF
     D.COMB <- D.COMB %>% add_row(
@@ -159,6 +183,8 @@ F_COMBINATION <- function( x, d, itn, CacheList, ColComb1 ){
       c6 = cname[6],
       
       colnames = coln,
+      short = shortname,
+      
       n = nrow( CACHE.COMB ), 
       lowerlim = CACHE.BIND[1], 
       middle = CACHE.BIND[2], 
@@ -167,10 +193,13 @@ F_COMBINATION <- function( x, d, itn, CacheList, ColComb1 ){
       c_min = cost[[1]],
       c_1q = cost[[2]],
       c_median = cost[[3]],
-      c_mean = cost[[4]],
+      c_mean = cost.boot$mean,
       c_3q = cost[[5]],
       c_max = cost[[6]],
-      c_n = cost_count
+      c_n = cost.boot$n,
+      c_ci_upper = cost.boot$upper.ci,
+      c_ci_lower = cost.boot$lower.ci
+      
     )
   }
   # Return full DF
@@ -186,7 +215,7 @@ F_MAP_CLUSTER <- function( x ){
   x <- x %>% na.omit()
   # kmeans for simple automatic cluster search, 1/4 seems to work good with this data
   # 1/4 for beekeeper distribution
-  c <- kmeans(x, ( nrow(x)/4) )
+  c <- kmeans(x, ( nrow(x)/2) )
   # Extract Data from kmeans
   CENTERS <- as.data.frame( c$centers )
   CENTERS$cluster <- seq.int( nrow(CENTERS) )  
@@ -207,17 +236,52 @@ F_MAP_CLUSTER <- function( x ){
   return(x)
 }
 
-#### Unused Function #### 
-##############################
-F_GLM_RETURN <- function( x, f, xf ){
-  x$ff = get( f, pos = x ) 
-  print(x$ff)
-  GLM.FULL <- glm( 
-    cbind( hives_lost_e, hives_spring_e ) ~ as.factor( ff ) , # F*** it, we need to use "Bundesland" here
-    family = quasibinomial( link = "logit" ), 
-    data = x, na.action = na.omit )
-}
-
-F_ROUND_ANY <- function(x, accuracy, f=round){
-  return( f ( x / accuracy ) * accuracy)
+#### Bootstrap sample method to calculate mean of full sample and corresonding CI, with not normally distributed data
+# atm. only used in total losses for proliferation rate
+# we use it because the data is not normally distributed and we cannot fit GLM
+# df = dataframe contain columns a (difference), b (sum end), f (factor), percent (if percent then you can leave empty otherwise use 1)
+F_BOOTSTRAP <- function(df, fact, percent = 100){
+  # Simple Mean Function, will calculate total sample mean
+  mean.fun <- function(d, i) 
+  {    
+    # mean of difference (eg. prolifer. hives_production)
+    mean.a <- mean(d$a[i])
+    # mean of end value (eg. proflifer. hives_winter)
+    mean.b <- mean(d$b[i])
+    # divde means to get full sample profileration rate
+    c <- mean.a / mean.b
+    return (c)
+  }
+  # bootstrap 999 times
+  sample.boot <- boot(df, mean.fun, R = 2000)
+  # bias corrected sample mean = mean of bootstrap samples - original sample is bias correcture value
+  # https://www.statmethods.net/advstats/bootstrapping.html
+  # https://stats.stackexchange.com/questions/372589/explanation-of-confidence-interval-from-r-function-boot-ci
+  # https://stats.idre.ucla.edu/r/faq/how-can-i-generate-bootstrap-statistics-in-r/
+  s.mean <- sample.boot$t0 - (mean(sample.boot$t[,1]) - sample.boot$t0)
+  # calculating CI95 with the bootstrap samples
+  # using basic method here as it seems more accurate than percentile bootstrap with lower n's
+  # https://stats.stackexchange.com/questions/37918/why-is-the-error-estimated-adjustment-a-is-na-generated-from-r-boot-package
+  sample.boot.si <- boot.ci(sample.boot, type = "basic", conf = 0.95)
+  # format to percentage
+  s.n <- nrow(df)
+  s.mean <- as.numeric( format( round( (s.mean * percent), 1), nsmall = 2))
+  s.lower <- as.numeric( format( round( (sample.boot.si$basic[,4] * percent), 1), nsmall = 2))
+  s.upper <- as.numeric( format( round( (sample.boot.si$basic[,5] * percent), 1), nsmall = 2))
+  
+  # Save Plot to check later if corrrect
+  s.plot.name <- paste("./bootstrap/Boot_", fact ,".pdf", sep = "")
+  pdf(s.plot.name)
+  plot(sample.boot)
+  dev.off()
+  
+  # Create a Dataframe which we return
+  x <- data.frame(
+    "Bundesland" = fact, 
+    "n" = s.n,
+    "mean" = s.mean,
+    "lower.ci" = s.lower,
+    "upper.ci" = s.upper
+  )
+  return( x )
 }

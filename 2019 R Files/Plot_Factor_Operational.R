@@ -37,11 +37,7 @@ D.FACTORS <-
 
 # Loop through list and create for all factors CI
 for( i in oList){
-  temp.n <- get( i[1], pos = D.FULL )
-  # remove "Uncertain" or not ...
-  #D.FULL_C <- subset( D.FULL, temp.n != "Unsicher" )
   D.FULL_C <- D.FULL
-  
   CACHE.M <- F_EXTRACT_N( D.FULL_C, i[1], i[2] )
   CACHE.BIND <- F_GLM_FACTOR( D.FULL_C, i[1], get( i[1], pos = D.FULL_C ) )
   CACHE.BIND <- cbind( CACHE.M, CACHE.BIND )
@@ -53,8 +49,8 @@ D.FACTORS.PLOT <- D.FACTORS
 D.FACTORS.PLOT$ff[ D.FACTORS.PLOT$ff == "Ja" ] <- "Yes"
 D.FACTORS.PLOT$ff[ D.FACTORS.PLOT$ff == "Nein" ] <- "No"
 D.FACTORS.PLOT$ff[ D.FACTORS.PLOT$ff == "Unsicher" ] <- "Uncertain"
-# Remove Uncertain values with lower n 10
-D.FACTORS.PLOT <- D.FACTORS.PLOT[!(D.FACTORS.PLOT$ff == "Uncertain" & D.FACTORS.PLOT$n < 10), ]
+# Remove Uncertain values with lower n 30
+D.FACTORS.PLOT <- D.FACTORS.PLOT[!(D.FACTORS.PLOT$ff == "Uncertain" & D.FACTORS.PLOT$n < 30), ]
 
 D.FACTORS.PLOT$ff <- factor( D.FACTORS.PLOT$ff, 
                              levels = c( "Yes", "No", "Uncertain"))
@@ -66,8 +62,8 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
   facet_wrap( ~ c, strip.position = "bottom", scales = "free_x", ncol = 5  ) +
-  xlab("") + ylab("Probability of loss [%]") + 
-  #ggtitle("Loss prob. by operational factors") +
+  xlab("") + ylab("Loss rate [%]") + 
+  #ggtitle("Loss rate by operational factors") +
   theme_classic() + 
   theme(
     panel.spacing = unit( 1, "lines" ),
@@ -89,12 +85,12 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
     #limits = c( 0, 25 )
   )
 
-gtitle = textGrob( "Loss prob. by operational factors" , gp=gpar( fontsize = 20 , face = "bold" ) )
+gtitle = textGrob( "Loss rate by operational factors" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1 ) )
 p1 <- arrangeGrob(  p1,
               top = gtitle, 
               layout_matrix = lay)
 
-ggsave("./img/Plot_Operational_Losses.pdf", p1, width = 11, height = 8, units = "in")
+ggsave("./img/Plot_Operational_Losses.pdf", p1, width = 12, height = 8, units = "in")
 

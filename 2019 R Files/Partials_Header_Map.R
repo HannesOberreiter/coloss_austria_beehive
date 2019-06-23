@@ -17,6 +17,9 @@ library(gpclib)
 #if (!require(gpclib)) install.packages("gpclib", type="source")
 gpclibPermit()
 
+SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
+setwd( SCRIPT.DIR )
+
 SHAPEFILE.NAME.STATES <- "laender_95_geo" # Folder and Name need to be the same!
 SHAPEFILE.NAME.DISCTRICTS <- "bezirke_95_geo" # Folder and Name need to be the same!
 

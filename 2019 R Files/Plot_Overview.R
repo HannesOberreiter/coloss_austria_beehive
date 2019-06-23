@@ -16,7 +16,7 @@ source( "Partials_Functions.r" )
 
 #### START CODE #####
 # Sequences used as Classes
-K.SEQ <- c( seq( 0, 150, 10 ), 20000 )
+K.SEQ <- c( seq( 0, 150, 10 ), Inf )
 L.SEQ <- seq( 0, 100, 10 )
 # Labels
 K.GROUPS <- c( "1-10", "11-20", "21-30", "31-40", "41-50", "51-60", "61-70", "71-80", "81-90", "91-100", "101-110", "111-120", "121-130", "131-140", "141-150", ">150")
@@ -61,9 +61,9 @@ p1 <- ggplot( data = D.PLOT ) +
     plot.title = element_text(hjust = 0), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
-    axis.line = element_line( linetype = "solid" ),
-    panel.grid.major.y = element_line( colour = "grey" ),
-    panel.grid.minor.y = element_line( colour = "grey" )
+    axis.line = element_line( linetype = "solid" )
+    #panel.grid.major.y = element_line( colour = "grey" ),
+    #panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
   ) +
@@ -84,32 +84,32 @@ p2 <- ggplot( data = D.PLOT ) +
     plot.title = element_text(hjust = 0), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
-    axis.line = element_line( linetype = "solid" ),
-    panel.grid.major.y = element_line( colour = "grey" ),
-    panel.grid.minor.y = element_line( colour = "grey" )
+    axis.line = element_line( linetype = "solid" )
+    #panel.grid.major.y = element_line( colour = "grey" ),
+    #panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 7100, 500 ),
-    limits = c( 0, 7100 )
+    breaks = seq( 0, 10000, 500 ),
+    limits = c( 0, 8000 )
   )
 
 p3 <- ggplot( data = D.PLOT2 ) +
   aes( x = loss_group, y = n) + 
   geom_bar( colour = "black", alpha = 1, fill = "black", show.legend = FALSE, stat = "identity", linetype = "solid") + 
   geom_text( aes( label = paste(np, "%", sep = "" )), angle = 40, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
-  xlab("Loss per Company [%]") + ylab("Number of beekeepers (n)") + 
+  xlab("Loss rate per Company [%]") + ylab("Number of beekeepers (n)") + 
   ggtitle("(C) Distribution of losses") +
   theme_classic() + 
   theme(
     plot.title = element_text(hjust = 0), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = -65, hjust = 0, size = 8, face = "bold"),
-    axis.line = element_line( linetype = "solid" ),
-    panel.grid.major.y = element_line( colour = "grey" ),
-    panel.grid.minor.y = element_line( colour = "grey" )
+    axis.line = element_line( linetype = "solid" )
+    #panel.grid.major.y = element_line( colour = "grey" ),
+    #panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
   ) +
@@ -122,9 +122,9 @@ p3 <- ggplot( data = D.PLOT2 ) +
 p4 <- ggplot() + 
   geom_polygon(data = MF_DISTRICTS, aes( x = MF_DISTRICTS$long, y = MF_DISTRICTS$lat, group = MF_DISTRICTS$group ), fill="white", color = "black", size = 0.2 ) + 
   geom_path(data = MF_STATES, aes(x = MF_STATES$long, y = MF_STATES$lat, group = MF_STATES$group), color = "black", size = 0.6 ) + 
-  geom_point(data = D.CACHE, aes(x = D.CACHE$longitude, y = D.CACHE$latitude, size = D.CACHE$n) ) + 
+  geom_point(data = D.CACHE, aes(x = D.CACHE$longitude, y = D.CACHE$latitude, size = D.CACHE$n), color = "gray", fill = "darkblue", stroke = 0.3, shape = 21 ) + 
   #scale_fill_distiller( aesthetics = "colour", direction = 1, na.value = "white", limits = c(min(D.CACHE$n), max(D.CACHE$n))) +
-  coord_fixed() +
+  coord_quickmap() +
   xlab( "" ) + ylab( "" ) + labs( colour = "Number of beekeepers (n)", size = "Number of beekeepers (n)" ) +
   #guides( size = "none" ) +
   scale_size_continuous(range = c(0.5, 3)) + 

@@ -84,7 +84,7 @@ D.QN$young_rate <-
 # Got some supicious data, better remove them ...
 D.QN <- D.QN %>% filter( young_rate <= 100 )
 
-D.QN2 <- D.FULL %>% select( young_queens, hives_winter, hives_lost_e, hives_spring_e, lost_rate_e ) %>% na.omit()
+D.QN2 <- D.FULL %>% select( young_queens, hives_winter, hives_lost_e, hives_spring_e, lost_rate_e, hives_spring_queen, lost_a ) %>% na.omit()
 D.QN2$young_rate <- 
   as.numeric(
     format(
@@ -100,8 +100,8 @@ D.QN2 <- D.QN2 %>% filter( young_rate <= 100 )
 # fit_reg2 <- lm( young_rate ~ lost_rate_e, data = D.QN2)
 
 # Young Queen Rate BoxPlots
-L.SEQ <- seq( 0, 100, 10 )
-L.GROUPS <- c( "0-10%", "11-20%", "21-30%", "31-40%", "41-50%", "51-60%", "61-70%", "71-80%", "81-90%", "91-100%" )
+L.SEQ <- seq( 0, 100, 25 )
+L.GROUPS <- c( "0-25%", "26-50%", "51-75%", "76-100%" )
 D.QN2$young_rate_group <- cut( D.QN2$young_rate, L.SEQ, label = L.GROUPS, include.lowest = TRUE, right = TRUE )
 
 # Create Plot DF
@@ -113,7 +113,15 @@ D.PLOT_Q <- D.QN2 %>%
   )
 
 CACHE.BIND <- F_GLM_FACTOR( D.QN2, "young_rate_group", D.QN2$young_rate_group )
-D.PLOT_Q <- cbind( D.PLOT_Q, CACHE.BIND )
+# Queen Exchange rate to overall losses
+D.PLOT_Q1 <- cbind( D.PLOT_Q, CACHE.BIND )
+
+# Queen Exchange rate to queen losses
+D.QN2$hives_lost_e <- D.QN2$lost_a
+D.QN2$hives_spring_e <- D.QN2$hives_spring_queen
+CACHE.BIND2 <- F_GLM_FACTOR( D.QN2, "young_rate_group", D.QN2$young_rate_group )
+# Queen Exchange rate to overall losses
+D.PLOT_Q2 <- cbind( D.PLOT_Q, CACHE.BIND2 )
 
 # Summary of new queens
 D.SUM.Q = tibble(hives_winter = 0, young_queens = 0, young_rate = 0)
@@ -140,8 +148,8 @@ p1 <-
   geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   #geom_point() +
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 1.0 )+ 
-  xlab("") + ylab("Probability of queen loss [%]") + 
-  ggtitle("(A) Losses due queen problems - Total & States") +
+  xlab("") + ylab("Queen related loss rate [%]") + 
+  ggtitle("(A) Overall losses due queen problems - Austria & states") +
   #geom_text( aes( label = lost_rate ), angle = -90, vjust = 0, color = "black", size = 3 ) +
   theme_classic() + 
   theme(
@@ -149,8 +157,8 @@ p1 <-
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" ),
-    panel.grid.major.y = element_line( colour = "grey" ),
-    panel.grid.minor.y = element_line( colour = "grey" )
+    panel.grid.major.y = element_line( colour = "grey" )
+    #panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
     labels = paste( D.STATES$Bundesland,"\n ( n = ",D.STATES$n_states, " )", sep="" ),
@@ -158,7 +166,7 @@ p1 <-
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 20, 1 )
+    breaks = seq( 0, 100, 1 )
     #limits = c( 0, 10 )
   )
 
@@ -169,17 +177,17 @@ p2 <-
   geom_text( aes( label = paste(rate, "%", sep = "" )), angle = 40, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
   #geom_point() +
   #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 1.0 )+ 
-  xlab("") + ylab("Queen problems occurence  [%]") + 
+  xlab("") + ylab("Queen problems occurence [%]") + 
   ggtitle("(B) Subjective queen problems in comparison to last year(s)") +
   #geom_text( aes( label = lost_rate ), angle = -90, vjust = 0, color = "black", size = 3 ) +
   theme_classic() + 
   theme(
     plot.title = element_text(hjust = 0.5), 
     axis.title.x = element_text(colour = "black" ), 
-    axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
-    axis.line = element_line( linetype = "solid" ),
-    panel.grid.major.y = element_line( colour = "grey" ),
-    panel.grid.minor.y = element_line( colour = "grey" )
+    axis.text.x = element_text(angle = 0, size = 8, face = "bold"),
+    axis.line = element_line( linetype = "solid" )
+    #panel.grid.major.y = element_line( colour = "grey" )
+    #panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
     labels = paste( D.QP$queen_problems,"\n ( n = ",D.QP$n, " )", sep="" )
@@ -187,11 +195,11 @@ p2 <-
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 55, 5 ),
-    limits = c( 0, 55 )
+    breaks = seq( 0, 100, 10 ),
+    limits = c( 0, 60 )
   )
 
-p3 <- ggplot( data = D.PLOT_Q ) +
+p3 <- ggplot( data = D.PLOT_Q1 ) +
   aes( x = young_rate_group, y = n) + 
   geom_bar( colour = "black", alpha = 1, fill = "black", show.legend = FALSE, stat = "identity", linetype = "solid") + 
   geom_text( aes( label = paste(np, "%", sep = "" )), angle = 40, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
@@ -201,26 +209,26 @@ p3 <- ggplot( data = D.PLOT_Q ) +
   theme(
     plot.title = element_text(hjust = 0), 
     axis.title.x = element_text(colour = "black" ), 
-    axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
-    axis.line = element_line( linetype = "solid" ),
-    panel.grid.major.y = element_line( colour = "grey" ),
-    panel.grid.minor.y = element_line( colour = "grey" )
+    axis.text.x = element_text(angle = 0, size = 8, face = "bold"),
+    axis.line = element_line( linetype = "solid" )
+    #panel.grid.major.y = element_line( colour = "grey" )
+    #panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 300, 25 ),
-    limits = c( 0, 300 )
+    breaks = seq( 0, 1000, 50 ),
+    limits = c( 0, 700 )
   )
 
-p4 <- ggplot( data = D.PLOT_Q ) +
+p4 <- ggplot( data = D.PLOT_Q1 ) +
   aes( x = young_rate_group, y = middle ) + 
   geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
-  geom_text( aes( x = young_rate_group, y = 0.5, label = paste("n = ", n )), angle = -90, vjust = 0, hjust = 1, color = "black", size = 3 ) +
-  xlab("Amount of  young queens [%]") + ylab("Probability of loss [%]") + 
-  ggtitle("(D) Loss prob. to amount of young queens") +
+  geom_text( aes( x = young_rate_group, y = 1, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
+  xlab("Amount of young queens [%]") + ylab("Loss rate [%]") + 
+  ggtitle("(D) Loss rate to relative amount of young queens") +
   theme_classic() + 
   theme(
     panel.spacing = unit( 1, "lines" ),
@@ -228,18 +236,18 @@ p4 <- ggplot( data = D.PLOT_Q ) +
     strip.placement = "outside",
     plot.title = element_text(hjust = 0.5), 
     axis.title.x = element_text(colour = "black" ), 
-    axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
+    axis.text.x = element_text(angle = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" ),
-    panel.grid.major.y = element_line( colour = "grey" ),
-    panel.grid.minor.y = element_line( colour = "grey" )
+    panel.grid.major.y = element_line( colour = "grey" )
+    #panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
     #labels = paste( D.FACTORS.PLOT2$ff,"\n ( n = ",D.FACTORS.PLOT2$n, " )", sep="" )
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 100, 5 ),
-    limits = c( 0, 30 )
+    breaks = seq( 0, 100, 5 )
+    #limits = c( 0, 30 )
   )
 
 # Removed Linear Regression Plot, doesnt look to good
@@ -317,9 +325,42 @@ p4 <- ggplot( data = D.PLOT_Q ) +
 gtitle = textGrob( "Queen related losses, Winter 2018/2019" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1, 2 ), c(3, 4))
-p1 <- arrangeGrob( p1, p2, p3, p4,
+p_p <- arrangeGrob( p1, p2, p3, p4,
              top = gtitle, 
              layout_matrix = lay)
 
 # Save File
-ggsave("./img/Plot_Queen_losses.pdf", p1, width = 11, height = 8, units = "in")
+ggsave("./img/Plot_Queen_losses.pdf", p_p, width = 12, height = 8, units = "in")
+
+# Queen Exchange rate to queen related losses
+p5 <- ggplot( data = D.PLOT_Q2 ) +
+  aes( x = young_rate_group, y = middle ) + 
+  geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
+  geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
+  geom_text( aes( x = young_rate_group, y = 0.5, label = paste("n = ", n )), angle = -90, vjust = 0, hjust = 1, color = "black", size = 3 ) +
+  xlab("Amount of  young queens [%]") + ylab("Queen related loss rate [%]") + 
+  ggtitle("Queen related loss rate to relative amount of young queens") +
+  theme_classic() + 
+  theme(
+    panel.spacing = unit( 1, "lines" ),
+    #strip.background = element_blank(),
+    strip.placement = "outside",
+    plot.title = element_text(hjust = 0.5), 
+    axis.title.x = element_text(colour = "black" ), 
+    axis.text.x = element_text(angle = 0, size = 8, face = "bold"),
+    axis.line = element_line( linetype = "solid" ),
+    panel.grid.major.y = element_line( colour = "grey" )
+    #panel.grid.minor.y = element_line( colour = "grey" )
+  ) +
+  scale_x_discrete(
+    #labels = paste( D.FACTORS.PLOT2$ff,"\n ( n = ",D.FACTORS.PLOT2$n, " )", sep="" )
+  ) +
+  scale_y_continuous(
+    expand = c( 0 , 0 ),
+    breaks = seq( 0, 100, 1 )
+    #limits = c( 0, 30 )
+  )
+
+# Save File
+ggsave("./img/Plot_Queen_losses2.pdf", p5, width = 5, height = 4, units = "in")
+

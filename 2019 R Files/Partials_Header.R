@@ -12,6 +12,7 @@ rm(list=ls())
 # Load Library's
 ###############
 library( ggplot2 )
+library( ggrepel )
 library( gridExtra )
 library( grid )
 library( readxl )
@@ -43,23 +44,23 @@ D.FULL <- read_excel( FILE.NAME, sheet = SHEET.NAME, skip = 5 ) #Skip first 5 ro
 D.FULL <- D.FULL[ rowSums( is.na( D.FULL )) != ncol( D.FULL ), ]
 
 # Remove Columns we dont want/need
-cremove <- c(
-  "https://geocode.localfocus.nl/", 
-  "eingew<Loss", 
-  "eingew<Loss+Schwach", 
-  "MaxSympt", 
-  "Datum Abgeschickt", 
-  "Letzte Seite", 
-  "Zufallsgeneratorstartwert",
-  "Start-Sprache",
-  "Datum letzte Aktivität",
-  "Datum gestartet",
-  "IP-Adresse",
-  "Weiterleitungs-URL",
-  "Kontakt"
-  )
+#cremove <- c(
+#  "https://geocode.localfocus.nl/", 
+#  "eingew<Loss", 
+#  "eingew<Loss+Schwach", 
+#  "MaxSympt", 
+#  "Datum Abgeschickt", 
+#  "Letzte Seite", 
+#  "Zufallsgeneratorstartwert",
+#  "Start-Sprache",
+#  "Datum letzte Aktivität",
+#  "Datum gestartet",
+#  "IP-Adresse",
+#  "Weiterleitungs-URL",
+#  "Kontakt"
+#  )
 # One of then it works even when the column is not in the file
-D.FULL <- select(D.FULL, -one_of( cremove ))
+# D.FULL <- select(D.FULL, -one_of( cremove ))
 
 # Change names to be more efficient and readable
 D.FULL <- D.FULL %>%
@@ -69,7 +70,7 @@ D.FULL <- D.FULL %>%
   rename( "lost_b" = "[b) ... verloren durch Elementarschaden (Flut, Tierschaden, Vandalismus, etc.)?]" ) %>%
   rename( "lost_c" = "[c) ... verloren (tote Völker, leere Beuten)?]" ) %>%
   rename( "hives_winter" = "Wie viele Bienenvölker haben Sie 2018 eingewintert?" ) %>%
-  rename( "hives_lost" = "Verlust sumloss" ) %>%
+  rename( "hives_lost" = "Verlust" ) %>%
   rename( "hives_spring_before" = "Vergleich: Wie viele Völker hatten Sie im Frühjahr des Vorjahres (Frühjahr 2018)?" ) %>%
   
   # Operational Factors
@@ -199,19 +200,19 @@ D.FULL <- D.FULL %>%
   rename( "T_lactic_12" = "[Milchsäure][Mär 18]" ) %>%
   rename( "T_lactic_13" = "[Milchsäure][Apr 18]" ) %>%
   # Oxalic Acid - Trickle
-  rename( "T_oxalic_trickle_01" = "[Oxalsäure Träufeln (oder Sprühen)][Apr 17]" ) %>%
-  rename( "T_oxalic_trickle_02" = "[Oxalsäure Träufeln (oder Sprühen)][Mai 17]" ) %>%
-  rename( "T_oxalic_trickle_03" = "[Oxalsäure Träufeln (oder Sprühen)][Jun 17]" ) %>%
-  rename( "T_oxalic_trickle_04" = "[Oxalsäure Träufeln (oder Sprühen)][Jul 17]" ) %>%
-  rename( "T_oxalic_trickle_05" = "[Oxalsäure Träufeln (oder Sprühen)][Aug 17]" ) %>%
-  rename( "T_oxalic_trickle_06" = "[Oxalsäure Träufeln (oder Sprühen)][Sep 17]" ) %>%
-  rename( "T_oxalic_trickle_07" = "[Oxalsäure Träufeln (oder Sprühen)][Okt 17]" ) %>%
-  rename( "T_oxalic_trickle_08" = "[Oxalsäure Träufeln (oder Sprühen)][Nov 17]" ) %>%
-  rename( "T_oxalic_trickle_09" = "[Oxalsäure Träufeln (oder Sprühen)][Dez 17]" ) %>%
-  rename( "T_oxalic_trickle_10" = "[Oxalsäure Träufeln (oder Sprühen)][Jän 18]" ) %>%
-  rename( "T_oxalic_trickle_11" = "[Oxalsäure Träufeln (oder Sprühen)][Feb 18]" ) %>%
-  rename( "T_oxalic_trickle_12" = "[Oxalsäure Träufeln (oder Sprühen)][Mär 18]" ) %>%
-  rename( "T_oxalic_trickle_13" = "[Oxalsäure Träufeln (oder Sprühen)][Apr 18]" ) %>%
+  rename( "T_oxalic_trickle_pure_01" = "[Oxalsäure Träufeln (oder Sprühen)][Apr 17]" ) %>%
+  rename( "T_oxalic_trickle_pure_02" = "[Oxalsäure Träufeln (oder Sprühen)][Mai 17]" ) %>%
+  rename( "T_oxalic_trickle_pure_03" = "[Oxalsäure Träufeln (oder Sprühen)][Jun 17]" ) %>%
+  rename( "T_oxalic_trickle_pure_04" = "[Oxalsäure Träufeln (oder Sprühen)][Jul 17]" ) %>%
+  rename( "T_oxalic_trickle_pure_05" = "[Oxalsäure Träufeln (oder Sprühen)][Aug 17]" ) %>%
+  rename( "T_oxalic_trickle_pure_06" = "[Oxalsäure Träufeln (oder Sprühen)][Sep 17]" ) %>%
+  rename( "T_oxalic_trickle_pure_07" = "[Oxalsäure Träufeln (oder Sprühen)][Okt 17]" ) %>%
+  rename( "T_oxalic_trickle_pure_08" = "[Oxalsäure Träufeln (oder Sprühen)][Nov 17]" ) %>%
+  rename( "T_oxalic_trickle_pure_09" = "[Oxalsäure Träufeln (oder Sprühen)][Dez 17]" ) %>%
+  rename( "T_oxalic_trickle_pure_10" = "[Oxalsäure Träufeln (oder Sprühen)][Jän 18]" ) %>%
+  rename( "T_oxalic_trickle_pure_11" = "[Oxalsäure Träufeln (oder Sprühen)][Feb 18]" ) %>%
+  rename( "T_oxalic_trickle_pure_12" = "[Oxalsäure Träufeln (oder Sprühen)][Mär 18]" ) %>%
+  rename( "T_oxalic_trickle_pure_13" = "[Oxalsäure Träufeln (oder Sprühen)][Apr 18]" ) %>%
   # Oxalic Acid - Vaporize
   rename( "T_oxalic_vapo_01" = "[Oxalsäure Verdampfen][Apr 17]" ) %>%
   rename( "T_oxalic_vapo_02" = "[Oxalsäure Verdampfen][Mai 17]" ) %>%
@@ -227,19 +228,19 @@ D.FULL <- D.FULL %>%
   rename( "T_oxalic_vapo_12" = "[Oxalsäure Verdampfen][Mär 18]" ) %>%
   rename( "T_oxalic_vapo_13" = "[Oxalsäure Verdampfen][Apr 18]" ) %>%
   # Oxalic Acid - Mixture
-  rename( "T_oxalic_mix_01" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Apr 17]" ) %>%
-  rename( "T_oxalic_mix_02" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Mai 17]" ) %>%
-  rename( "T_oxalic_mix_03" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Jun 17]" ) %>%
-  rename( "T_oxalic_mix_04" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Jul 17]" ) %>%
-  rename( "T_oxalic_mix_05" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Aug 17]" ) %>%
-  rename( "T_oxalic_mix_06" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Sep 17]" ) %>%
-  rename( "T_oxalic_mix_07" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Okt 17]" ) %>%
-  rename( "T_oxalic_mix_08" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Nov 17]" ) %>%
-  rename( "T_oxalic_mix_09" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Dez 17]" ) %>%
-  rename( "T_oxalic_mix_10" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Jän 18]" ) %>%
-  rename( "T_oxalic_mix_11" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Feb 18]" ) %>%
-  rename( "T_oxalic_mix_12" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Mär 18]" ) %>%
-  rename( "T_oxalic_mix_13" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Apr 18]" ) %>%
+  rename( "T_oxalic_trickle_mix_01" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Apr 17]" ) %>%
+  rename( "T_oxalic_trickle_mix_02" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Mai 17]" ) %>%
+  rename( "T_oxalic_trickle_mix_03" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Jun 17]" ) %>%
+  rename( "T_oxalic_trickle_mix_04" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Jul 17]" ) %>%
+  rename( "T_oxalic_trickle_mix_05" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Aug 17]" ) %>%
+  rename( "T_oxalic_trickle_mix_06" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Sep 17]" ) %>%
+  rename( "T_oxalic_trickle_mix_07" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Okt 17]" ) %>%
+  rename( "T_oxalic_trickle_mix_08" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Nov 17]" ) %>%
+  rename( "T_oxalic_trickle_mix_09" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Dez 17]" ) %>%
+  rename( "T_oxalic_trickle_mix_10" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Jän 18]" ) %>%
+  rename( "T_oxalic_trickle_mix_11" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Feb 18]" ) %>%
+  rename( "T_oxalic_trickle_mix_12" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Mär 18]" ) %>%
+  rename( "T_oxalic_trickle_mix_13" = "[Oxalsäuremischungen (Hiveclean/Bienenwohl/Varromed)][Apr 18]" ) %>%
   # Thymol
   rename( "T_thymol_01" = "[Thymol (Apiguard, Apilife VAR, Thymovar)][Apr 17]" ) %>%
   rename( "T_thymol_02" = "[Thymol (Apiguard, Apilife VAR, Thymovar)][Mai 17]" ) %>%

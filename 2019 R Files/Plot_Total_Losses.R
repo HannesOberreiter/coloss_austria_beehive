@@ -17,47 +17,18 @@ source( "Partials_Functions.r" )
 #### Hive Production in season ####
 # Remove NA rows, participants which did not answer spring hives question
 D.FULL.PROD <- D.FULL[ !is.na(D.FULL$hives_production),  ]
-# Create Total Austria production rate
-D.AUSTRIA <- D.FULL.PROD %>% 
-  summarise(Bundesland = "Österreich",
-            n = n(),
-            sd.prod = sd(hives_production),
-            hives_winter = sum(hives_winter),
-            hives_spring_before = sum(hives_spring_before),
-            hives_production = sum(hives_production),
-            production_rate = 
-              as.numeric(
-              format(
-                round(
-                  (
-                    hives_production / hives_winter * 100 ), 1), nsmall = 2))
-  ) %>%
-  mutate(se.prod = sd.prod / sqrt(n),
-         lower.ci.prod = production_rate - qt(1 - (0.05 / 2), n - 1) * se.prod,
-         upper.ci.prod = production_rate + qt(1 - (0.05 / 2), n - 1) * se.prod)
-
-# Create Production rate for states
-D.STATES <- D.FULL.PROD %>% 
-  group_by(Bundesland) %>% 
-  summarise(
-            n = n(),
-            sd.prod = sd(hives_production),
-            hives_winter = sum(hives_winter),
-            hives_spring_before = sum(hives_spring_before),
-            hives_production = sum(hives_production),
-            production_rate = 
-              as.numeric(
-                format(
-                  round(
-                    (
-                      hives_production / hives_winter * 100 ), 1), nsmall = 2))
-  ) %>%
-  mutate(se.prod = sd.prod / sqrt(n),
-         lower.ci.prod = production_rate - qt(1 - (0.05 / 2), n - 1) * se.prod,
-         upper.ci.prod = production_rate + qt(1 - (0.05 / 2), n - 1) * se.prod)
-
-D.STATES.PROD <- rbind(D.AUSTRIA, D.STATES)
-
+# create dataframe with only needed columns
+D.FULL.PROD <- select(D.FULL.PROD, hives_production, hives_winter, Bundesland)
+# rename column names, because our function can be used for different reasons
+names(D.FULL.PROD) <- c("a", "b", "f")
+# first run full austria sample
+D.STATES.PROD <- F_BOOTSTRAP(D.FULL.PROD, "Österreich")
+# now create states
+state.list <- levels(factor(D.FULL.PROD$f))  
+for( i in state.list) {
+  temp.df <- F_BOOTSTRAP(D.FULL.PROD[D.FULL.PROD$f == i, ], i)
+  D.STATES.PROD <- rbind(D.STATES.PROD, temp.df)
+}
 
 #### STATES Plot Matrix ####
 D.STATES <- D.FULL %>% 
@@ -173,8 +144,8 @@ p1 <-
   geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   #geom_point() +
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 1.0 )+ 
-  xlab("") + ylab("Probability of loss [%]") + 
-  ggtitle("(A) Austria Total & States") +
+  xlab("") + ylab("Loss rate [%]") + 
+  ggtitle("(A) Overall loss rate - Austria & states") +
   #geom_text( aes( label = lost_rate ), angle = -90, vjust = 0, color = "black", size = 3 ) +
   theme_classic() + 
   theme(
@@ -199,11 +170,11 @@ p2 <- ggplot() +
   geom_polygon(data = MF_STATES, aes( x = MF_STATES$long, y = MF_STATES$lat, group = MF_STATES$group, fill = MF_STATES$lost_rate ), color = "black", size = 0.2 ) + 
   #geom_path(data = MF_STATES, aes(x = MF_STATES$long, y = MF_STATES$lat, group = MF_STATES$group), color = "black", size = 0.6 ) + 
   #geom_text(data=map_d_text, aes(long, lat, label = loss_total_rate), size=3, color = "white") +
-  coord_fixed() +
+  coord_quickmap() +
   scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white" ) +
   #scale_fill_distiller( palette = "DarkMint", direction = 1, na.value = "white") +
-  xlab( "" ) + ylab( "" ) + labs( fill = "Prob. of loss [%]") +
-  ggtitle("(B) Austria State - Median") +
+  xlab( "" ) + ylab( "" ) + labs( fill = "Loss rate [%]") +
+  ggtitle("(B) Austria states - Mean") +
   theme_classic() +
   theme(
     legend.position="bottom", 
@@ -218,11 +189,11 @@ p3 <- ggplot() +
   geom_polygon(data = MF_DISTRICTS, aes( x = MF_DISTRICTS$long, y = MF_DISTRICTS$lat, group = MF_DISTRICTS$group, fill = MF_DISTRICTS$hives_lost ), color = "black", size = 0.2 ) + 
   geom_path(data = MF_STATES, aes(x = MF_STATES$long, y = MF_STATES$lat, group = MF_STATES$group), color = "black", size = 0.6 ) + 
   #geom_text(data=map_d_text, aes(long, lat, label = loss_total_rate), size=3, color = "white") +
-  coord_fixed() +
+  coord_quickmap() +
   scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white" ) +
   # scale_fill_distiller( palette = "Greys", direction = 1, na.value = "grey") +
-  xlab( "" ) + ylab( "" ) + labs( fill = "Prob. of loss [%]") +
-  ggtitle("(C) Austria District - Median (white = n < 6)") +
+  xlab( "" ) + ylab( "" ) + labs( fill = "Loss rate [%]") +
+  ggtitle("(C) Austria District - Mean (white = n < 6)") +
   theme_classic() +
   theme(
     legend.position="bottom", 
@@ -234,12 +205,12 @@ p3 <- ggplot() +
   )
 
 p4 <- 
-  ggplot( D.STATES.PROD, aes( x = Bundesland, y = production_rate )) +
+  ggplot( D.STATES.PROD, aes( x = Bundesland, y = mean )) +
   geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   #geom_point() +
-  geom_pointrange( aes( ymin = lower.ci.prod, ymax = upper.ci.prod ), size = 0.5 )+ 
-  xlab("") + ylab("Proliferation rate [%]") + 
-  ggtitle("Total proliferation rate of beehives 2018") +
+  geom_pointrange( aes( ymin = lower.ci, ymax = upper.ci ), size = 0.5 )+ 
+  xlab("") + ylab("Change rate [%]") + 
+  ggtitle("Beehives overall amount net percentage change 2018") +
   #geom_text( aes( label = lost_rate ), angle = -90, vjust = 0, color = "black", size = 3 ) +
   theme_classic() + 
   theme(
@@ -256,17 +227,17 @@ p4 <-
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 30, 5 ),
-    limits = c( 0, 30 )
+    breaks = seq( 0, 100, 5 )
+    #limits = c( 0, 30 )
   )
 
-gtitle = textGrob( "Probability of loss, Winter 2018/2019" , gp=gpar( fontsize = 20 , face = "bold" ) )
+gtitle = textGrob( "Loss rate, Winter 2018/2019" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1, 2 ), c( 1, 3) )
 p1 <- arrangeGrob( p1, p2, p3,
              top = gtitle, 
              layout_matrix = lay)
 # Save File
-ggsave("./img/Plot_Total_Losses.pdf", p1, width = 11, height = 8, units = "in")
-ggsave("./img/Plot_Total_Regeneration.pdf", p4, width = 4, height = 4, units = "in")
+ggsave("./img/Plot_Total_Losses.pdf", p1, width = 12, height = 8, units = "in")
+ggsave("./img/Plot_Total_Regeneration.pdf", p4, width = 5, height = 4, units = "in")
 

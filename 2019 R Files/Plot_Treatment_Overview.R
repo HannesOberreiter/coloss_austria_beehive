@@ -20,8 +20,9 @@ source( "Partials_Functions.r" )
 # List of Factors we want in our Plot
 oList = list(
   c("varroa_checked", "(A) Did monitor varroa infestation level"),
-  c("varroa_treated", "(B) Did treatmend agains varroa mites"),
-  c("crippled_bees", "(C) Amount of crippled bees observed")
+  # only one person which did not treatmend agains varroa mites
+  #c("varroa_treated", "(B) Did treatmend agains varroa mites"),
+  c("crippled_bees", "(B) Amount of crippled bees observed")
 )
 
 # Create dummy Dataframe, to insert rows later
@@ -83,6 +84,31 @@ VC_text <- c("April 18", "May", "June", "July", "August", "September", "October"
 VC_color <- c("cornflowerblue", "cornflowerblue", "forestgreen", "forestgreen", "forestgreen", "forestgreen", "forestgreen", "grey13", "grey13", "grey13", "cornflowerblue", "cornflowerblue", "cornflowerblue")
 
 
+#### Cost Distribution ####
+# our sequence
+K.SEQ <- c(0, 1, 5, 10, 15, 20, 25, 30 , Inf )
+# labels for sequence
+L.SEQ <- c("0", "1-5", "6-10", "11-15", "16-20", "21-25", "26-30", "> 31")
+# remove nas
+D.FULL.COST <- D.FULL$costs[!(is.na(D.FULL$costs))]
+shapiro.test(D.FULL.COST)
+
+# cut with our sequence
+D.FULL.COST <- cut( D.FULL.COST, K.SEQ, label = L.SEQ, include.lowest = TRUE)
+# create df
+D.COST.PLOT <- tibble(D.FULL.COST, .name_repair = ~ make.names("a"))
+# summarize data and calculate percentage
+D.COST.PLOT <- D.COST.PLOT %>% group_by(a) %>% 
+  summarize( 
+    n = n(), 
+    np =
+      as.numeric(
+        format(
+          round(
+            (
+              ( n() ) / nrow(D.COST.PLOT) * 100 ), 1), nsmall = 2)) 
+      )
+
 #### PLOTTING #####
 p1 <- ggplot( data = D.FACTORS.PLOT ) +
   aes( x = ff, y = middle ) + 
@@ -90,7 +116,7 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
   facet_wrap( ~ c, strip.position = "bottom", scales = "free_x", ncol = 3  ) +
-  xlab("") + ylab("Probability of loss [%]") + 
+  xlab("") + ylab("Loss rate [%]") + 
   #ggtitle("Loss prob. by operational factors") +
   theme_classic() + 
   theme(
@@ -117,23 +143,23 @@ p2 <- ggplot( data = D.PLOT_T ) +
   aes( x = T_amount, y = n) + 
   geom_bar( colour = "black", alpha = 1, fill = "black", show.legend = FALSE, stat = "identity", linetype = "solid") + 
   geom_text( aes( label = paste(np, "%", sep = "" )), angle = 40, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
-  xlab("Number of diff. treatment types") + ylab("Number of beekeepers (n)") + 
-  ggtitle("(D) Different treatment methods used per company") +
+  xlab("Different treatment types (amount)") + ylab("Number of beekeepers (n)") + 
+  ggtitle("(C) Amount of different treatment methods used") +
   theme_classic() + 
   theme(
     plot.title = element_text(hjust = 0), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(size = 8, face = "bold"),
-    axis.line = element_line( linetype = "solid" ),
-    panel.grid.major.y = element_line( colour = "grey" ),
-    panel.grid.minor.y = element_line( colour = "grey" )
+    axis.line = element_line( linetype = "solid" )
+    #panel.grid.major.y = element_line( colour = "grey" ),
+    #panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 750, 50 ),
-    limits = c( 0, 600 )
+    breaks = seq( 0, 1000, 50 ),
+    limits = c( 0, 750 )
   )
 
 
@@ -141,16 +167,16 @@ p3 <- ggplot() +
   aes( x = VC_text, y = VC_count, fill = VC_color) + 
   geom_bar( colour = "black", alpha = 1, show.legend = FALSE, stat = "identity", linetype = "solid") + 
   xlab("Months 2018 - 2019") + ylab("Number of beekeepers (n)") + 
-  ggtitle("(E) Monitoring of Varroa infestation level") +
+  ggtitle("(D) Month of monitoring varroa infestation level") +
   theme_classic() + 
   scale_fill_identity() + # as we use our own colors
   theme(
     plot.title = element_text(hjust = 0), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
-    axis.line = element_line( linetype = "solid" ),
-    panel.grid.major.y = element_line( colour = "grey" ),
-    panel.grid.minor.y = element_line( colour = "grey" )
+    axis.line = element_line( linetype = "solid" )
+    #panel.grid.major.y = element_line( colour = "grey" ),
+    #panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
     limits = c( VC_text )
@@ -162,11 +188,38 @@ p3 <- ggplot() +
   )
 
 
-gtitle = textGrob( "Treatment Survey Data Overview" , gp=gpar( fontsize = 20 , face = "bold" ) )
+gtitle = textGrob( "Treatment survey data overview" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1 ), c( 2, 3 ) )
 p1 <- arrangeGrob( p1, p2, p3,
               top = gtitle, 
               layout_matrix = lay)
 # Save File
-ggsave("./img/Plot_Treatment_Overview.pdf", p1, width = 11, height = 8, units = "in")
+ggsave("./img/Plot_Treatment_Overview.pdf", p1, width = 12, height = 8, units = "in")
+
+p4 <- ggplot( data = D.COST.PLOT ) +
+  aes( x = a, y = n) + 
+  geom_bar( colour = "black", alpha = 1, fill = "black", show.legend = FALSE, stat = "identity", linetype = "solid") + 
+  geom_text( aes( label = paste(np, "%", sep = "" )), angle = 40, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
+  xlab("Costs per hive [Euro]") + ylab("Number of beekeepers (n)") + 
+  ggtitle("Distribution of treatment costs per hive") +
+  theme_classic() + 
+  theme(
+    plot.title = element_text(hjust = 0), 
+    axis.title.x = element_text(colour = "black" ), 
+    axis.text.x = element_text(size = 8, face = "bold"),
+    axis.line = element_line( linetype = "solid" )
+    #panel.grid.major.y = element_line( colour = "grey" ),
+    #panel.grid.minor.y = element_line( colour = "grey" )
+  ) +
+  scale_x_discrete(
+  ) +
+  scale_y_continuous(
+    expand = c( 0 , 0 ),
+    breaks = seq( 0, 1000, 50 ),
+    limits = c( 0, 500 )
+  )
+
+ggsave("./img/Plot_Treatment_Cost.pdf", p4, width = 5, height = 4, units = "in")
+
+p4

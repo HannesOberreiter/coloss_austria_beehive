@@ -21,6 +21,8 @@ D.CACHE <- D.FULL %>% drop_na( longitude, latitude )
 
 # List of discticts
 D.DISTRICT <- D.CACHE %>% group_by( Bezirk ) %>% summarize( n = n() )
+# Drop "In mehr as einem Bezirk" because we cannot know which one it belongs to
+D.DISTRICT <- subset(D.DISTRICT, Bezirk != "In mehr als einem Bezirk")
 
 # If we want to check a single district use this line
 # D.DISTRICT <- subset(D.DISTRICT, Bezirk == "Weiz")

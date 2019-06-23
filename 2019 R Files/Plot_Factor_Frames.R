@@ -25,7 +25,7 @@ D.FULL <- D.FULL[D.FULL$new_frames != 0, ]
 
 # List of Factors we want in our Plot
 oList = list(
-  c("new_frames", "(B) Amount of replaced old brood frames [%]"),
+  c("new_frames", "(B) Relative amount replaced [%]"),
   c("new_frames_yn", "(A) Replaced old brood frames")
 )
 
@@ -57,7 +57,8 @@ D.FACTORS.PLOT$ff[ D.FACTORS.PLOT$ff == "Ja" ] <- "Yes"
 D.FACTORS.PLOT$ff[ D.FACTORS.PLOT$ff == "Nein" ] <- "No"
 D.FACTORS.PLOT$ff[ D.FACTORS.PLOT$ff == "mehr als 50%" ] <- "51-100%"
 
-
+D.FACTORS.PLOT$ff <- factor( D.FACTORS.PLOT$ff, 
+                             levels = c( "Yes", "No", "0%", "1-30%", "31-50%", "51-100%"))
 
 #### PLOTTING #####
 p1 <- ggplot( data = D.FACTORS.PLOT ) +
@@ -66,7 +67,7 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
   facet_wrap( ~ c, strip.position = "bottom", scales = "free_x", ncol = 3  ) +
-  xlab("") + ylab("Probability of loss [%]") + 
+  xlab("") + ylab("Loss rate [%]") + 
   #ggtitle("Loss prob. by operational factors") +
   theme_classic() + 
   theme(
@@ -85,14 +86,17 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 45, 5 )
+    breaks = seq( 0, 100, 5 )
     #limits = c( 0, 25 )
   )
 
 
-gtitle = textGrob( "Loss prob. by replaced old brood frames" , gp=gpar( fontsize = 20 , face = "bold" ) )
+gtitle = textGrob( "Loss rate to replaced old brood frames" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1 ))
-grid.arrange( p1, 
-              top = gtitle, 
-              layout_matrix = lay)
+p1 <- arrangeGrob(  p1,
+                    top = gtitle, 
+                    layout_matrix = lay)
+
+ggsave("./img/Plot_Factor_Frames.pdf", p1, width = 5, height = 4, units = "in")
+
