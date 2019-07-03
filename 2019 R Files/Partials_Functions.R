@@ -4,9 +4,9 @@
 ##############################
 ##############################
 
-# Our Custom Functions
+# Custom Functions CODE
 
-#### GLM Single #### 
+#### GLM Single, without Factor #### 
 # x = Dataframe
 ##############################
 F_GLM_SINGLE <- function( x )
@@ -16,36 +16,38 @@ F_GLM_SINGLE <- function( x )
     family = quasibinomial( link = "logit" ), 
     data = x, na.action = na.omit )
   SUMMARY.FULL <- summary( GLM.FULL )
-  GLM.ODDS <- GLM.FULL$fitted.values[1] * 100
-  GLM.LOW <- inv.logit( coef( GLM.FULL) - qt( 0.975, df = GLM.FULL$df.residual ) * SUMMARY.FULL$coefficients[, 2] ) * 100
-  GLM.MAX <- inv.logit( coef( GLM.FULL) + qt( 0.975, df = GLM.FULL$df.residual ) * SUMMARY.FULL$coefficients[, 2] ) * 100
+  print( SUMMARY.FULL ) 
+  GLM.ODDS <- F_NUMBER_FORMAT( GLM.FULL$fitted.values[1] * 100 )
+  GLM.LOW <- F_NUMBER_FORMAT( inv.logit( coef( GLM.FULL) - qt( 0.975, df = GLM.FULL$df.residual ) * SUMMARY.FULL$coefficients[, 2] ) * 100 )
+  GLM.MAX <- F_NUMBER_FORMAT( inv.logit( coef( GLM.FULL) + qt( 0.975, df = GLM.FULL$df.residual ) * SUMMARY.FULL$coefficients[, 2] ) * 100 )
   return( CACHE.BIND <- cbind( lowerlim = GLM.LOW, middle = GLM.ODDS, upperlim = GLM.MAX ) )
 }
 
-#### GLM with Factors #### 
-# x = Dataframe, f = factor as string, xf is factor from dataframe
+#### GLM, with Factor #### 
+# x = Dataframe, f = factor as string, xf = factor from dataframe
 ##############################
-F_GLM_FACTOR <- function( x, f, xf ){
+F_GLM_FACTOR <- function( x, f, xf )
+{
+  # get column via string
   x$ff <- get( f, pos = x ) 
   #print(x$ff)
   GLM.FULL <- glm( 
-    cbind( hives_lost_e, hives_spring_e ) ~ as.factor( ff ) , # F*** it, we need to use example "Bundesland" here
+    cbind( hives_lost_e, hives_spring_e ) ~ as.factor( ff ) ,
     family = quasibinomial( link = "logit" ), 
     data = x, na.action = na.omit )
   SUMMARY.FULL <- summary( GLM.FULL )
   print( SUMMARY.FULL ) 
-  # Check which DF we should use
+  # F-Test
   ANOVA.FULL <- anova( GLM.FULL, test = "F" )
-  print( paste( "ANOVA TEST --> ", f ))
-  print( ANOVA.FULL ) 
-  # Save Summary to ANOVA Folder
   write.csv( ANOVA.FULL, file = paste("./ANOVA/", paste(f, "_ANOVA.csv", sep = "" ), sep = "" ) )
-  
+  # Chi-Sqr Test
   ANOVA.CHISQ <- anova( GLM.FULL, test = "Chisq" )
   write.csv( ANOVA.CHISQ, file = paste("./ANOVA/", paste(f, "_CHISQ.csv", sep = "" ), sep = "" ) )
+  # Print Output
+  print( paste( "ANOVA TEST --> ", f ))
+  print( ANOVA.FULL ) 
   
-  
-  # Here we use the better one
+  # Calculate odds via model for factors  
   DFRESIDUAL.FULL <- SUMMARY.FULL$df.residual
   VALUES.FULL <- predict( GLM.FULL, data.frame( ff = levels( as.factor(xf) ) ), type = "link", se.fit = T )
   
@@ -54,17 +56,27 @@ F_GLM_FACTOR <- function( x, f, xf ){
   CACHE.LOWERLIM <- VALUES.FULL$fit - qt( 0.975, df = DFRESIDUAL.FULL ) * VALUES.FULL$se.fit
   CACHE.UPPERLIM <- VALUES.FULL$fit + qt( 0.975, df = DFRESIDUAL.FULL ) * VALUES.FULL$se.fit
   # Add Prob. to our plot matrix
-  CACHE.ODDS = inv.logit( CACHE.ODDS ) * 100
-  CACHE.LOWERLIM = inv.logit( CACHE.LOWERLIM ) * 100
-  CACHE.UPPERLIM = inv.logit( CACHE.UPPERLIM ) * 100
-  
+  CACHE.ODDS = F_NUMBER_FORMAT( inv.logit( CACHE.ODDS ) * 100 )
+  CACHE.LOWERLIM = F_NUMBER_FORMAT( inv.logit( CACHE.LOWERLIM ) * 100 )
+  CACHE.UPPERLIM = F_NUMBER_FORMAT( inv.logit( CACHE.UPPERLIM ) * 100 )
   return( CACHE.BIND <- cbind( lowerlim = CACHE.LOWERLIM, middle = CACHE.ODDS, upperlim = CACHE.UPPERLIM ) )
+}
+
+#### Number Format, round to 2 after decimal ####
+# x = number
+###########################
+F_NUMBER_FORMAT <- function(x)
+{
+  x <- as.numeric( format( round( x, 1 ), nsmall = 2))
+  return(x)
 }
 
 #### Extract our N into a DF #### 
 # x = Dataframe, f = level, c = Name for Factor
 ##############################
-F_EXTRACT_N <- function( x, f, c ){
+F_EXTRACT_N <- function( x, f, c )
+  {
+  # get our factor position inside the dataframe
   x$ff = get( f, pos = x ) 
   F.CACHE <- x %>% 
     group_by( ff ) %>% 
@@ -75,7 +87,8 @@ F_EXTRACT_N <- function( x, f, c ){
       lost_a = sum(lost_a, na.rm = FALSE),
       lost_b = sum(lost_b, na.rm = FALSE),
       lost_c = sum(lost_c, na.rm = FALSE),
-      hives_lost_rate = sum( hives_lost_e ) / sum( hives_winter ) * 100
+      hive_lost_rate = as.numeric( format( round(
+                ( sum( hives_lost_e ) / sum( hives_winter ) * 100 ), 1), nsmall = 2))
     )
   print( F.CACHE )
   F.CACHE <- F.CACHE %>% na.omit()
@@ -148,7 +161,6 @@ F_COMBINATION <- function( x, d, itn, CacheList, ColComb1 ){
     # send to bootstrap 
     cost.boot <- F_BOOTSTRAP(cost.df, shortname, 1)
     
-    
     # Standard Derivation from mean with 95% square root n, using qt because t-distribution
     #sd.cost <- sd(CACHE.COMB$costs, na.rm = TRUE)
     #se.cost = sd.cost / sqrt(cost_count)
@@ -163,7 +175,6 @@ F_COMBINATION <- function( x, d, itn, CacheList, ColComb1 ){
     ghisto_Plot <- ggplot(ghisto_DF, aes(x = costs)) + geom_histogram()
     histo_save <- paste("./histo/Hist_", shortname ,".pdf", sep = "")
     ggsave(histo_save, ghisto_Plot, width = 5, height = 5, units = "in")
-    
     
     # Add row to Dummy DF
     D.COMB <- D.COMB %>% add_row(
@@ -265,9 +276,9 @@ F_BOOTSTRAP <- function(df, fact, percent = 100){
   sample.boot.si <- boot.ci(sample.boot, type = "basic", conf = 0.95)
   # format to percentage
   s.n <- nrow(df)
-  s.mean <- as.numeric( format( round( (s.mean * percent), 1), nsmall = 2))
-  s.lower <- as.numeric( format( round( (sample.boot.si$basic[,4] * percent), 1), nsmall = 2))
-  s.upper <- as.numeric( format( round( (sample.boot.si$basic[,5] * percent), 1), nsmall = 2))
+  s.mean <- F_NUMBER_FORMAT(s.mean * percent)
+  s.lower <- F_NUMBER_FORMAT(sample.boot.si$basic[,4] * percent)
+  s.upper <- F_NUMBER_FORMAT(sample.boot.si$basic[,5] * percent)
   
   # Save Plot to check later if corrrect
   s.plot.name <- paste("./bootstrap/Boot_", fact ,".pdf", sep = "")
