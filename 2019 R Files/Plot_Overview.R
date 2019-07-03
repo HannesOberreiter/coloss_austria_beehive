@@ -7,6 +7,10 @@
 
 ####### OPTERATION FACTOR PLOT ###########
 
+# Set Working directory (uses API of RStudio)
+SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
+setwd( SCRIPT.DIR )
+
 # Import Header
 source( "Partials_Header.r" )
 source( "Partials_Header_map.r" )
@@ -32,9 +36,9 @@ D.PLOT <- D.FULL %>%
   group_by( size_group ) %>%
   summarise(
     n = n(),
-    np = format( round( (n() / nrow(D.FULL) * 100), 1), nsmall = 1 ),
+    np = F_NUMBER_FORMAT(n() / nrow(D.FULL) * 100),
     n_h = sum( hives_winter ),
-    n_hp = format( round( ( sum( hives_winter ) / sum( D.FULL$hives_winter ) * 100 ), 1), nsmall = 1 )
+    n_hp = F_NUMBER_FORMAT( sum( hives_winter ) / sum( D.FULL$hives_winter ) * 100 )
   )
 
 # Create Plot DF
@@ -42,7 +46,7 @@ D.PLOT2 <- D.FULL %>%
   group_by(loss_group) %>%
   summarise(
     n = n(),
-    np = format( round( (n() / nrow(D.FULL) * 100), 1), nsmall = 1 )
+    np = F_NUMBER_FORMAT(n() / nrow(D.FULL) * 100)
   )
 
 #### CREATE MAP CLUSTER ####
@@ -53,7 +57,7 @@ D.CACHE <- F_MAP_CLUSTER( D.CACHE )
 p1 <- ggplot( data = D.PLOT ) +
   aes( x = size_group, y = n) + 
   geom_bar( colour = "black", alpha = 1, fill = "black", show.legend = FALSE, stat = "identity", linetype = "solid") + 
-  geom_text( aes( label = paste(np, "%", sep = "" )), angle = 40, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
+  geom_text( aes( label = paste(np, "%", sep = "" )), angle = 55, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
   xlab("Operation size") + ylab("Number of beekeepers (n)") + 
   ggtitle("(A) Numbers of participates in given operation size groups") +
   theme_classic() + 
@@ -62,8 +66,6 @@ p1 <- ggplot( data = D.PLOT ) +
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" )
-    #panel.grid.major.y = element_line( colour = "grey" ),
-    #panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
   ) +
@@ -76,7 +78,7 @@ p1 <- ggplot( data = D.PLOT ) +
 p2 <- ggplot( data = D.PLOT ) +
   aes( x = size_group, y = n_h) + 
   geom_bar( colour = "black", alpha = 1, fill = "black", show.legend = FALSE, stat = "identity", linetype = "solid") + 
-  geom_text( aes( label = paste(n_hp, "%", sep = "" )), angle = 40, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
+  geom_text( aes( label = paste(n_hp, "%", sep = "" )), angle = 55, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
   xlab("Operation size") + ylab("Number of hives (n)") + 
   ggtitle("(B) Number of hives in given operation size groups") +
   theme_classic() + 
@@ -85,21 +87,20 @@ p2 <- ggplot( data = D.PLOT ) +
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" )
-    #panel.grid.major.y = element_line( colour = "grey" ),
-    #panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
     breaks = seq( 0, 10000, 500 ),
-    limits = c( 0, 8000 )
+    limits = c( 0, 8300 )
   )
+
 
 p3 <- ggplot( data = D.PLOT2 ) +
   aes( x = loss_group, y = n) + 
   geom_bar( colour = "black", alpha = 1, fill = "black", show.legend = FALSE, stat = "identity", linetype = "solid") + 
-  geom_text( aes( label = paste(np, "%", sep = "" )), angle = 40, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
+  geom_text( aes( label = paste(np, "%", sep = "" )), angle = 55, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
   xlab("Loss rate per Company [%]") + ylab("Number of beekeepers (n)") + 
   ggtitle("(C) Distribution of losses") +
   theme_classic() + 
@@ -108,8 +109,6 @@ p3 <- ggplot( data = D.PLOT2 ) +
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = -65, hjust = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" )
-    #panel.grid.major.y = element_line( colour = "grey" ),
-    #panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
   ) +
@@ -123,11 +122,9 @@ p4 <- ggplot() +
   geom_polygon(data = MF_DISTRICTS, aes( x = MF_DISTRICTS$long, y = MF_DISTRICTS$lat, group = MF_DISTRICTS$group ), fill="white", color = "black", size = 0.2 ) + 
   geom_path(data = MF_STATES, aes(x = MF_STATES$long, y = MF_STATES$lat, group = MF_STATES$group), color = "black", size = 0.6 ) + 
   geom_point(data = D.CACHE, aes(x = D.CACHE$longitude, y = D.CACHE$latitude, size = D.CACHE$n), color = "gray", fill = "darkblue", stroke = 0.3, shape = 21 ) + 
-  #scale_fill_distiller( aesthetics = "colour", direction = 1, na.value = "white", limits = c(min(D.CACHE$n), max(D.CACHE$n))) +
   coord_quickmap() +
-  xlab( "" ) + ylab( "" ) + labs( colour = "Number of beekeepers (n)", size = "Number of beekeepers (n)" ) +
-  #guides( size = "none" ) +
-  scale_size_continuous(range = c(0.5, 3)) + 
+  xlab( "" ) + ylab( "" ) + labs( colour = "Number of beekeepers (n)", size = "Number of beekeepers (n)") +
+  scale_size_continuous(range = c(1, 3.5), breaks = c(1, 5, 10, 15)) + 
   ggtitle("(D) Rough location of main winter apiary") +
   theme_classic() +
   theme(
@@ -139,12 +136,13 @@ p4 <- ggplot() +
     panel.grid.major = element_blank()
   )
 
+
 gtitle = textGrob( "Distribution of survey data" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1, 2 ), c( 3, 4 ) )
-p1 <- arrangeGrob( p1, p2, p3, p4,
+p_p <- arrangeGrob( p1, p2, p3, p4,
               top = gtitle, 
               layout_matrix = lay)
 
 # Save File
-ggsave("./img/Plot_Overview.pdf", p1, width = 12, height = 8, units = "in")
+ggsave("./img/Plot_Overview.pdf", p_p, width = 12, height = 8, units = "in")
