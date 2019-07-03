@@ -8,6 +8,10 @@
 # (e.g. place is not in state it should be or outside of the map) 
 # Coords in source are from a batch geo code tool (e.g. https://geocode.localfocus.nl/)
 
+# Set Working directory (uses API of RStudio)
+SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
+setwd( SCRIPT.DIR )
+
 # Import Header
 source( "Partials_Header.r" )
 source( "Partials_Header_map.r" )
