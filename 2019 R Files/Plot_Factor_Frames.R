@@ -7,6 +7,10 @@
 
 ####### OLD FRAMES EXCHANGE FACTOR PLOT ###########
 
+# Set Working directory (uses API of RStudio)
+SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
+setwd( SCRIPT.DIR )
+
 # Import Header
 source( "Partials_Header.r" )
 
@@ -65,10 +69,9 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
   aes( x = ff, y = middle ) + 
   geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
-  geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
+  geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 2.5 ) +
   facet_wrap( ~ c, strip.position = "bottom", scales = "free_x", ncol = 3  ) +
   xlab("") + ylab("Loss rate [%]") + 
-  #ggtitle("Loss prob. by operational factors") +
   theme_classic() + 
   theme(
     panel.spacing = unit( 1, "lines" ),
@@ -82,21 +85,19 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
     panel.grid.minor.y = element_line( colour = "grey" )
     ) +
   scale_x_discrete(
-    # labels = paste( D.FACTORS.PLOT$ff,"\n ( n = ",D.FACTORS.PLOT$n, " )", sep="" )
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
-    #limits = c( 0, 25 )
   )
 
 
 gtitle = textGrob( "Loss rate to replaced old brood frames" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1 ))
-p1 <- arrangeGrob(  p1,
+p <- arrangeGrob(  p1,
                     top = gtitle, 
                     layout_matrix = lay)
 
-ggsave("./img/Plot_Factor_Frames.pdf", p1, width = 5, height = 4, units = "in")
+ggsave("./img/Plot_Factor_Frames.pdf", p, width = 5, height = 4, units = "in")
 
