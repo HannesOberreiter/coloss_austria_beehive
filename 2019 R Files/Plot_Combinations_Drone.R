@@ -7,6 +7,10 @@
 
 ####### COMBINATION DRONE PLOT ###########
 
+# Set Working directory (uses API of RStudio)
+SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
+setwd( SCRIPT.DIR )
+
 # Import Header
 source( "Partials_Header.r" )
 source( "Partials_Header_Treatment.r" )
@@ -48,12 +52,10 @@ xAxisTemp <- c("Only in spring", "Only in summer", "Spring and summer")
 p1 <- 
   ggplot( CACHE.COMB, aes( x = xAxisTemp, y = middle )) +
   geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
-  #geom_point() +
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 1.0 ) + 
   geom_text( aes( x = xAxisTemp, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
   xlab("") + ylab("Loss rate [%]") + 
   ggtitle("Drone brood removal") +
-  #geom_text( aes( label = lost_rate ), angle = -90, vjust = 0, color = "black", size = 3 ) +
   theme_classic() + 
   theme(
     plot.title = element_text(hjust = 0.5), 
@@ -64,13 +66,11 @@ p1 <-
     panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
-    #labels = paste( D.STATES$Bundesland,"\n ( n = ",D.STATES$n_states, " )", sep="" ),
     limits = xAxisTemp
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
-    #limits = c( 0, 20 )
   )
 
 ggsave("./img/Plot_Drone_Removal.pdf", p1, width = 4, height = 3, units = "in")
