@@ -34,10 +34,11 @@ for( i in state.list) {
   temp.df <- F_BOOTSTRAP(D.FULL.PROD[D.FULL.PROD$f == i, ], i)
   D.STATES.PROD <- rbind(D.STATES.PROD, temp.df)
 }
+# We use the alpha later for plotting
+D.STATES.PROD$alpha <- ifelse(D.STATES.PROD$Bundesland == "Österreich", 0.5, 0)
 
 #### STATES Plot Matrix ####
 D.STATES <- F_EXTRACT_N(D.FULL, "Bundesland", "STATES")
-
 
 #### DISTRICTS Plot Matrix ####
 # Remove "In more than one district rows"
@@ -94,9 +95,12 @@ OrderVector <- c( "Österreich", "Burgenland", "Kärnten", "Niederösterreich", 
 D.STATES$ff <- factor( D.STATES$ff, levels = OrderVector )
 D.STATES <- D.STATES[ order( factor( D.STATES$ff, levels = OrderVector )),]
 
+# Workaround because ggplot uses for alpha 0 --> 0.1 
+color_rule <- ifelse(D.STATES$alpha == 0, NA, "gray")
+
 p1 <- 
   ggplot( D.STATES, aes( x = ff, y = middle )) +
-  geom_bar( aes(alpha = alpha), colour = "black", fill = "gray", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
+  geom_bar( aes(alpha = alpha), colour = "black", fill = color_rule, show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), alpha = 1, size = 1.0 )+ 
   xlab("") + ylab("Loss rate [%]") + 
   ggtitle("(A) Overall loss rate - Austria & states") +
@@ -154,7 +158,7 @@ p3 <- ggplot() +
 
 p4 <- 
   ggplot( D.STATES.PROD, aes( x = Bundesland, y = mean )) +
-  geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
+  geom_bar( aes(alpha = alpha), colour = "black", fill = color_rule, show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   geom_pointrange( aes( ymin = lower.ci, ymax = upper.ci ), size = 0.5 )+ 
   xlab("") + ylab("Change rate [%]") + 
   ggtitle("Beehives overall amount net percentage change 2018") +
@@ -168,8 +172,8 @@ p4 <-
     panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
-    labels = paste( D.STATES$Bundesland,"\n ( n = ",D.STATES.PROD$n, " )", sep="" ),
-    limits = c( levels( D.STATES$Bundesland ))
+    labels = paste( D.STATES$ff,"\n ( n = ",D.STATES.PROD$n, " )", sep="" ),
+    limits = c( levels( D.STATES$ff ))
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
