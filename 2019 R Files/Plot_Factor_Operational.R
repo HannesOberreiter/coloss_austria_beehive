@@ -7,6 +7,10 @@
 
 ####### OPTERATION FACTOR PLOT ###########
 
+# Set Working directory (uses API of RStudio)
+SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
+setwd( SCRIPT.DIR )
+
 # Import Header
 source( "Partials_Header.r" )
 
@@ -17,15 +21,15 @@ source( "Partials_Functions.r" )
 
 # List of Factors we want in our Plot
 oList = list(
-  c("no_foundation", "(H) No Foundation"),
+  c("no_foundation", "(H) No foundation"),
   c("foreign_wax", "(G) Foreign wax"),
   c("migratory_beekeeper", "(B) Migration"),
-  c("mash_bottom_board", "(F) Mash Bottom"),
-  c("insulated_hives", "(E) Insulated Hives"),
-  c("plastic_hives", "(D) Plastic Hives"),
-  c("cert_org_beek", "(A) Cert. Organic"),
-  c("varroatolerant", "(C) VSH Bees"),
-  c("small_broodcells", "(I) Small Broodcells")
+  c("mash_bottom_board", "(F) Mash bottom"),
+  c("insulated_hives", "(E) Insulated hives"),
+  c("plastic_hives", "(D) Plastic hives"),
+  c("cert_org_beek", "(A) Cert. organic"),
+  c("varroatolerant", "(C) VSH bees"),
+  c("small_broodcells", "(I) Small broodcells")
 )
 
 # Create dummy Dataframe, to insert rows later
@@ -60,14 +64,12 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
   aes( x = ff, y = middle ) + 
   geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
-  geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
+  geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 2.5 ) +
   facet_wrap( ~ c, strip.position = "bottom", scales = "free_x", ncol = 5  ) +
   xlab("") + ylab("Loss rate [%]") + 
-  #ggtitle("Loss rate by operational factors") +
   theme_classic() + 
   theme(
     panel.spacing = unit( 1, "lines" ),
-    #strip.background = element_blank(),
     strip.placement = "outside",
     plot.title = element_text(hjust = 0.5), 
     axis.title.x = element_text(colour = "black" ), 
@@ -77,20 +79,18 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
     panel.grid.minor.y = element_line( colour = "grey" )
     ) +
   scale_x_discrete(
-    # labels = paste( D.FACTORS.PLOT$ff,"\n ( n = ",D.FACTORS.PLOT$n, " )", sep="" )
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
     breaks = seq( 0, 25, 5 )
-    #limits = c( 0, 25 )
   )
 
 gtitle = textGrob( "Loss rate by operational factors" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1 ) )
-p1 <- arrangeGrob(  p1,
+p <- arrangeGrob(  p1,
               top = gtitle, 
               layout_matrix = lay)
 
-ggsave("./img/Plot_Operational_Losses.pdf", p1, width = 12, height = 8, units = "in")
+ggsave("./img/Plot_Operational_Losses.pdf", p, width = 12, height = 8, units = "in")
 
