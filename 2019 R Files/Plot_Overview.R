@@ -72,7 +72,7 @@ p1 <- ggplot( data = D.PLOT ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
     breaks = seq( 0, 950, 50 ),
-    limits = c( 0, 950 )
+    limits = c( 0, max(D.PLOT$n)+100 )
   )
 
 p2 <- ggplot( data = D.PLOT ) +
@@ -93,7 +93,7 @@ p2 <- ggplot( data = D.PLOT ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
     breaks = seq( 0, 10000, 500 ),
-    limits = c( 0, 8300 )
+    limits = c( 0, max(D.PLOT$n_h)+900 )
   )
 
 
@@ -115,7 +115,7 @@ p3 <- ggplot( data = D.PLOT2 ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
     breaks = seq( 0, 900, 50 ),
-    limits = c( 0, 900 )
+    limits = c( 0, max(D.PLOT2$n)+150 )
   )
 
 p4 <- ggplot() + 
