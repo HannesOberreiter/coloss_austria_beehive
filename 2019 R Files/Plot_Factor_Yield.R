@@ -5,8 +5,6 @@
 ##############################
 ##############################
 
-# Clear Enviroment
-rm(list=ls())
 # Set Working directory (uses API of RStudio)
 SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
 setwd( SCRIPT.DIR )
@@ -27,7 +25,7 @@ oList = list(
   c("brassica_napus", "(A) Rapeseed"),
   c("zea_mays", "(B) Maize"),
   c("helianthus_annuus", "(C) Sunflower"),
-  c("late_catch_crop", "(D) Late Catch Crop"),
+  c("late_catch_crop", "(D) Late catch crop"),
   c("honeydew", "(E) Honeydew"),
   c("melezitose", "(F) Melezitose")
 )
@@ -64,7 +62,7 @@ D.FACTORS.PLOT$ff <- factor( D.FACTORS.PLOT$ff,
 D.DISTRICTS <- D.FULL %>% 
   group_by( Bezirk, Bundesland ) %>% 
   summarize( n = n(),
-             hives_lost = sum( hives_lost_e ) / sum( hives_winter ) * 100
+             hives_lost = F_NUMBER_FORMAT(sum( hives_lost_e ) / sum( hives_winter ) * 100)
   )
 # We only use data when there are aleast 6n
 D.DISTRICTS <- subset( D.DISTRICTS, D.DISTRICTS$n > 5 )
@@ -97,13 +95,12 @@ for(i in oList){
     ggplot() + 
     geom_polygon(data = MF_DISTRICTS, aes( x = MF_DISTRICTS$long, y = MF_DISTRICTS$lat, group = MF_DISTRICTS$group, fill = MF_DISTRICTS$hives_lost ), show.legend = label.fill, color = "Grey", size = 0.2 ) + 
     geom_path(data = MF_STATES, aes(x = MF_STATES$long, y = MF_STATES$lat, group = MF_STATES$group), color = "Grey", size = 0.6 ) + 
-    #geom_point(data = D.CACHE[[i[1]]], aes_string(x = D.CACHE[[i[1]]]$longitude, y = D.CACHE[[i[1]]]$latitude, size = D.CACHE[[i[1]]]$n, colour = D.CACHE[[i[1]]]$n) ) + 
     geom_point(data = D.CACHE[[i[1]]], aes_string(x = D.CACHE[[i[1]]]$longitude, y = D.CACHE[[i[1]]]$latitude, size = D.CACHE[[i[1]]]$n), color = "blue", fill = "black", stroke = 0.2, shape = 21, show.legend = label.point ) + 
     coord_quickmap() +
     # Info, when you want to join the legends for size and colour they need exact the same limits and breaks otherwise it wont work
     xlab( "" ) + ylab( "" ) + labs( colour = "Reports (n)", size = "Reports (n)", fill = "Loss rate [%]" ) +
-    scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white" ) +
-    scale_size_continuous( range = c(0.1, 2), breaks = c( 1, 5, 10, 15, 20 ), limits = c(0, 20), guide = label.size ) + 
+    scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white", limits = c(0, 70), breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100) ) +
+    scale_size_continuous( range = c(0.1, 3), breaks = c( 1, 5, 10, 15, 20 ), limits = c(0, 20), guide = label.size ) + 
     ggtitle(paste(i[2], "- rough location of yield")) +
     theme_classic() +
     theme(
@@ -127,11 +124,9 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
   facet_wrap( ~ c, strip.position = "bottom", scales = "free_x", ncol = 3  ) +
   xlab("") + ylab("Loss rate [%]") + 
-  #ggtitle("Loss prob. by operational factors") +
   theme_classic() + 
   theme(
     panel.spacing = unit( 1, "lines" ),
-    #strip.background = element_blank(),
     strip.placement = "outside",
     plot.title = element_text(hjust = 0.5), 
     axis.title.x = element_text(colour = "black" ), 
@@ -141,12 +136,10 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
     panel.grid.minor.y = element_line( colour = "grey" )
     ) +
   scale_x_discrete(
-    # labels = paste( D.FACTORS.PLOT$ff,"\n ( n = ",D.FACTORS.PLOT$n, " )", sep="" )
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
-    #limits = c( 0, 20 )
   )
 
 gtitle = textGrob( "Loss rate by yield without migratory beekeepers" , gp=gpar( fontsize = 20 , face = "bold" ) )
