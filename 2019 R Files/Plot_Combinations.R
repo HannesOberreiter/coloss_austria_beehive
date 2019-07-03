@@ -22,7 +22,9 @@ source( "Partials_Functions.r" )
 #### START CODE #####
 
 # List of Factors we want in our Plot
-# CAREFUL with ordering, they will be correct only if the are in order with column numbers
+# CAREFUL with ordering, they will be correct only if they are in order with column numbers
+# commented columns are ignored to reduce number of possible combinations, as they are not worth when looked at usage histograms
+
 oList = list(
   
   c("A", "SPRING", "Hyperthermia", "Sp-Hyp"),
@@ -154,8 +156,7 @@ p1 <-
   geom_point( size = 5, color = "white" ) + 
   # use defined shapes and color with better visibility
   scale_shape_manual( values = shapeLetters[1:20] ) +
-  #scale_colour_manual( values = shadesOfGrey(19) ) + 
-  
+
   # custom text repel that text dont overlap
   #geom_label_repel( show.legend = FALSE, hjust = "right", nudge_x = -0.3, nudge_y = -0.9, fontface = "bold", color = "black", segment.alpha = 0) +
 
@@ -171,7 +172,6 @@ p1 <-
   scale_x_continuous(
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
-    #limits = c(0, 45)
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
@@ -183,22 +183,17 @@ p1 <-
 p2 <- 
   ggplot( CACHE.COMB.PLOT, aes( x = Combination, y = middle, shape = `Combination (ny/nx)` )) +
   geom_bar( alpha = 0, fill = "white", show.legend = FALSE, color = "gray20", stat = "identity", linetype = "longdash" ) + 
-  #geom_point() +
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), color = "gray20", size = 1.0, show.legend = FALSE ) + 
-  
   # background point
   geom_point( shape = 21, size = 7, fill = "black", color = "black", show.legend = FALSE) + 
   # point with symbol
   geom_point( size = 3, stroke = 1, show.legend = FALSE, color = "white") + 
-  
   # use defined shapes and color with better visibility
   scale_shape_manual( values = shapeLetters[1:20] ) +
-  #scale_colour_manual( values = disColor20[1:20] ) + 
-  
+
   geom_text( aes( x = Combination, y = 2, label = paste("n = ", n )), angle = 0, color = "black", size = 3 ) +
-  ggtitle("(A) Loss rate") +
+  ggtitle("(A) Overall loss rate") +
   xlab("") + ylab("Loss rate [%]") +
-  #geom_text( aes( label = lost_rate ), angle = -90, vjust = 0, color = "black", size = 3 ) +
   theme_classic() + 
   theme(
     plot.title = element_text(hjust = 0), 
@@ -209,33 +204,26 @@ p2 <-
     panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
-    #labels = paste( D.STATES$Bundesland,"\n ( n = ",D.STATES$n_states, " )", sep="" ),
-    #limits = xAxisTemp
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
-    #limits = c( 0, 35 )
   )
 
 p3 <- 
   ggplot( CACHE.COMB.PLOT, aes( x = Combination, y = c_mean, shape = `Combination (ny/nx)` )) +
   geom_bar( alpha = 0, fill = "white", color = "gray20", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
-  #geom_point() +
   geom_pointrange( aes( ymin = c_ci_lower, ymax = c_ci_upper ), color = "gray20", size = 1.0, show.legend = FALSE ) + 
   geom_text( aes( x = Combination, y = 2, label = paste("n = ", c_n )), angle = 0, color = "black", size = 3 ) +
-  
   # background point
   geom_point( shape = 21, size = 7, fill = "black", color = "black", show.legend = FALSE) + 
   # point with symbol
   geom_point( size = 3, stroke = 1, color = "white", show.legend = FALSE) + 
-  
   # use defined shapes and color with better visibility
   scale_shape_manual( values = shapeLetters[1:20] ) +
-  #scale_colour_manual( values = disColor20[1:20] ) + 
-  xlab("") + ylab("Treatment cost per hive [Euro]") + 
-  ggtitle("(B) Cost per beehive") +
-  #geom_text( aes( label = lost_rate ), angle = -90, vjust = 0, color = "black", size = 3 ) +
+  
+  xlab("") + ylab("Cost per hive [Euro]") + 
+  ggtitle("(B) Treatment cost per beehive") +
   theme_classic() + 
   theme(
     plot.title = element_text(hjust = 0), 
@@ -246,13 +234,10 @@ p3 <-
     panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
-    #labels = paste( D.STATES$Bundesland,"\n ( n = ",D.STATES$n_states, " )", sep="" ),
-    #limits = xAxisTemp
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
-    #limits = c( 0, 35 )
   )
 
 gtitle = textGrob( "Combination of treatment methods" , gp=gpar( fontsize = 20 , face = "bold" ) )
