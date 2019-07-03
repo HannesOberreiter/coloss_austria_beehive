@@ -7,6 +7,10 @@
 
 ####### OPTERATION FACTOR PLOT ###########
 
+# Set Working directory (uses API of RStudio)
+SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
+setwd( SCRIPT.DIR )
+
 # Import Header
 source( "Partials_Header.r" )
 source( "Partials_Header_Treatment.r" )
@@ -55,8 +59,11 @@ D.FACTORS.PLOT$ff[ D.FACTORS.PLOT$ff == "Wenig" ] <- "Seldom"
 D.FACTORS.PLOT$ff[ D.FACTORS.PLOT$ff == "Weiß nicht" ] <- "Don't know"
 
 # Ordering
-D.FACTORS.PLOT$ff <- factor( D.FACTORS.PLOT$ff, 
-                             levels = c( "Yes", "No", "Uncertain", "Often", "Seldom", "None", "Don't know"))
+
+# Ordering
+OrderVector <- c( "Yes", "No", "Uncertain", "Often", "Seldom", "None", "Don't know")
+D.FACTORS.PLOT$ff <- factor( D.FACTORS.PLOT$ff, levels = OrderVector )
+D.FACTORS.PLOT <- D.FACTORS.PLOT[ order( factor( D.FACTORS.PLOT$ff, levels = OrderVector )),]
 
 #### Treatment Types Overview #####
 
@@ -68,7 +75,7 @@ D.PLOT_T <- D.FULL %>%
   group_by( T_amount ) %>%
   summarise(
     n = n(),
-    np = format( round( (n() / NROW( D.FULL$T_amount[( D.FULL$T_amount != 0 )]) * 100), 1), nsmall = 1 )
+    np = F_NUMBER_FORMAT( n() / NROW( D.FULL$T_amount[( D.FULL$T_amount != 0 )]) * 100)
   )
 # removed 0 ones, as we also dont count them in %
 D.PLOT_T <- D.PLOT_T[(D.PLOT_T$T_amount != 0), ]
@@ -80,9 +87,8 @@ D.PLOT_T$T_amount <- as.factor( D.PLOT_T$T_amount )
 x <- grepl("(T_vcount_)", colnames(D.FULL), fixed = FALSE, perl = TRUE)
 # sum the col values
 VC_count <- colSums(D.FULL[  , x ], na.rm = TRUE)
-VC_text <- c("April 18", "May", "June", "July", "August", "September", "October", "November", "December", "January", "February", "March", "April 19")
+VC_text <- c("Apr. 18", "May", "June", "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec.", "Jan.", "Feb.", "Mar.", "Apr. 19")
 VC_color <- c("cornflowerblue", "cornflowerblue", "forestgreen", "forestgreen", "forestgreen", "forestgreen", "forestgreen", "grey13", "grey13", "grey13", "cornflowerblue", "cornflowerblue", "cornflowerblue")
-
 
 #### Cost Distribution ####
 # our sequence
@@ -91,7 +97,7 @@ K.SEQ <- c(0, 1, 5, 10, 15, 20, 25, 30 , Inf )
 L.SEQ <- c("0", "1-5", "6-10", "11-15", "16-20", "21-25", "26-30", "> 31")
 # remove nas
 D.FULL.COST <- D.FULL$costs[!(is.na(D.FULL$costs))]
-shapiro.test(D.FULL.COST)
+#shapiro.test(D.FULL.COST)
 
 # cut with our sequence
 D.FULL.COST <- cut( D.FULL.COST, K.SEQ, label = L.SEQ, include.lowest = TRUE)
@@ -101,13 +107,8 @@ D.COST.PLOT <- tibble(D.FULL.COST, .name_repair = ~ make.names("a"))
 D.COST.PLOT <- D.COST.PLOT %>% group_by(a) %>% 
   summarize( 
     n = n(), 
-    np =
-      as.numeric(
-        format(
-          round(
-            (
-              ( n() ) / nrow(D.COST.PLOT) * 100 ), 1), nsmall = 2)) 
-      )
+    np = F_NUMBER_FORMAT( n() / nrow(D.COST.PLOT) * 100 )
+  )
 
 #### PLOTTING #####
 p1 <- ggplot( data = D.FACTORS.PLOT ) +
@@ -117,26 +118,22 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
   facet_wrap( ~ c, strip.position = "bottom", scales = "free_x", ncol = 3  ) +
   xlab("") + ylab("Loss rate [%]") + 
-  #ggtitle("Loss prob. by operational factors") +
   theme_classic() + 
   theme(
     panel.spacing = unit( 1, "lines" ),
-    #strip.background = element_blank(),
     strip.placement = "outside",
     plot.title = element_text(hjust = 0.5), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = 0, hjust = 0.5, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" ),
-    panel.grid.major.y = element_line( colour = "grey" ),
-    panel.grid.minor.y = element_line( colour = "grey" )
+    panel.grid.major.y = element_line( colour = "grey" )
+    #panel.grid.minor.y = element_line( colour = "grey" )
     ) +
   scale_x_discrete(
-    # labels = paste( D.FACTORS.PLOT$ff,"\n ( n = ",D.FACTORS.PLOT$n, " )", sep="" )
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
-   # limits = c( 0, 25 )
   )
 
 p2 <- ggplot( data = D.PLOT_T ) +
@@ -151,15 +148,13 @@ p2 <- ggplot( data = D.PLOT_T ) +
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" )
-    #panel.grid.major.y = element_line( colour = "grey" ),
-    #panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
     breaks = seq( 0, 1000, 50 ),
-    limits = c( 0, 750 )
+    limits = c( 0, max(D.PLOT_T$n)+100 )
   )
 
 
@@ -175,8 +170,6 @@ p3 <- ggplot() +
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" )
-    #panel.grid.major.y = element_line( colour = "grey" ),
-    #panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
     limits = c( VC_text )
@@ -184,42 +177,37 @@ p3 <- ggplot() +
   scale_y_continuous(
     expand = c( 0 , 0 ),
     breaks = seq( 0, 1000, 100 )
-    #limits = c( 0, 600 )
   )
 
 
 gtitle = textGrob( "Treatment survey data overview" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1 ), c( 2, 3 ) )
-p1 <- arrangeGrob( p1, p2, p3,
+p <- arrangeGrob( p1, p2, p3,
               top = gtitle, 
               layout_matrix = lay)
 # Save File
-ggsave("./img/Plot_Treatment_Overview.pdf", p1, width = 12, height = 8, units = "in")
+ggsave("./img/Plot_Treatment_Overview.pdf", p, width = 12, height = 8, units = "in")
 
 p4 <- ggplot( data = D.COST.PLOT ) +
   aes( x = a, y = n) + 
   geom_bar( colour = "black", alpha = 1, fill = "black", show.legend = FALSE, stat = "identity", linetype = "solid") + 
   geom_text( aes( label = paste(np, "%", sep = "" )), angle = 40, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
   xlab("Costs per hive [Euro]") + ylab("Number of beekeepers (n)") + 
-  ggtitle("Distribution of treatment costs per hive") +
+  ggtitle("Distribution of treatment cost per hive") +
   theme_classic() + 
   theme(
-    plot.title = element_text(hjust = 0), 
+    plot.title = element_text(hjust = 0.5), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" )
-    #panel.grid.major.y = element_line( colour = "grey" ),
-    #panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
     breaks = seq( 0, 1000, 50 ),
-    limits = c( 0, 500 )
+    limits = c( 0, max(D.COST.PLOT$n)+100 )
   )
 
 ggsave("./img/Plot_Treatment_Cost.pdf", p4, width = 5, height = 4, units = "in")
-
-p4
