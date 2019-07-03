@@ -7,6 +7,10 @@
 
 ####### TREATMENT HISTOGRAMM PLOT ###########
 
+# Set Working directory (uses API of RStudio)
+SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
+setwd( SCRIPT.DIR )
+
 # Import Header
 source( "Partials_Header.r" )
 source( "Partials_Header_Treatment.r" )
@@ -17,7 +21,7 @@ source( "Partials_Functions.r" )
 #### START CODE #####
 
 # List of our Months for plot x axis
-VC_text <- c("April", "May", "June", "July", "August", "September", "October", "November", "December", "January")
+VC_text <- c("Apr.", "May", "June", "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec.", "Jan.")
 # Color our bars to represent our spring, summer, winter treatments
 VC_color <- c("cornflowerblue", "cornflowerblue", "forestgreen", "forestgreen", "forestgreen", "forestgreen", "forestgreen", "grey13", "grey13", "grey13")
 
@@ -61,18 +65,19 @@ D.PLOT_LIST = list()
 
 # Used on the title for easier comparison in text
 TitleLettersTemp <- LETTERS[1:27]
-count <- 1
+count <- 0
 
 # Plotting via loop, using now treatmentList as this has combinded synthetics
 for( i in treatmentListwMix){
   
-  ylab.text <- ifelse((count %in% c(1, 5, 9)), "Number of beekeepers (n)", "")
+  ylab.text <- ifelse((count %in% c(0, 4, 8)), "Number of beekeepers (n)", "")
   count <- count + 1
   
   # Title of plot
   title <- paste("(", TitleLettersTemp[count], ") - ", i[3], sep = "")
   # our plot
-  p_cache <- ggplot(D.PLOT.HIST[D.PLOT.HIST$ff == i[3], ], aes( x = x, y = y, fill = vc_color)) +
+  p_cache <- ggplot(
+    D.PLOT.HIST[D.PLOT.HIST$ff == i[3], ], aes( x = x, y = y, fill = vc_color)) +
     geom_bar(colour = "black",show.legend = FALSE, stat = "identity", linetype = "solid") + 
     xlab("") + ylab(ylab.text) + 
     ggtitle(title) +
@@ -92,9 +97,9 @@ for( i in treatmentListwMix){
     scale_y_continuous(
       expand = c( 0 , 0 ),
       # this prevents decimal points happening
-      labels = scales::number_format(accuracy = 1)
+      labels = scales::number_format(accuracy = 1),
       #breaks = seq( 0, 1000, 100 )
-      #limits = c( 0, 600 )
+      limits = c( 0, max(D.PLOT.HIST$y[D.PLOT.HIST$ff == i[3]])+10 )
     )
   # save plot into list
   D.PLOT_LIST[[i[1]]] <- p_cache
@@ -103,10 +108,10 @@ for( i in treatmentListwMix){
 gtitle = textGrob( "Treatment method histogram by months" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1, 2, 3, 4 ), c( 5, 6, 7, 8 ), c( 9, 10, 11, 12 ))
-p1 <- arrangeGrob( D.PLOT_LIST[[1]], D.PLOT_LIST[[2]], D.PLOT_LIST[[3]], D.PLOT_LIST[[4]], D.PLOT_LIST[[5]], D.PLOT_LIST[[6]], 
+p <- arrangeGrob( D.PLOT_LIST[[1]], D.PLOT_LIST[[2]], D.PLOT_LIST[[3]], D.PLOT_LIST[[4]], D.PLOT_LIST[[5]], D.PLOT_LIST[[6]], 
                    D.PLOT_LIST[[7]], D.PLOT_LIST[[8]], D.PLOT_LIST[[9]], D.PLOT_LIST[[10]], D.PLOT_LIST[[11]], D.PLOT_LIST[[12]],
                    top = gtitle, 
                    layout_matrix = lay)
 
 # Save File
-ggsave("./img/Plot_Treatment_Histogramm.pdf", p1, width = 12, height = 8, units = "in")
+ggsave("./img/Plot_Treatment_Histogramm.pdf", p, width = 12, height = 8, units = "in")
