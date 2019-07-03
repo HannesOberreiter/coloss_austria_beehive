@@ -7,6 +7,10 @@
 
 ####### OPTERATION FACTOR PLOT ###########
 
+# Set Working directory (uses API of RStudio)
+SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
+setwd( SCRIPT.DIR )
+
 # Import Header
 source( "Partials_Header.r" )
 source( "Partials_Header_Treatment.r" )
@@ -69,11 +73,9 @@ p1 <- ggplot( data = D.FACTORS ) +
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
   facet_wrap( ~ letter, strip.position = "bottom", scales = "free_x", ncol = 5  ) +
   xlab("") + ylab("Loss rate [%]") + 
-  #ggtitle("Loss prob. by operational factors") +
   theme_classic() + 
   theme(
     panel.spacing = unit( 1, "lines" ),
-    #strip.background = element_blank(),
     strip.placement = "outside",
     plot.title = element_text(hjust = 0.5), 
     axis.title.x = element_text(colour = "black" ), 
@@ -83,22 +85,20 @@ p1 <- ggplot( data = D.FACTORS ) +
     panel.grid.minor.y = element_line( colour = "grey" )
     ) +
   scale_x_discrete(
-    # labels = paste( D.FACTORS.PLOT$ff,"\n ( n = ",D.FACTORS.PLOT$n, " )", sep="" )
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
-    #limits = c( 0, 35 )
   )
 
 gtitle = textGrob( "Loss rate by treatment method - SPRING (April, May)" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1 ) )
-p1 <- arrangeGrob( p1,
+p <- arrangeGrob( p1,
               top = gtitle, 
               layout_matrix = lay)
 
-ggsave("./img/P_FACTOR_Treatment_Spring.pdf", p1, width = 12, height = 3, units = "in")
+ggsave("./img/P_FACTOR_Treatment_Spring.pdf", p, width = 12, height = 3, units = "in")
 
 
 #### SUMMER ####
@@ -150,11 +150,9 @@ p1 <- ggplot( data = D.FACTORS ) +
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
   facet_wrap( ~ letter, strip.position = "bottom", scales = "free_x", ncol = 4  ) +
   xlab("") + ylab("Loss rate [%]") + 
-  #ggtitle("Loss prob. by operational factors") +
   theme_classic() + 
   theme(
     panel.spacing = unit( 1, "lines" ),
-    #strip.background = element_blank(),
     strip.placement = "outside",
     plot.title = element_text(hjust = 0.5), 
     axis.title.x = element_text(colour = "black" ), 
@@ -164,22 +162,20 @@ p1 <- ggplot( data = D.FACTORS ) +
     panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
-    # labels = paste( D.FACTORS.PLOT$ff,"\n ( n = ",D.FACTORS.PLOT$n, " )", sep="" )
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
-    #limits = c( 0, 35 )
   )
 
 gtitle = textGrob( "Loss rate by treatment method - SUMMER (June - October)" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1 ) )
-p1 <- arrangeGrob( p1,
+p <- arrangeGrob( p1,
                    top = gtitle, 
                    layout_matrix = lay)
 
-ggsave("./img/P_FACTOR_Treatment_Summer.pdf", p1, width = 12, height = 8, units = "in")
+ggsave("./img/P_FACTOR_Treatment_Summer.pdf", p, width = 12, height = 8, units = "in")
 
 
 
@@ -232,11 +228,9 @@ p1 <- ggplot( data = D.FACTORS ) +
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
   facet_wrap( ~ letter, strip.position = "bottom", scales = "free_x", ncol = 4  ) +
   xlab("") + ylab("Loss rate [%]") + 
-  #ggtitle("Loss prob. by operational factors") +
   theme_classic() + 
   theme(
     panel.spacing = unit( 1, "lines" ),
-    #strip.background = element_blank(),
     strip.placement = "outside",
     plot.title = element_text(hjust = 0.5), 
     axis.title.x = element_text(colour = "black" ), 
@@ -246,20 +240,18 @@ p1 <- ggplot( data = D.FACTORS ) +
     panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
-    # labels = paste( D.FACTORS.PLOT$ff,"\n ( n = ",D.FACTORS.PLOT$n, " )", sep="" )
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
-    #limits = c( 0, 35 )
   )
 
 gtitle = textGrob( "Loss rate by treatment method - WINTER (November - January)" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1 ) )
-p1 <- arrangeGrob( p1,
+p <- arrangeGrob( p1,
                    top = gtitle, 
                    layout_matrix = lay)
 
-ggsave("./img/P_FACTOR_Treatment_Winter.pdf", p1, width = 12, height = 3, units = "in")
+ggsave("./img/P_FACTOR_Treatment_Winter.pdf", p, width = 12, height = 3, units = "in")
 
