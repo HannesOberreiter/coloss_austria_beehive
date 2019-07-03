@@ -374,16 +374,13 @@ D.FULL <- D.FULL %>%
 
 # Basic Code
 ###############
-# Order our states
-D.FULL$Bundesland <- factor( D.FULL$Bundesland, 
-                             levels = c( "Burgenland", "Kärnten", "Niederösterreich", "Oberösterreich", "Salzburg", "Steiermark", "Tirol", "Vorarlberg", "Wien"))
 
 # ifelse question to prevent NA Errors and wrong numbers
-D.FULL$hives_winter[is.na(D.FULL$hives_winter)] <- 0
-D.FULL$hives_lost[is.na(D.FULL$hives_lost)] <- 0
-D.FULL$lost_a[is.na(D.FULL$lost_a)] <- 0
-D.FULL$lost_b[is.na(D.FULL$lost_b)] <- 0
-D.FULL$lost_c[is.na(D.FULL$lost_c)] <- 0
+D.FULL$hives_winter[ is.na( D.FULL$hives_winter )] <- 0
+D.FULL$hives_lost[ is.na( D.FULL$hives_lost )] <- 0
+D.FULL$lost_a[ is.na( D.FULL$lost_a )] <- 0
+D.FULL$lost_b[ is.na( D.FULL$lost_b )] <- 0
+D.FULL$lost_c[ is.na( D.FULL$lost_c )] <- 0
 
 # Add Spring hive amount
 D.FULL$hives_spring <- D.FULL$hives_winter - D.FULL$hives_lost
@@ -391,7 +388,7 @@ D.FULL$hives_spring <- D.FULL$hives_winter - D.FULL$hives_lost
 D.FULL$hives_lost_e <- ifelse( is.na( D.FULL$lost_b ), D.FULL$hives_lost, D.FULL$hives_lost - D.FULL$lost_b)
 D.FULL$hives_spring_e <- D.FULL$hives_winter - D.FULL$hives_lost_e
 # Values for Queens
-D.FULL$hives_spring_queen <- ifelse( is.na(D.FULL$lost_a), NA, D.FULL$hives_winter - D.FULL$lost_a )
+D.FULL$hives_spring_queen <- ifelse( is.na( D.FULL$lost_a ), NA, D.FULL$hives_winter - D.FULL$lost_a )
 # Loss rate per company
 D.FULL$lost_rate <- D.FULL$hives_lost / D.FULL$hives_winter * 100
 D.FULL$lost_rate_e <- D.FULL$hives_lost_e / D.FULL$hives_winter * 100

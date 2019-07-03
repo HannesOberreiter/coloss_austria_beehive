@@ -88,7 +88,6 @@ CACHE.BIND <- F_GLM_FACTOR( D.FULL, "Bundesland", D.FULL$Bundesland )
 CACHE.BIND <- rbind( AUSTRIA.BIND, CACHE.BIND )
 D.STATES <- cbind( D.STATES, CACHE.BIND )
 
-
 #### PLOTTING #####
 # Ordering
 OrderVector <- c( "Österreich", "Burgenland", "Kärnten", "Niederösterreich", "Oberösterreich", "Salzburg", "Steiermark", "Tirol", "Vorarlberg", "Wien")
