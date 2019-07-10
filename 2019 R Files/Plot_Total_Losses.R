@@ -103,7 +103,7 @@ p1 <-
   geom_bar( aes(alpha = alpha), colour = "black", fill = color_rule, show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), alpha = 1, size = 1.0 )+ 
   xlab("") + ylab("Loss rate [%]") + 
-  ggtitle("(A) Overall loss rate - Austria & states") +
+  ggtitle("(A) Overall loss rate - Austria & States") +
   theme_classic() + 
   theme(
     plot.title = element_text(hjust = 0.5), 
@@ -161,7 +161,7 @@ p4 <-
   geom_bar( aes(alpha = alpha), colour = "black", fill = color_rule, show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   geom_pointrange( aes( ymin = lower.ci, ymax = upper.ci ), size = 0.5 )+ 
   xlab("") + ylab("Change rate [%]") + 
-  ggtitle("Beehives overall amount net percentage change 2018") +
+  ggtitle("Overall net change in total beehive numbers 2018") +
   theme_classic() + 
   theme(
     plot.title = element_text(hjust = 0.5), 
@@ -183,10 +183,10 @@ p4 <-
 gtitle = textGrob( "Loss rate, Winter 2018/2019" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1, 2 ), c( 1, 3) )
-p1 <- arrangeGrob( p1, p2, p3,
+p <- arrangeGrob( p1, p2, p3,
              top = gtitle, 
              layout_matrix = lay)
 # Save File
-ggsave("./img/Plot_Total_Losses.pdf", p1, width = 12, height = 8, units = "in")
+ggsave("./img/Plot_Total_Losses.pdf", p, width = 12, height = 8, units = "in")
 ggsave("./img/Plot_Total_Regeneration.pdf", p4, width = 5, height = 4, units = "in")
 

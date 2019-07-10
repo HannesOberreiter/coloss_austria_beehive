@@ -59,7 +59,7 @@ p1 <- ggplot( data = D.PLOT ) +
   geom_bar( colour = "black", alpha = 1, fill = "black", show.legend = FALSE, stat = "identity", linetype = "solid") + 
   geom_text( aes( label = paste(np, "%", sep = "" )), angle = 55, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
   xlab("Operation size") + ylab("Number of beekeepers (n)") + 
-  ggtitle("(A) Numbers of participates in given operation size groups") +
+  ggtitle("(A) Numbers of participants in given operation size groups") +
   theme_classic() + 
   theme(
     plot.title = element_text(hjust = 0), 

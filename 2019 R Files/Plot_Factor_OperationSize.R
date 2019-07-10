@@ -51,7 +51,7 @@ p1 <- ggplot( data = D.FACTORS ) +
   theme(
     panel.spacing = unit( 1, "lines" ),
     strip.placement = "outside",
-    plot.title = element_text(hjust = 0.5, size = 20), 
+    plot.title = element_text(hjust = 0.5), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = 0, hjust = 0.5, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" ),

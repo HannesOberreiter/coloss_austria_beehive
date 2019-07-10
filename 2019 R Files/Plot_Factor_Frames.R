@@ -92,7 +92,7 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
   )
 
 
-gtitle = textGrob( "Loss rate to replaced old brood frames" , gp=gpar( fontsize = 20 , face = "bold" ) )
+gtitle = textGrob( "Loss rate to replaced old brood frames" , gp=gpar(face = "bold" ) )
 
 lay <- rbind( c( 1 ))
 p <- arrangeGrob(  p1,

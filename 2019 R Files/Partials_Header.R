@@ -26,7 +26,6 @@ library( rstudioapi ) # to set dirname
 library( colorspace ) # better colorpalettes for maps
 library( svMisc ) # only for combination function to get a progress bar
 
-
 # Read XLS
 ###############
 # Set Working directory (uses API of RStudio)
