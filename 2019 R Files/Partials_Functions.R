@@ -42,6 +42,9 @@ F_GLM_FACTOR <- function( x, f, xf )
   write.csv( ANOVA.FULL, file = paste("./ANOVA/", paste(f, "_ANOVA.csv", sep = "" ), sep = "" ) )
   # Chi-Sqr Test
   ANOVA.CHISQ <- anova( GLM.FULL, test = "Chisq" )
+  if(ANOVA.CHISQ$p.value < 0.05){
+    # TODO if p value is significant create pairwise comparison?
+  }
   write.csv( ANOVA.CHISQ, file = paste("./ANOVA/", paste(f, "_CHISQ.csv", sep = "" ), sep = "" ) )
   # Print Output
   print( paste( "ANOVA TEST --> ", f ))
