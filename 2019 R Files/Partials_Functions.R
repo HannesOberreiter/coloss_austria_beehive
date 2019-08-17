@@ -69,6 +69,8 @@ F_GLM_FACTOR <- function( x, f, xf, chi = FALSE )
   CACHE.ODDS = F_NUMBER_FORMAT( inv.logit( CACHE.ODDS ) * 100 )
   CACHE.LOWERLIM = F_NUMBER_FORMAT( inv.logit( CACHE.LOWERLIM ) * 100 )
   CACHE.UPPERLIM = F_NUMBER_FORMAT( inv.logit( CACHE.UPPERLIM ) * 100 )
+  
+  if(chi)   return( CACHE.BIND <- cbind( lowerlim = CACHE.LOWERLIM, middle = CACHE.ODDS, upperlim = CACHE.UPPERLIM, chistar = chistar ) )
   return( CACHE.BIND <- cbind( lowerlim = CACHE.LOWERLIM, middle = CACHE.ODDS, upperlim = CACHE.UPPERLIM ) )
 }
 
