@@ -108,9 +108,11 @@ F_EXTRACT_N <- function( x, f, c )
 }
 
 #### Combination Calcuation #### 
-# x = Dataframe, d = col numbers, itn = iternations, CacheList = "nice" names of cols, ColComb1 = our single intereger array of all treatments collumns
+# x = Dataframe, d = col numbers, itn = iternations, CacheList = "nice" names of cols, 
+# ColComb1 = our single intereger array of all treatments collumns,
+# negative = standard 1, then it selecteds only participants which did use the combination, set to 0 to select the people which did not use this combination
 ##############################
-F_COMBINATION <- function( x, d, itn, CacheList, ColComb1 ){
+F_COMBINATION <- function( x, d, itn, CacheList, ColComb1, negative = 1 ){
   # our dummy dataframe, which will be returned
   D.COMB <- 
     setNames( 
@@ -139,7 +141,7 @@ F_COMBINATION <- function( x, d, itn, CacheList, ColComb1 ){
       # remove selected treatment(s) from the list of treatment columns
       d1 <- d1 [ d1 != i[ n ] ]
       # subsetting our dataframe, were only our selected treatments are given
-      CACHE.COMB <- CACHE.COMB[ CACHE.COMB[, i[n]] == 1 , ]
+      CACHE.COMB <- CACHE.COMB[ CACHE.COMB[, i[n]] == negative , ]
       coln <- paste( coln, colnames(CACHE.COMB[i[n]]), sep = " ")
       # Names for Export
       cname[n] = as.character( CacheList$X3[ CacheList$ColComb1 == i[n] ])
@@ -149,16 +151,19 @@ F_COMBINATION <- function( x, d, itn, CacheList, ColComb1 ){
     
     # if no data is available we skip it
     if( nrow( CACHE.COMB ) == 0 ) next
-      
-    # count numbers without given treatment, if it is bigger than 0 it means there are other treatments in combination
-    # drop = FALSE tocreate a one-column dataframe and no vector if there is only one column left
-    CACHE.COMB$comb_count <- rowSums(CACHE.COMB[ , d1, drop = FALSE ], na.rm = TRUE)
-    # only get the count 0 ones, because then we are sure there is no combination
-    CACHE.COMB <- CACHE.COMB[CACHE.COMB[, "comb_count"] == 0, ]
-    # get loss probability for combination
-    CACHE.BIND <- c(NA,NA,NA)
     
-    # if less than 20 rows we skip it
+    if(negative == 1){
+      # count numbers without given treatment, if it is bigger than 0 it means there are other treatments in combination
+      # drop = FALSE tocreate a one-column dataframe and no vector if there is only one column left
+      CACHE.COMB$comb_count <- rowSums(CACHE.COMB[ , d1, drop = FALSE ], na.rm = TRUE)
+      # only get the count 0 ones, because then we are sure there is no combination
+      CACHE.COMB <- CACHE.COMB[CACHE.COMB[, "comb_count"] == 0, ]
+    }
+
+    # get loss probability for combination
+    # create dummy columns, to insert the values from GLM
+    CACHE.BIND <- c(NA,NA,NA)
+    # if less than 15 rows we skip it
     if( nrow( CACHE.COMB ) < 15) next
     if( nrow( CACHE.COMB ) > 9) CACHE.BIND <- F_GLM_SINGLE( CACHE.COMB )
     
