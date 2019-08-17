@@ -36,13 +36,26 @@ C.QP.N$ff[ C.QP.N$ff == "Normal" ] <- "Normal"
 C.QP.N$ff[ C.QP.N$ff == "Seltener" ] <- "More rare"
 C.QP.N$ff[ C.QP.N$ff == "Weiß nicht" ] <- "Don't know"
 
-C.QP.GLM <- F_GLM_FACTOR( D.FULL, "queen_problems", D.FULL$queen_problems )
+D.CACHE <- D.FULL
+# queen related losses
+D.CACHE$hives_lost_e <- D.CACHE$lost_a
+C.QP.GLM <- F_GLM_FACTOR( D.CACHE, "queen_problems", D.CACHE$queen_problems )
 C.QP <- cbind(C.QP.N, C.QP.GLM)
 
 # Ordering factors and values so we get the right order in our plots because we use custom text we also need to order the values
 OrderVector <- c( "Don't know", "More often", "Normal", "More rare")
 C.QP$ff <- factor( C.QP$ff, levels = OrderVector )
 C.QP <- C.QP[order(factor(C.QP$ff, levels = OrderVector )),]
+
+# queen related losses
+D.CACHE$hives_lost_e <- D.CACHE$lost_c
+C.QP2.GLM <- F_GLM_FACTOR( D.CACHE, "queen_problems", D.CACHE$queen_problems )
+C.QP2 <- cbind(C.QP.N, C.QP2.GLM)
+
+# Ordering factors and values so we get the right order in our plots because we use custom text we also need to order the values
+OrderVector <- c( "Don't know", "More often", "Normal", "More rare")
+C.QP2$ff <- factor( C.QP2$ff, levels = OrderVector )
+C.QP2 <- C.QP2[order(factor(C.QP2$ff, levels = OrderVector )),]
 
 #### TOTAL Lost Queen Rate #####
 
@@ -70,7 +83,7 @@ D.STATES$alpha <- 0
 D.STATES <- rbind(D.AUSTRIA, D.STATES)
 
 #### New Queens #####
-D.QN2 <- D.FULL %>% select( young_queens, hives_winter, hives_lost_e, hives_spring_e, lost_rate_e, hives_spring_queen, lost_a ) %>% na.omit()
+D.QN2 <- D.FULL %>% select( young_queens, hives_winter, hives_lost_e, hives_spring_e, lost_rate_e, hives_spring_queen, lost_a, lost_c ) %>% na.omit()
 D.QN2$young_rate <- F_NUMBER_FORMAT( D.QN2$young_queens / D.QN2$hives_winter * 100 )
 # Got some supicious data, better remove them ...
 D.QN2 <- D.QN2 %>% filter( young_rate <= 100 )
@@ -88,6 +101,8 @@ D.PLOT_Q <- D.QN2 %>%
     np = F_NUMBER_FORMAT(n() / nrow(D.QN2) * 100)
   )
 
+# We want loss rate without queen related losses
+D.QN2$hives_lost_e <- D.QN2$lost_c
 CACHE.BIND <- F_GLM_FACTOR( D.QN2, "young_rate_group", D.QN2$young_rate_group )
 
 # Queen Exchange rate to overall losses
@@ -125,7 +140,7 @@ p1 <-
   ggtitle("(A) Overall losses due queen problems - Austria & states") +
   theme_classic() + 
   theme(
-    plot.title = element_text(hjust = 0.5), 
+    plot.title = element_text(hjust = 0.5, size = 12), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" ),
@@ -146,10 +161,10 @@ p3 <- ggplot( data = D.PLOT_Q1 ) +
   geom_bar( colour = "black", alpha = 1, fill = "black", show.legend = FALSE, stat = "identity", linetype = "solid") + 
   geom_text( aes( label = paste(np, "%", sep = "" )), angle = 40, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
   xlab("Amount of young queens [%]") + ylab("Number of beekeeper (n)") + 
-  ggtitle("(B) Distribution of young queens per company in given groups") +
+  ggtitle("(B) Distribution of young queens per operation in given groups") +
   theme_classic() + 
   theme(
-    plot.title = element_text(hjust = 0), 
+    plot.title = element_text(hjust = 0.5, size = 12), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" )
@@ -167,13 +182,13 @@ p4 <- ggplot( data = D.PLOT_Q1 ) +
   geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
   geom_text( aes( x = young_rate_group, y = 1.5, label = paste("n = ", n )), color = "black", size = 3 ) +
-  xlab("Amount of young queens [%]") + ylab("Loss rate [%]") + 
-  ggtitle("(C) Loss rate to relative amount of young queens") +
+  xlab("Amount of young queens [%]") + ylab("Loss rate without queen related losses [%]") + 
+  ggtitle("(C) Loss rate to relative amount of young queens w/o queen related losses") +
   theme_classic() + 
   theme(
     panel.spacing = unit( 1, "lines" ),
     strip.placement = "outside",
-    plot.title = element_text(hjust = 0.5), 
+    plot.title = element_text(hjust = 0.5, size = 12), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" ),
@@ -198,7 +213,7 @@ p5 <- ggplot( data = D.PLOT_Q2 ) +
   theme(
     panel.spacing = unit( 1, "lines" ),
     strip.placement = "outside",
-    plot.title = element_text(hjust = 0.5), 
+    plot.title = element_text(hjust = 0.5, size = 12), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" ),
@@ -211,7 +226,7 @@ p5 <- ggplot( data = D.PLOT_Q2 ) +
     breaks = seq( 0, 100, 1 )
   )
 
-gtitle = textGrob( "Queen related losses, Winter 2018/2019" , gp=gpar( fontsize = 20 , face = "bold" ) )
+gtitle = textGrob( "Queen related losses" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1, 2 ), c(3, 4))
 p_p <- arrangeGrob( p1, p3, p4, p5,
@@ -232,7 +247,7 @@ p2 <-
   ggtitle("(A) Subjective queen problems in comparison to last year(s)") +
   theme_classic() + 
   theme(
-    plot.title = element_text(hjust = 0.5), 
+    plot.title = element_text(hjust = 0.5, size = 12), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" )
@@ -252,14 +267,39 @@ p6 <- ggplot( data = C.QP ) +
   aes( x = ff, y = middle ) + 
   geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
-  geom_text( aes( x = ff, y = 1.5, label = paste("n = ", n )), color = "black", size = 3 ) +
-  xlab("") + ylab("Loss rate [%]") + 
-  ggtitle("(B) Subjective queen problems to loss rate") +
+  geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), color = "black", size = 3 ) +
+  xlab("") + ylab("Queen related loss rate [%]") + 
+  ggtitle("(C) Subjective queen problems to queen related loss rate") +
   theme_classic() + 
   theme(
     panel.spacing = unit( 1, "lines" ),
     strip.placement = "outside",
-    plot.title = element_text(hjust = 0.5), 
+    plot.title = element_text(hjust = 0.5, size = 12), 
+    axis.title.x = element_text(colour = "black" ), 
+    axis.text.x = element_text(angle = 0, size = 8, face = "bold"),
+    axis.line = element_line( linetype = "solid" ),
+    panel.grid.major.y = element_line( colour = "grey" )
+  ) +
+  scale_x_discrete(
+  ) +
+  scale_y_continuous(
+    expand = c( 0 , 0 ),
+    breaks = seq( 0, 100, 1 )
+  )
+
+# Subjective queen problems to loss rate without queen problems
+p7 <- ggplot( data = C.QP2 ) +
+  aes( x = ff, y = middle ) + 
+  geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
+  geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
+  geom_text( aes( x = ff, y = 1.5, label = paste("n = ", n )), color = "black", size = 3 ) +
+  xlab("") + ylab("Loss rate without queen related losses [%]") + 
+  ggtitle("(B) Subjective queen problems to loss rate w/o queen related losses") +
+  theme_classic() + 
+  theme(
+    panel.spacing = unit( 1, "lines" ),
+    strip.placement = "outside",
+    plot.title = element_text(hjust = 0.5, size = 12), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" ),
@@ -274,12 +314,13 @@ p6 <- ggplot( data = C.QP ) +
 
 gtitle = textGrob( "Subjective queen problems" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
-lay <- rbind( c( 1, 2 ) )
-p_2 <- arrangeGrob( p2, p6,
+lay <- rbind( c( 1, 1 ), c( 2, 3 ) )
+p_2 <- arrangeGrob( p2, p7, p6,
                     top = gtitle, 
                     layout_matrix = lay)
 
 # Save File
-ggsave("./img/Plot_Queen_losses2.pdf", p_2, width = 12, height = 4, units = "in")
+ggsave("./img/Plot_Queen_losses2.pdf", p_2, width = 12, height = 8, units = "in")
+
 
 
