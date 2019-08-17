@@ -24,9 +24,9 @@ F_GLM_SINGLE <- function( x )
 }
 
 #### GLM, with Factor #### 
-# x = Dataframe, f = factor as string, xf = factor from dataframe
+# x = Dataframe, f = factor as string, xf = factor from dataframe, chi = TRUE when you want to return column with stars if chisqr is significant
 ##############################
-F_GLM_FACTOR <- function( x, f, xf )
+F_GLM_FACTOR <- function( x, f, xf, chi = FALSE )
 {
   # get column via string
   x$ff <- get( f, pos = x ) 
@@ -42,9 +42,16 @@ F_GLM_FACTOR <- function( x, f, xf )
   write.csv( ANOVA.FULL, file = paste("./ANOVA/", paste(f, "_ANOVA.csv", sep = "" ), sep = "" ) )
   # Chi-Sqr Test
   ANOVA.CHISQ <- anova( GLM.FULL, test = "Chisq" )
-  if(ANOVA.CHISQ$p.value < 0.05){
-    # TODO if p value is significant create pairwise comparison?
+  #TODO if p value is significant create pairwise comparison?
+  chistar <- ""
+  if(chi){
+    if(ANOVA.CHISQ[[5]][2] < 0.05){
+      chistar <- TRUE
+    } else {
+      chistar <- FALSE
+    }
   }
+
   write.csv( ANOVA.CHISQ, file = paste("./ANOVA/", paste(f, "_CHISQ.csv", sep = "" ), sep = "" ) )
   # Print Output
   print( paste( "ANOVA TEST --> ", f ))
