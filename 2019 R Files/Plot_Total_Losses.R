@@ -128,7 +128,7 @@ p2 <- ggplot() +
   coord_quickmap() +
   scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white", limits = c(9, 20), breaks = c(10, 12, 14, 16, 18, 20) ) +
   xlab( "" ) + ylab( "" ) + labs( fill = "Loss rate [%]") +
-  ggtitle("(B) States - Mean") +
+  ggtitle("(B) States - Loss rate") +
   theme_classic() +
   theme(
     legend.position="bottom", 
@@ -145,7 +145,7 @@ p3 <- ggplot() +
   coord_quickmap() +
   scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white", limits = c(0, 70), breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100) ) +
   xlab( "" ) + ylab( "" ) + labs( fill = "Loss rate [%]") +
-  ggtitle("(C) Districts - Mean (white = n < 6)") +
+  ggtitle("(C) Districts - Loss rate (white = n < 6)") +
   theme_classic() +
   theme(
     legend.position="bottom", 
@@ -161,7 +161,7 @@ p4 <-
   geom_bar( aes(alpha = alpha), colour = "black", fill = color_rule, show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   geom_pointrange( aes( ymin = lower.ci, ymax = upper.ci ), size = 0.5 )+ 
   xlab("") + ylab("Change rate [%]") + 
-  ggtitle("Overall net change in total beehive numbers 2018") +
+  ggtitle("Overall net increase in total colonies 2018") +
   theme_classic() + 
   theme(
     plot.title = element_text(hjust = 0.5), 

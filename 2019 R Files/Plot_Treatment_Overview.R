@@ -116,13 +116,15 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
   geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
-  facet_wrap( ~ c, strip.position = "bottom", scales = "free_x", ncol = 3  ) +
+  facet_wrap( ~ c, strip.position = "top", scales = "free_x", ncol = 3  ) +
   xlab("") + ylab("Loss rate [%]") + 
   theme_classic() + 
   theme(
     panel.spacing = unit( 1, "lines" ),
     strip.placement = "outside",
-    plot.title = element_text(hjust = 0.5), 
+    strip.background = element_blank(),
+    strip.text = element_text(angle = 0, hjust = 0, size = 12),
+    plot.title = element_text(hjust = 0.5, size = 10), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = 0, hjust = 0.5, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" ),
@@ -194,7 +196,7 @@ p4 <- ggplot( data = D.COST.PLOT ) +
   geom_bar( colour = "black", alpha = 1, fill = "black", show.legend = FALSE, stat = "identity", linetype = "solid") + 
   geom_text( aes( label = paste(np, "%", sep = "" )), angle = 40, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
   xlab("Costs per hive [Euro]") + ylab("Number of beekeepers (n)") + 
-  ggtitle("Distribution of treatment cost per hive") +
+  ggtitle("Distribution of estimated treatment \n cost of materials per colony") +
   theme_classic() + 
   theme(
     plot.title = element_text(hjust = 0.5), 

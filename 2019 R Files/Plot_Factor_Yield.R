@@ -101,7 +101,7 @@ for(i in oList){
     xlab( "" ) + ylab( "" ) + labs( colour = "Reports (n)", size = "Reports (n)", fill = "Loss rate [%]" ) +
     scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white", limits = c(0, 70), breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100) ) +
     scale_size_continuous( range = c(0.1, 3), breaks = c( 1, 5, 10, 15, 20 ), limits = c(0, 20), guide = label.size ) + 
-    ggtitle(paste(i[2], "- rough location of yield")) +
+    ggtitle(paste(i[2], "- rough location of crop")) +
     theme_classic() +
     theme(
       legend.position = legen.pos,
@@ -142,7 +142,7 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
     breaks = seq( 0, 100, 5 )
   )
 
-gtitle = textGrob( "Loss rate by yield without migratory beekeepers" , gp=gpar( fontsize = 20 , face = "bold" ) )
+gtitle = textGrob( "Loss rate by crop without migratory beekeepers" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1 ), c( 1 ), c( 2, 3 ), c( 4, 5 ), c( 6, 7 ))
 p_p <- arrangeGrob( p1, D.PLOT_LIST[[1]], D.PLOT_LIST[[2]], D.PLOT_LIST[[3]], D.PLOT_LIST[[4]], D.PLOT_LIST[[5]], D.PLOT_LIST[[6]],
