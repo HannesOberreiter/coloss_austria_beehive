@@ -122,8 +122,9 @@ write.csv( CACHE.COMB.MATRIX, file = paste("./", "Combination_Treatments.csv", s
 
 # Our Plot subset
 CACHE.COMB.PLOT <- CACHE.COMB[CACHE.COMB$n > 14, ]
+
 # We remove H because the wide range
-CACHE.COMB.PLOT <- CACHE.COMB[CACHE.COMB$xAxisTemp != "H", ]
+#CACHE.COMB.PLOT <- CACHE.COMB[CACHE.COMB$xAxisTemp != "H", ]
 
 CACHE.COMB.MATRIX <- as.matrix(CACHE.COMB.PLOT)
 write.csv( CACHE.COMB.MATRIX, file = paste("./", "Combination_Treatments_Plot.csv", sep = "" ) )
@@ -133,7 +134,7 @@ shapeForms <- c(1:18,33:127)
 shapeLetters <- c(65:79, 80:90)
 
 # remove "H" because we removed it from the PLOT
-shapeLetters <- shapeLetters[shapeLetters != 72]
+#shapeLetters <- shapeLetters[shapeLetters != 72]
 
 # list of "distinctiv" colors, actually not used
 disColor20 <- c("#e6194B", "#3cb44b", "#ffe119", "#4363d8", "#f58231", "#911eb4", "#42d4f4", "#f032e6", "#bfef45", "#fabebe", "#469990","#e6beff", "#9A6324", "#fffac8", "#800000", "#aaffc3", "#808000", "#ffd8b1", "#a9a9a9", "#172ab7")
@@ -144,12 +145,30 @@ names(CACHE.COMB.PLOT)[names(CACHE.COMB.PLOT) == 'xAxisTemp'] <- 'Combination'
 CACHE.COMB.PLOT$'Combination (ny/nx)' <- ""
 CACHE.COMB.PLOT$'Combination (ny/nx)' <- paste("(", CACHE.COMB.PLOT$Combination, ")", CACHE.COMB.PLOT$short, " (", CACHE.COMB.PLOT$n, " / ", CACHE.COMB.PLOT$c_n, " )", sep = "")
 
+# create limits for point plot with custom column for arrow heads
+CACHE.COMB.PLOT.POINT <- CACHE.COMB.PLOT
+
+CACHE.COMB.PLOT.POINT <- CACHE.COMB.PLOT.POINT %>% mutate(upperlim_max = ifelse(upperlim > 40, 40-middle, NA))
+CACHE.COMB.PLOT.POINT <- CACHE.COMB.PLOT.POINT %>% mutate(c_ci_upper_max = ifelse(c_ci_upper > 30, 30-c_mean, NA))
+
+CACHE.COMB.PLOT.POINT <- CACHE.COMB.PLOT.POINT %>% mutate(upperlim = ifelse(upperlim > 40, middle, upperlim))
+CACHE.COMB.PLOT.POINT <- CACHE.COMB.PLOT.POINT %>% mutate(c_ci_upper = ifelse(c_ci_upper > 30, c_mean, c_ci_upper))
+
 p1 <- 
-  ggplot( CACHE.COMB.PLOT, aes( x = c_mean, y = middle, shape = `Combination (ny/nx)`) ) +
+  ggplot( CACHE.COMB.PLOT.POINT, aes( x = c_mean, y = middle, shape = `Combination (ny/nx)`) ) +
   # errorbar vertical
-  geom_errorbar( aes( ymin = lowerlim, ymax = upperlim, width = 0.5 ), color = "gray", linetype = "solid", size = 1, alpha = 0.7, show.legend = FALSE ) + 
+  geom_errorbar( aes( ymin = lowerlim, ymax = upperlim, width = 0.5 ), color = "gray", linetype = "solid", size = 1, alpha = 0.7, show.legend = FALSE, na.rm = TRUE ) + 
   # errorbar horizontal
-  geom_errorbarh( aes( xmin = c_ci_lower, xmax = c_ci_upper, height = 0.5), color = "gray", linetype = "solid", alpha = 0.7, size = 1, show.legend = FALSE ) +
+  geom_errorbarh( aes( xmin = c_ci_lower, xmax = c_ci_upper, height = 0.5), color = "gray", linetype = "solid", alpha = 0.7, size = 1, show.legend = FALSE, na.rm = TRUE ) +
+ 
+   # Arrow Heads if bars are longer than plot
+  geom_segment(aes(x = c_mean, xend = c_mean, y = middle, yend = middle + upperlim_max), 
+               arrow = arrow(length = unit(0.03, "npc")),
+               na.rm = TRUE, arrow.fill = "black", color = "gray", linetype = "solid", alpha = 0.7, size = 1) + 
+  geom_segment(aes(x = c_mean, xend = c_mean + c_ci_upper_max, y = middle, yend = middle), 
+               arrow = arrow(length = unit(0.03, "npc")),
+               na.rm = TRUE, arrow.fill = "black", color = "gray", linetype = "solid", alpha = 0.7, size = 1) + 
+  
   # background point
   geom_point( shape = 21, size = 10, fill = "black", color = "black", show.legend = TRUE) + 
   # point with symbol
@@ -157,16 +176,22 @@ p1 <-
   # use defined shapes and color with better visibility
   scale_shape_manual( values = shapeLetters[1:20] ) +
 
+
   # custom text repel that text dont overlap
   #geom_label_repel( show.legend = FALSE, hjust = "right", nudge_x = -0.3, nudge_y = -0.9, fontface = "bold", color = "black", segment.alpha = 0) +
 
-  xlab("Cost per beehive [Euro]") + ylab("Loss rate [%]") + labs( colour = "Combination ( y(n) / x(n) )", shape = "Combination ( y(n) / x(n) )", fill = "Combination ( y(n) / x(n) )" ) + 
-  ggtitle("Combination of treatment methods - loss rate to cost per hive") +
+  xlab("Cost of treatment materials per colony [Euro]") + ylab("Loss rate [%]") + labs( colour = "Combination ( y(n) / x(n) )", shape = "Combination ( y(n) / x(n) )", fill = "Combination ( y(n) / x(n) )" ) + 
+  ggtitle("Combination of treatment methods - loss rate to cost per colony") +
+  
+  coord_cartesian(ylim=c(0, 40), xlim=c(0, 30)) + 
+  
   
   theme_classic() + 
   theme(
     plot.title = element_text(hjust = 0.5, size = 20), 
-    axis.title.x = element_text(colour = "black" ), 
+    axis.title = element_text(colour = "black", size = 14), 
+    axis.text = element_text(size = 11 ), 
+    
     axis.line = element_line( linetype = "solid" )
   ) +
   scale_x_continuous(
@@ -175,10 +200,9 @@ p1 <-
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 100, 5 ),
-    limits = c(0, 40)
+    breaks = seq( 0, 100, 5 )
+    #limits = c(0, 40)
   )
-
 
 p2 <- 
   ggplot( CACHE.COMB.PLOT, aes( x = Combination, y = middle, shape = `Combination (ny/nx)` )) +
@@ -223,7 +247,7 @@ p3 <-
   scale_shape_manual( values = shapeLetters[1:20] ) +
   
   xlab("") + ylab("Cost per hive [Euro]") + 
-  ggtitle("(B) Treatment cost per beehive") +
+  ggtitle("(B) Cost of treatment materials per colony") +
   theme_classic() + 
   theme(
     plot.title = element_text(hjust = 0), 
@@ -250,4 +274,4 @@ p <- arrangeGrob( p2, p3,
 
 ggsave("./img/Plot_Treatment_Combination1.pdf", p, width = 14, height = 8, units = "in")
 
-ggsave("./img/Plot_Treatment_Combination2.pdf", p1, width = 14, height = 8, units = "in")
+ggsave("./img/Plot_Treatment_Combination2.pdf", p1, width = 14, height = 8.5, units = "in")
