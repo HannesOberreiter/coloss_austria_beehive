@@ -44,7 +44,7 @@ for( i in oList){
   D.FULL_C <- subset( D.FULL, temp.n != "Unsicher" & D.FULL$migratory_beekeeper == "Nein" )
   
   CACHE.M <- F_EXTRACT_N( D.FULL_C, i[1], i[2] )
-  CACHE.BIND <- F_GLM_FACTOR( D.FULL_C, i[1], get( i[1], pos = D.FULL_C ) )
+  CACHE.BIND <- F_GLM_FACTOR( D.FULL_C, i[1], get( i[1], pos = D.FULL_C ), TRUE )
   CACHE.BIND <- cbind( CACHE.M, CACHE.BIND )
   D.FACTORS <- rbind( D.FACTORS, CACHE.BIND )
 }
@@ -122,6 +122,7 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
   geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
+  geom_text(data =  D.FACTORS.PLOT[(D.FACTORS.PLOT$chistar == 1 & D.FACTORS.PLOT$ff == 'Yes'),], aes( x = ff, y = 22, label = "*"), angle = 0, vjust = 0, hjust = -5, color = "black", size = 8 ) +
   facet_wrap( ~ c, strip.position = "bottom", scales = "free_x", ncol = 3  ) +
   xlab("") + ylab("Loss rate [%]") + 
   theme_classic() + 
