@@ -140,7 +140,7 @@ p1 <-
   ggtitle("(A) Overall losses due queen problems - Austria & states") +
   theme_classic() + 
   theme(
-    plot.title = element_text(hjust = 0.5, size = 12), 
+    plot.title = element_text(size = 12), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" ),
@@ -164,7 +164,7 @@ p3 <- ggplot( data = D.PLOT_Q1 ) +
   ggtitle("(B) Distribution of young queens per operation in given groups") +
   theme_classic() + 
   theme(
-    plot.title = element_text(hjust = 0.5, size = 12), 
+    plot.title = element_text(size = 12), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" )
@@ -188,7 +188,7 @@ p4 <- ggplot( data = D.PLOT_Q1 ) +
   theme(
     panel.spacing = unit( 1, "lines" ),
     strip.placement = "outside",
-    plot.title = element_text(hjust = 0.5, size = 12), 
+    plot.title = element_text(size = 12), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" ),
@@ -213,7 +213,7 @@ p5 <- ggplot( data = D.PLOT_Q2 ) +
   theme(
     panel.spacing = unit( 1, "lines" ),
     strip.placement = "outside",
-    plot.title = element_text(hjust = 0.5, size = 12), 
+    plot.title = element_text(size = 12), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" ),
@@ -247,7 +247,7 @@ p2 <-
   ggtitle("(A) Subjective queen problems in comparison to last year(s)") +
   theme_classic() + 
   theme(
-    plot.title = element_text(hjust = 0.5, size = 12), 
+    plot.title = element_text(size = 12), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" )
@@ -274,7 +274,7 @@ p6 <- ggplot( data = C.QP ) +
   theme(
     panel.spacing = unit( 1, "lines" ),
     strip.placement = "outside",
-    plot.title = element_text(hjust = 0.5, size = 12), 
+    plot.title = element_text(size = 12), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" ),
@@ -299,7 +299,7 @@ p7 <- ggplot( data = C.QP2 ) +
   theme(
     panel.spacing = unit( 1, "lines" ),
     strip.placement = "outside",
-    plot.title = element_text(hjust = 0.5, size = 12), 
+    plot.title = element_text(size = 12), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" ),
