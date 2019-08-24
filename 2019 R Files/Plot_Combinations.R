@@ -246,7 +246,7 @@ p3 <-
   # use defined shapes and color with better visibility
   scale_shape_manual( values = shapeLetters[1:20] ) +
   
-  xlab("") + ylab("Cost per hive [Euro]") + 
+  xlab("") + ylab("Cost per colony [Euro]") + 
   ggtitle("(B) Cost of treatment materials per colony") +
   theme_classic() + 
   theme(
@@ -275,3 +275,36 @@ p <- arrangeGrob( p2, p3,
 ggsave("./img/Plot_Treatment_Combination1.pdf", p, width = 14, height = 8, units = "in")
 
 ggsave("./img/Plot_Treatment_Combination2.pdf", p1, width = 14, height = 8.5, units = "in")
+
+
+p4 <- 
+  ggplot( CACHE.COMB.PLOT, aes( x = Combination, y = middle, shape = `Combination (ny/nx)` )) +
+  geom_bar( alpha = 0, fill = "white", show.legend = FALSE, color = "gray20", stat = "identity", linetype = "longdash" ) + 
+  geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), color = "gray20", size = 1.0, show.legend = FALSE ) + 
+  # background point
+  geom_point( shape = 21, size = 7, fill = "black", color = "black", show.legend = FALSE) + 
+  # point with symbol
+  geom_point( size = 3, stroke = 1, show.legend = FALSE, color = "white") + 
+  # use defined shapes and color with better visibility
+  scale_shape_manual( values = shapeLetters[1:20] ) +
+  
+  geom_text( aes( x = Combination, y = 2, label = paste("n = ", n )), angle = 0, color = "black", size = 3 ) +
+  ggtitle("Combination of treatment methods loss rates") +
+  xlab("") + ylab("Loss rate [%]") +
+  theme_classic() + 
+  theme(
+    plot.title = element_text(hjust = 0.5, size=20), 
+    axis.title.x = element_text(colour = "black" ), 
+    axis.text.x = element_text(angle = 0, size = 8, face = "bold"),
+    axis.line = element_line( linetype = "solid" ),
+    panel.grid.major.y = element_line( colour = "grey" ),
+    panel.grid.minor.y = element_line( colour = "grey" )
+  ) +
+  scale_x_discrete(
+  ) +
+  scale_y_continuous(
+    expand = c( 0 , 0 ),
+    breaks = seq( 0, 100, 5 )
+  )
+
+ggsave("./img/Plot_Treatment_Combination3.pdf", p4, width = 14, height = 6.5, units = "in")
