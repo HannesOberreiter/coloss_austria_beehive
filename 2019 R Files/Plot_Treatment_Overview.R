@@ -195,7 +195,7 @@ p4 <- ggplot( data = D.COST.PLOT ) +
   aes( x = a, y = n) + 
   geom_bar( colour = "black", alpha = 1, fill = "black", show.legend = FALSE, stat = "identity", linetype = "solid") + 
   geom_text( aes( label = paste(np, "%", sep = "" )), angle = 40, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
-  xlab("Costs per hive [Euro]") + ylab("Number of beekeepers (n)") + 
+  xlab("Costs per colony [Euro]") + ylab("Number of beekeepers (n)") + 
   ggtitle("Distribution of estimated treatment \n cost of materials per colony") +
   theme_classic() + 
   theme(
