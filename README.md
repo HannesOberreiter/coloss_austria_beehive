@@ -5,6 +5,8 @@ Code pieces, mostly R to help with the yearly bee colony winter mortality evalua
 
 ***Test_Coords.R****: Tests if given lat/long is in given district and throws map and file with wrong IDs
 
+***Get_altitude.R****: Generates altitudes from lat/long via geonames API
+
 ***Partial_XXX Files***: Loading Libraries, Functions and main Ressources for all Files
 
 ***Plot_XXX Files***: Ploting files used for analysis and visualization of the data
