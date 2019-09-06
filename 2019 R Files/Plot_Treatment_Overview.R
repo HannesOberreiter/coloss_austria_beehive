@@ -126,7 +126,8 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
     strip.text = element_text(angle = 0, hjust = 0, size = 12),
     plot.title = element_text(hjust = 0.5, size = 10), 
     axis.title.x = element_text(colour = "black" ), 
-    axis.text.x = element_text(angle = 0, hjust = 0.5, size = 8, face = "bold"),
+    axis.text.x = element_text(angle = 0, hjust = 0.5, size = 9, face = "bold"),
+    axis.text.y = element_text(angle = 0, size = 10),
     axis.line = element_line( linetype = "solid" ),
     panel.grid.major.y = element_line( colour = "grey" )
     #panel.grid.minor.y = element_line( colour = "grey" )
@@ -147,8 +148,9 @@ p2 <- ggplot( data = D.PLOT_T ) +
   theme_classic() + 
   theme(
     plot.title = element_text(hjust = 0), 
-    axis.title.x = element_text(colour = "black" ), 
-    axis.text.x = element_text(size = 8, face = "bold"),
+    axis.title.x = element_text(colour = "black", margin = margin(b = 22)), 
+    axis.text.x = element_text(size = 9, face = "bold"),
+    axis.text.y = element_text(angle = 0, size = 10),
     axis.line = element_line( linetype = "solid" )
   ) +
   scale_x_discrete(
@@ -170,7 +172,8 @@ p3 <- ggplot() +
   theme(
     plot.title = element_text(hjust = 0), 
     axis.title.x = element_text(colour = "black" ), 
-    axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
+    axis.text.x = element_text(angle = -55, hjust = 0, size = 9, face = "bold"),
+    axis.text.y = element_text(angle = 0, size = 10),
     axis.line = element_line( linetype = "solid" )
   ) +
   scale_x_discrete(
@@ -182,14 +185,14 @@ p3 <- ggplot() +
   )
 
 
-gtitle = textGrob( "Treatment survey data overview" , gp=gpar( fontsize = 20 , face = "bold" ) )
+#gtitle = textGrob( "Treatment survey data overview" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1 ), c( 2, 3 ) )
 p <- arrangeGrob( p1, p2, p3,
-              top = gtitle, 
+              #top = gtitle, 
               layout_matrix = lay)
 # Save File
-ggsave("./img/Plot_Treatment_Overview.pdf", p, width = 12, height = 8, units = "in")
+ggsave("./img/Plot_Treatment_Overview.pdf", p, width = 10.5, height = 7, units = "in")
 
 p4 <- ggplot( data = D.COST.PLOT ) +
   aes( x = a, y = n) + 

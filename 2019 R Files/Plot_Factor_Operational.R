@@ -65,19 +65,22 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
   geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 2.5 ) +
-  geom_text(data =  D.FACTORS.PLOT[(D.FACTORS.PLOT$chistar == 1 & D.FACTORS.PLOT$ff == 'Yes'),], aes( x = ff, y = 20, label = "*"), angle = 0, vjust = 0, hjust = -4, color = "black", size = 8 ) +
-  facet_wrap( ~ c, strip.position = "bottom", scales = "free_x", ncol = 5, labeller = label_wrap_gen(width=30)  ) +
+  geom_text(data =  D.FACTORS.PLOT[(D.FACTORS.PLOT$chistar == 1 & D.FACTORS.PLOT$ff == 'Yes'),], aes( x = ff, y = 20, label = "*"), angle = 0, vjust = 0, hjust = -3, color = "black", size = 8 ) +
+  facet_wrap( ~ c, strip.position = "top", scales = "free_x", ncol = 5, labeller = label_wrap_gen(width=30)  ) +
   xlab("") + ylab("Loss rate [%]") + 
   theme_classic() + 
   theme(
     panel.spacing = unit( 1, "lines" ),
     strip.placement = "outside",
-    plot.title = element_text(hjust = 0.5), 
+    plot.title = element_text(hjust = 0), 
     axis.title.x = element_text(colour = "black" ), 
-    axis.text.x = element_text(angle = 0, hjust = 0.5, size = 8, face = "bold"),
-    axis.line = element_line( linetype = "solid" ),
+    axis.text.x = element_text(angle = 0, hjust = 0.5, size = 9, face = "bold"),
+    axis.line = element_line( linetype = "solid", size = 0.5 ),
     panel.grid.major.y = element_line( colour = "grey" ),
-    panel.grid.minor.y = element_line( colour = "grey" )
+    panel.grid.minor.y = element_line( colour = "grey" ),
+    axis.text.y = element_text(angle = 0, size = 10)
+    #axis.line = element_blank(),
+    #panel.border = element_rect( fill = NA, linetype = "solid", colour = "black", size = 1 )
     ) +
   scale_x_discrete(
   ) +
@@ -86,12 +89,12 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
     breaks = seq( 0, 25, 5 )
   )
 
-gtitle = textGrob( "Loss rate by operational factors" , gp=gpar( fontsize = 20 , face = "bold" ) )
+gtitle = textGrob( "Loss rate by operational factors" , gp=gpar(fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1 ) )
 p <- arrangeGrob(  p1,
               top = gtitle, 
               layout_matrix = lay)
 
-ggsave("./img/Plot_Operational_Losses.pdf", p, width = 12, height = 8, units = "in")
+ggsave("./img/Plot_Operational_Losses.pdf", p, width = 11, height = 6, units = "in")
 

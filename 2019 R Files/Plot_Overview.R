@@ -5,7 +5,7 @@
 ##############################
 ##############################
 
-####### OPTERATION FACTOR PLOT ###########
+####### Overview PLOT ###########
 
 # Set Working directory (uses API of RStudio)
 SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
@@ -137,12 +137,12 @@ p4 <- ggplot() +
   )
 
 
-gtitle = textGrob( "Distribution of survey data" , gp=gpar( fontsize = 20 , face = "bold" ) )
+#gtitle = textGrob( "Distribution of survey data" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1, 2 ), c( 3, 4 ) )
 p_p <- arrangeGrob( p1, p2, p3, p4,
-              top = gtitle, 
+              #top = gtitle, 
               layout_matrix = lay)
 
 # Save File
-ggsave("./img/Plot_Overview.pdf", p_p, width = 12, height = 8, units = "in")
+ggsave("./img/Plot_Overview.pdf", p_p, width = 10.5, height = 8, units = "in")

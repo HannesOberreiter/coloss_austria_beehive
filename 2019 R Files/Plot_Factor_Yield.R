@@ -123,7 +123,7 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
   geom_text(data =  D.FACTORS.PLOT[(D.FACTORS.PLOT$chistar == 1 & D.FACTORS.PLOT$ff == 'Yes'),], aes( x = ff, y = 22, label = "*"), angle = 0, vjust = 0, hjust = -5, color = "black", size = 8 ) +
-  facet_wrap( ~ c, strip.position = "bottom", scales = "free_x", ncol = 3  ) +
+  facet_wrap( ~ c, strip.position = "top", scales = "free_x", ncol = 3  ) +
   xlab("") + ylab("Loss rate [%]") + 
   theme_classic() + 
   theme(
@@ -132,9 +132,11 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
     plot.title = element_text(hjust = 0.5), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = 0, hjust = 0.5, size = 8, face = "bold"),
-    axis.line = element_line( linetype = "solid" ),
+    #axis.line = element_line( linetype = "solid" ),
     panel.grid.major.y = element_line( colour = "grey" ),
-    panel.grid.minor.y = element_line( colour = "grey" )
+    panel.grid.minor.y = element_line( colour = "grey" ),
+    panel.border = element_rect( fill = NA, linetype = "solid", colour = "black", size = 1 ),
+    axis.line = element_blank()
     ) +
   scale_x_discrete(
   ) +

@@ -68,7 +68,7 @@ p1 <-
   ggtitle("Drone brood removal") +
   theme_classic() + 
   theme(
-    plot.title = element_text(hjust = 0.5), 
+    plot.title = element_text(), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" ),

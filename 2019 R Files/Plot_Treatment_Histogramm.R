@@ -75,21 +75,27 @@ for( i in treatmentListwMix){
   
   # Title of plot
   title <- paste("(", TitleLettersTemp[count], ") - ", i[3], sep = "")
+  loopPlot <- D.PLOT.HIST[D.PLOT.HIST$ff == i[3], ]
+  loopPlot$t <- title
   # our plot
   p_cache <- ggplot(
-    D.PLOT.HIST[D.PLOT.HIST$ff == i[3], ], aes( x = x, y = y, fill = vc_color)) +
+    loopPlot, aes( x = x, y = y, fill = vc_color)) +
     geom_bar(colour = "black",show.legend = FALSE, stat = "identity", linetype = "solid") + 
     xlab("") + ylab(ylab.text) + 
-    ggtitle(title) +
+    #ggtitle(title) +
     scale_fill_identity() + # as we use our own colors
     theme_classic() + 
+    facet_wrap(. ~ t, strip.position = "top") +
     theme(
       plot.title = element_text(hjust = 0, size = 10), 
+      strip.placement = "outside",
       axis.title.x = element_text(colour = "black" ), 
       axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
-      axis.line = element_line( linetype = "solid" ),
+      #axis.line = element_line( linetype = "solid" ),
       panel.grid.major.y = element_line( colour = "grey" ),
-      panel.grid.minor.y = element_line( colour = "grey" )
+      panel.grid.minor.y = element_line( colour = "grey" ),
+      panel.border = element_rect( fill = NA, linetype = "solid", colour = "black", size = 1 ), 
+      axis.line = element_blank()
     ) +
     scale_x_discrete(
       limits = c( VC_text )

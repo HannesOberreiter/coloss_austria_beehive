@@ -92,6 +92,7 @@ D.STATES <- cbind( D.STATES, CACHE.BIND )
 #### PLOTTING #####
 # Ordering
 OrderVector <- c( "Österreich", "Burgenland", "Kärnten", "Niederösterreich", "Oberösterreich", "Salzburg", "Steiermark", "Tirol", "Vorarlberg", "Wien")
+RenameVector <- c( "Austria", "Burgenland", "Carinthia", "Lower Austria", "Upper Austria", "Salzburg", "Styria", "Tyrol", "Vorarlberg", "Vienna")
 D.STATES$ff <- factor( D.STATES$ff, levels = OrderVector )
 D.STATES <- D.STATES[ order( factor( D.STATES$ff, levels = OrderVector )),]
 
@@ -106,7 +107,7 @@ p1 <-
   ggtitle("(A) Overall loss rate - Austria & States") +
   theme_classic() + 
   theme(
-    plot.title = element_text(hjust = 0.5), 
+    plot.title = element_text(), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" ),
@@ -114,7 +115,7 @@ p1 <-
     panel.grid.minor.y = element_line( colour = "grey" )
   ) +
   scale_x_discrete(
-    labels = paste( D.STATES$ff,"\n ( n = ",D.STATES$n, " )", sep="" ),
+    labels = paste( RenameVector,"\n ( n = ",D.STATES$n, " )", sep="" ),
     limits = c( levels( D.STATES$ff ))
   ) +
   scale_y_continuous(
@@ -133,7 +134,7 @@ p2 <- ggplot() +
   theme(
     legend.position="bottom", 
     legend.box = "horizontal",
-    plot.title = element_text(hjust = 0.5), 
+    plot.title = element_text(), 
     axis.text = element_blank(), 
     axis.ticks = element_blank(),
     panel.grid.major = element_blank()
@@ -150,7 +151,7 @@ p3 <- ggplot() +
   theme(
     legend.position="bottom", 
     legend.box = "horizontal",
-    plot.title = element_text(hjust = 0.5), 
+    plot.title = element_text(), 
     axis.text = element_blank(), 
     axis.ticks = element_blank(),
     panel.grid.major = element_blank()
@@ -164,7 +165,7 @@ p4 <-
   ggtitle("Overall net increase in total colonies 2018") +
   theme_classic() + 
   theme(
-    plot.title = element_text(hjust = 0.5), 
+    plot.title = element_text(), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
     axis.line = element_line( linetype = "solid" ),
@@ -180,13 +181,15 @@ p4 <-
     breaks = seq( 0, 100, 5 )
   )
 
-gtitle = textGrob( "Loss rate, Winter 2018/2019" , gp=gpar( fontsize = 20 , face = "bold" ) )
+#gtitle = textGrob( "Loss rate, Winter 2018/2019" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1, 2 ), c( 1, 3) )
 p <- arrangeGrob( p1, p2, p3,
-             top = gtitle, 
+             #top = gtitle, 
              layout_matrix = lay)
 # Save File
-ggsave("./img/Plot_Total_Losses.pdf", p, width = 12, height = 8, units = "in")
+#ggsave("./img/Plot_Total_Losses.pdf", p, width = 12, height = 8, units = "in")
+ggsave("./img/Plot_Total_Losses.pdf", p, width = 10, height = 7, units = "in")
+
 ggsave("./img/Plot_Total_Regeneration.pdf", p4, width = 5, height = 4, units = "in")
 

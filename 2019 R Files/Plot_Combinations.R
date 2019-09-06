@@ -293,9 +293,13 @@ p4 <-
   xlab("") + ylab("Loss rate [%]") +
   theme_classic() + 
   theme(
-    plot.title = element_text(hjust = 0.5, size=20), 
-    axis.title.x = element_text(colour = "black" ), 
-    axis.text.x = element_text(angle = 0, size = 8, face = "bold"),
+    plot.title = element_text(size=20), 
+    axis.title.x = element_text(colour = "black", size = 13 ), 
+    axis.title.y = element_text(colour = "black", size = 13 ), 
+    
+    axis.text.x = element_text(angle = 0, size = 10, face = "bold"),
+    axis.text.y = element_text(angle = 0, size = 10, face = "bold"),
+    
     axis.line = element_line( linetype = "solid" ),
     panel.grid.major.y = element_line( colour = "grey" ),
     panel.grid.minor.y = element_line( colour = "grey" )
@@ -307,4 +311,4 @@ p4 <-
     breaks = seq( 0, 100, 5 )
   )
 
-ggsave("./img/Plot_Treatment_Combination3.pdf", p4, width = 14, height = 6.5, units = "in")
+ggsave("./img/Plot_Treatment_Combination3.pdf", p4, width = 12, height = 6.5, units = "in")
