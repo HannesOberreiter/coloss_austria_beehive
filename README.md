@@ -16,3 +16,5 @@ Copyright (c) 2019 Hannes Oberreiter
 
 ***Shapefiles 2019 Austria Originally:*** CC BY 4.0, Flooh Perlot (https://creativecommons.org/licenses/by/4.0/)
 
+[![DOI](https://zenodo.org/badge/181077729.svg)](https://zenodo.org/badge/latestdoi/181077729)
+
