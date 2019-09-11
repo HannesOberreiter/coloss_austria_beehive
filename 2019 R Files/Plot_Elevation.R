@@ -38,8 +38,8 @@ p <- ggplot( data = D.PLOT_Q ) +
   geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
   geom_text( aes( x = altitude_group, y = 1.5, label = paste("n = ", n )), color = "black", size = 3 ) +
-  xlab("Altitude [m]") + ylab("Loss rate [%]") + 
-  ggtitle("Loss rate to altitude of main wintering apiary") +
+  xlab("Elevation [m]") + ylab("Loss rate [%]") + 
+  ggtitle("Loss rate to elevation of main wintering apiary") +
   theme_classic() + 
   theme(
     panel.spacing = unit( 1, "lines" ),
