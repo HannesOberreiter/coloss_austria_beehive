@@ -264,6 +264,14 @@ F_MAP_CLUSTER <- function( x ){
   return(x)
 }
 
+#### Extracts a legend from a ggplot ####
+F_GG_LEGEND <- function(a.gplot){
+  tmp <- ggplot_gtable(ggplot_build(a.gplot))
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend <- tmp$grobs[[leg]]
+  return(legend)
+}
+
 #### Bootstrap sample method to calculate mean of full sample and corresonding CI, with not normally distributed data
 # atm. only used in total losses for proliferation rate
 # we use it because the data is not normally distributed and we cannot fit GLM
