@@ -65,39 +65,70 @@ D.FACTORS.PLOT$ff <- factor( D.FACTORS.PLOT$ff,
                              levels = c( "Yes", "No", "0%", "1-30%", "31-50%", "51-100%"))
 
 #### PLOTTING #####
-p1 <- ggplot( data = D.FACTORS.PLOT ) +
+## this code will also create subplot with Yes / No
+# p1 <- ggplot( data = D.FACTORS.PLOT ) +
+#   aes( x = ff, y = middle ) + 
+#   geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
+#   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
+#   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 2.5 ) +
+#   facet_wrap( ~ c, strip.position = "bottom", scales = "free_x", ncol = 3  ) +
+#   xlab("") + ylab("Loss rate [%]") + 
+#   theme_classic() + 
+#   theme(
+#     panel.spacing = unit( 1, "lines" ),
+#     #strip.background = element_blank(),
+#     strip.placement = "outside",
+#     plot.title = element_text(hjust = 0.5), 
+#     axis.title.x = element_text(colour = "black" ), 
+#     axis.text.x = element_text(angle = 0, hjust = 0.5, size = 8, face = "bold"),
+#     axis.line = element_line( linetype = "solid" ),
+#     panel.grid.major.y = element_line( colour = "grey" ),
+#     panel.grid.minor.y = element_line( colour = "grey" )
+#     ) +
+#   scale_x_discrete(
+#   ) +
+#   scale_y_continuous(
+#     expand = c( 0 , 0 ),
+#     breaks = seq( 0, 100, 5 )
+#   )
+
+
+
+# Plot without Yes / No
+p1 <- ggplot( data = D.FACTORS.PLOT[1:4,] ) +
   aes( x = ff, y = middle ) + 
   geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
-  geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 2.5 ) +
-  facet_wrap( ~ c, strip.position = "bottom", scales = "free_x", ncol = 3  ) +
+  geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
   xlab("") + ylab("Loss rate [%]") + 
+  #ggtitle("Loss rate to amount of replaced old brood frames") +
   theme_classic() + 
   theme(
     panel.spacing = unit( 1, "lines" ),
-    #strip.background = element_blank(),
     strip.placement = "outside",
-    plot.title = element_text(hjust = 0.5), 
+    plot.title = element_text(), 
     axis.title.x = element_text(colour = "black" ), 
-    axis.text.x = element_text(angle = 0, hjust = 0.5, size = 8, face = "bold"),
+    axis.text.x = element_text(angle = 0, hjust = 0.5, size = 9, face = "bold"),
+    axis.text.y = element_text(size = 10, face = "bold"),
     axis.line = element_line( linetype = "solid" ),
     panel.grid.major.y = element_line( colour = "grey" ),
     panel.grid.minor.y = element_line( colour = "grey" )
-    ) +
+  ) +
   scale_x_discrete(
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 100, 5 )
+    breaks = seq( 0, 45, 5 )
   )
 
+ggsave("./img/Plot_Factor_Frames.pdf", p1, width = 5, height = 4, units = "in")
 
-gtitle = textGrob( "Loss rate to replaced old brood frames" , gp=gpar(face = "bold" ) )
+#gtitle = textGrob( "Loss rate to replaced old brood frames" , gp=gpar(face = "bold" ) )
 
-lay <- rbind( c( 1 ))
-p <- arrangeGrob(  p1,
-                    top = gtitle, 
-                    layout_matrix = lay)
+#lay <- rbind( c( 1 ))
+#p <- arrangeGrob(  p1,
+#                    top = gtitle, 
+#                    layout_matrix = lay)
 
-ggsave("./img/Plot_Factor_Frames.pdf", p, width = 5, height = 4, units = "in")
+#ggsave("./img/Plot_Factor_Frames.pdf", p, width = 5, height = 4, units = "in")
 
