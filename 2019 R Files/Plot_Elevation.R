@@ -39,7 +39,7 @@ p <- ggplot( data = D.PLOT_Q ) +
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
   geom_text( aes( x = altitude_group, y = 1.5, label = paste("n = ", n )), color = "black", size = 3 ) +
   xlab("Elevation [m]") + ylab("Loss rate [%]") + 
-  ggtitle("Loss rate to elevation of main wintering apiary") +
+  #ggtitle("Loss rate to elevation of main wintering apiary") +
   theme_classic() + 
   theme(
     panel.spacing = unit( 1, "lines" ),
@@ -59,7 +59,7 @@ p <- ggplot( data = D.PLOT_Q ) +
 
 
 # Save File
-ggsave("./img/Plot_altitude.pdf", p, width = 6, height = 3, units = "in")
+ggsave("./img/Plot_Elevation.pdf", p, width = 6, height = 3, units = "in")
 
 
 

@@ -89,11 +89,11 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
     breaks = seq( 0, 25, 5 )
   )
 
-gtitle = textGrob( "Loss rate by operational factors" , gp=gpar(fontsize = 20 , face = "bold" ) )
+#gtitle = textGrob( "Loss rate by operational factors" , gp=gpar(fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1 ) )
 p <- arrangeGrob(  p1,
-              top = gtitle, 
+              #top = gtitle, 
               layout_matrix = lay)
 
 ggsave("./img/Plot_Operational_Losses.pdf", p, width = 11, height = 6, units = "in")

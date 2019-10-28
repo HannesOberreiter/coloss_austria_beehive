@@ -111,12 +111,12 @@ for( i in treatmentListwMix){
   D.PLOT_LIST[[i[1]]] <- p_cache
 }
 
-gtitle = textGrob( "Treatment method histogram by months" , gp=gpar( fontsize = 20 , face = "bold" ) )
+#gtitle = textGrob( "Treatment method histogram by months" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
 lay <- rbind( c( 1, 2, 3, 4 ), c( 5, 6, 7, 8 ), c( 9, 10, 11, 12 ))
 p <- arrangeGrob( D.PLOT_LIST[[1]], D.PLOT_LIST[[2]], D.PLOT_LIST[[3]], D.PLOT_LIST[[4]], D.PLOT_LIST[[5]], D.PLOT_LIST[[6]], 
                    D.PLOT_LIST[[7]], D.PLOT_LIST[[8]], D.PLOT_LIST[[9]], D.PLOT_LIST[[10]], D.PLOT_LIST[[11]], D.PLOT_LIST[[12]],
-                   top = gtitle, 
+                   #top = gtitle, 
                    layout_matrix = lay)
 
 # Save File

@@ -46,14 +46,15 @@ p1 <- ggplot( data = D.FACTORS ) +
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
   xlab("") + ylab("Loss rate [%]") + 
-  ggtitle("Loss rate by operation size") +
+  #ggtitle("Loss rate by operation size") +
   theme_classic() + 
   theme(
     panel.spacing = unit( 1, "lines" ),
     strip.placement = "outside",
-    plot.title = element_text(hjust = 0.5), 
+    plot.title = element_text(), 
     axis.title.x = element_text(colour = "black" ), 
-    axis.text.x = element_text(angle = 0, hjust = 0.5, size = 8, face = "bold"),
+    axis.text.x = element_text(angle = 0, hjust = 0.5, size = 9, face = "bold"),
+    axis.text.y = element_text(size = 10, face = "bold"),
     axis.line = element_line( linetype = "solid" ),
     panel.grid.major.y = element_line( colour = "grey" ),
     panel.grid.minor.y = element_line( colour = "grey" )

@@ -65,7 +65,7 @@ p1 <-
   geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 1.0 ) + 
   geom_text( aes( x = xAxisTemp, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
   xlab("") + ylab("Loss rate [%]") + 
-  ggtitle("Drone brood removal") +
+  #ggtitle("Drone brood removal") +
   theme_classic() + 
   theme(
     plot.title = element_text(), 

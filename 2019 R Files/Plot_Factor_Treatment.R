@@ -94,11 +94,11 @@ p1 <- ggplot( data = D.FACTORS ) +
     limits = c( 0, 30 )
   )
 
-gtitle = textGrob( "Loss rate by treatment method - SPRING (April, May)" , gp=gpar( fontsize = 16 , face = "bold" ) )
+#gtitle = textGrob( "Loss rate by treatment method - SPRING (April, May)" , gp=gpar( fontsize = 16 , face = "bold" ) )
 
 lay <- rbind( c( 1 ) )
 p <- arrangeGrob( p1,
-              top = gtitle, 
+              #top = gtitle, 
               layout_matrix = lay)
 
 ggsave("./img/P_FACTOR_Treatment_Spring.pdf", p, width = 12, height = 3, units = "in")
@@ -171,14 +171,14 @@ p1 <- ggplot( data = D.FACTORS ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 ),
-    limits = c( 0, 30 )
+    limits = c( 0, 31 )
   )
 
-gtitle = textGrob( "Loss rate by treatment method - SUMMER (June - October)" , gp=gpar( fontsize = 16 , face = "bold" ) )
+#gtitle = textGrob( "Loss rate by treatment method - SUMMER (June - October)" , gp=gpar( fontsize = 16 , face = "bold" ) )
 
 lay <- rbind( c( 1 ) )
 p <- arrangeGrob( p1,
-                   top = gtitle, 
+                   #top = gtitle, 
                    layout_matrix = lay)
 
 ggsave("./img/P_FACTOR_Treatment_Summer.pdf", p, width = 12, height = 8, units = "in")
@@ -260,11 +260,11 @@ p1 <- ggplot( data = D.FACTORS ) +
     limits = c( 0, 30 )
   )
 
-gtitle = textGrob( "Loss rate by treatment method - WINTER (November - January)" , gp=gpar( fontsize = 16 , face = "bold" ) )
+#gtitle = textGrob( "Loss rate by treatment method - WINTER (November - January)" , gp=gpar( fontsize = 16 , face = "bold" ) )
 
 lay <- rbind( c( 1 ) )
 p <- arrangeGrob( p1,
-                   top = gtitle, 
+                   #top = gtitle, 
                    layout_matrix = lay)
 
 ggsave("./img/P_FACTOR_Treatment_Winter.pdf", p, width = 12, height = 3, units = "in")
