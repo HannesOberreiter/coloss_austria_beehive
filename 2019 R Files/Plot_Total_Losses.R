@@ -130,7 +130,7 @@ p2 <- ggplot() +
   scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white", limits = c(9, 20), breaks = c(10, 12, 14, 16, 18, 20) ) +
   xlab( "" ) + ylab( "" ) + labs( fill = "Loss rate [%]") +
   ggtitle("(B) States - Loss rate") +
-  theme_classic() +
+  theme_void() +
   theme(
     legend.position="bottom", 
     legend.box = "horizontal",
@@ -147,7 +147,7 @@ p3 <- ggplot() +
   scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white", limits = c(0, 70), breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100) ) +
   xlab( "" ) + ylab( "" ) + labs( fill = "Loss rate [%]") +
   ggtitle("(C) Districts - Loss rate (white = n < 6)") +
-  theme_classic() +
+  theme_void() +
   theme(
     legend.position="bottom", 
     legend.box = "horizontal",
