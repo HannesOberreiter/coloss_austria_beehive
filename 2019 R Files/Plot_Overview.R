@@ -71,7 +71,7 @@ p1 <- ggplot( data = D.PLOT ) +
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 950, 50 ),
+    breaks = seq( 0, 950, 100 ),
     limits = c( 0, max(D.PLOT$n)+100 )
   )
 
@@ -92,7 +92,7 @@ p2 <- ggplot( data = D.PLOT ) +
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 10000, 500 ),
+    breaks = seq( 0, 10000, 1000 ),
     limits = c( 0, max(D.PLOT$n_h)+900 )
   )
 
@@ -114,7 +114,7 @@ p3 <- ggplot( data = D.PLOT2 ) +
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 900, 50 ),
+    breaks = seq( 0, 900, 100 ),
     limits = c( 0, max(D.PLOT2$n)+150 )
   )
 
@@ -126,7 +126,7 @@ p4 <- ggplot() +
   xlab( "" ) + ylab( "" ) + labs( colour = "Number of beekeepers (n)", size = "Number of beekeepers (n)") +
   scale_size_continuous(range = c(1, 3.5), breaks = c(1, 5, 10, 15)) + 
   ggtitle("(D) Rough location of main winter apiary") +
-  theme_classic() +
+  theme_void() +
   theme(
     legend.position="bottom", 
     legend.box = "horizontal",

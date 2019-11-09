@@ -61,8 +61,9 @@ xAxisTemp <- c("Only in spring", "Only in summer", "Spring and summer", "No dron
 
 p1 <- 
   ggplot( CACHE.COMB.PLOT, aes( x = xAxisTemp, y = middle )) +
-  geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
-  geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 1.0 ) + 
+  geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
+  #geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
+  #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 1.0 ) + 
   geom_text( aes( x = xAxisTemp, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
   xlab("") + ylab("Loss rate [%]") + 
   #ggtitle("Drone brood removal") +
@@ -79,6 +80,7 @@ p1 <-
     limits = xAxisTemp
   ) +
   scale_y_continuous(
+    limits = c(0, NA),
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
   )

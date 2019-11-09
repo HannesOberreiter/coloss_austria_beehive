@@ -35,10 +35,11 @@ D.PLOT_Q <- cbind( D.PLOT_Q, CACHE.BIND )
 
 p <- ggplot( data = D.PLOT_Q ) +
   aes( x = altitude_group, y = middle ) + 
-  geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
-  geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
-  geom_text( aes( x = altitude_group, y = 1.5, label = paste("n = ", n )), color = "black", size = 3 ) +
-  xlab("Elevation [m]") + ylab("Loss rate [%]") + 
+  geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
+  #geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
+  #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
+  geom_text( aes( x = altitude_group, y = 0.5, label = paste("n = ", n )), color = "black", size = 2.5 ) +
+  xlab("Elevation [m above sea level]") + ylab("Loss rate [%]") + 
   #ggtitle("Loss rate to elevation of main wintering apiary") +
   theme_classic() + 
   theme(
@@ -53,6 +54,7 @@ p <- ggplot( data = D.PLOT_Q ) +
   scale_x_discrete(
   ) +
   scale_y_continuous(
+    limits = c(0, NA),
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
   )

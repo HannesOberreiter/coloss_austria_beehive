@@ -137,8 +137,9 @@ color_rule <- ifelse(D.STATES$alpha == 0, NA, "gray")
 
 p1 <- 
   ggplot( D.STATES, aes( x = ff, y = middle )) +
-  geom_bar( aes(alpha = alpha), colour = "black", fill = color_rule, show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
-  geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 1.0 )+ 
+  geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
+  #geom_bar( aes(alpha = alpha), colour = "black", fill = color_rule, show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
+  #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 1.0 )+ 
   xlab("") + ylab("Queen related loss rate [%]") + 
   ggtitle("(A) Overall losses due queen problems - Austria & states") +
   theme_classic() + 
@@ -155,6 +156,7 @@ p1 <-
     limits = c( levels( D.STATES$ff ))
   ) +
   scale_y_continuous(
+    limit = c(0, 8.1),
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 1 )
   )
@@ -178,15 +180,16 @@ p3 <- ggplot( data = D.PLOT_Q1 ) +
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 1000, 50 ),
+    breaks = seq( 0, 1000, 100 ),
     limits = c( 0, max(D.PLOT_Q1$n)+100 )
   )
 
 p4 <- ggplot( data = D.PLOT_Q1 ) +
   aes( x = young_rate_group, y = middle ) + 
-  geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
-  geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
-  geom_text( aes( x = young_rate_group, y = 1.5, label = paste("n = ", n )), color = "black", size = 3 ) +
+  geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
+  #geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
+  #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
+  geom_text( aes( x = young_rate_group, y = 0.5, label = paste("n = ", n )), color = "black", size = 2.5 ) +
   xlab("Amount of young queens [%]") + ylab("Loss rate [%] (colonies died out during winter)") + 
   ggtitle("(C) Loss rate to relative amount of young queens w/o queen related losses") +
   theme_classic() + 
@@ -203,6 +206,7 @@ p4 <- ggplot( data = D.PLOT_Q1 ) +
   scale_x_discrete(
   ) +
   scale_y_continuous(
+    limits = c(0, NA),
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
   )
@@ -210,9 +214,10 @@ p4 <- ggplot( data = D.PLOT_Q1 ) +
 # Queen Exchange rate to queen related losses
 p5 <- ggplot( data = D.PLOT_Q2 ) +
   aes( x = young_rate_group, y = middle ) + 
-  geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
-  geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
-  geom_text( aes( x = young_rate_group, y = 0.5, label = paste("n = ", n )), color = "black", size = 3 ) +
+  geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
+  #geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
+  #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
+  geom_text( aes( x = young_rate_group, y = 0.2, label = paste("n = ", n )), color = "black", size = 2.5 ) +
   xlab("Amount of  young queens [%]") + ylab("Loss rate [%] (due to queen problems)") + 
   ggtitle("(D) Queen related loss rate to relative amount of young queens") +
   theme_classic() + 
@@ -229,6 +234,7 @@ p5 <- ggplot( data = D.PLOT_Q2 ) +
   scale_x_discrete(
   ) +
   scale_y_continuous(
+    limits = c(0, 8.1),
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 1 )
   )
@@ -266,16 +272,17 @@ p2 <-
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 10000, 50 ),
+    breaks = seq( 0, 10000, 100 ),
     limits = c( 0, max(C.QP$n)+100 )
   )
 
 # Subjective queen problems to loss rate
 p6 <- ggplot( data = C.QP ) +
   aes( x = ff, y = middle ) + 
-  geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
-  geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
-  geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), color = "black", size = 3 ) +
+  geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
+  #geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
+  #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
+  geom_text( aes( x = ff, y = 0.2, label = paste("n = ", n )), color = "black", size = 2.5 ) +
   xlab("") + ylab("Loss rate [%] (due to queen problems)") + 
   ggtitle("(C) Subjective queen problems to queen related loss rate") +
   theme_classic() + 
@@ -292,6 +299,7 @@ p6 <- ggplot( data = C.QP ) +
   scale_x_discrete(
   ) +
   scale_y_continuous(
+    limit = c(0, 8.1),
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 1 )
   )
@@ -299,9 +307,10 @@ p6 <- ggplot( data = C.QP ) +
 # Subjective queen problems to loss rate without queen problems
 p7 <- ggplot( data = C.QP2 ) +
   aes( x = ff, y = middle ) + 
-  geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
-  geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
-  geom_text( aes( x = ff, y = 1.5, label = paste("n = ", n )), color = "black", size = 3 ) +
+  geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
+  #geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
+  #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
+  geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), color = "black", size = 2.5 ) +
   xlab("") + ylab("Loss rate [%] (colonies died out during winter)") + 
   ggtitle("(B) Subjective queen problems to loss rate w/o queen related losses") +
   theme_classic() + 
@@ -318,6 +327,7 @@ p7 <- ggplot( data = C.QP2 ) +
   scale_x_discrete(
   ) +
   scale_y_continuous(
+    limit = c(0, 21),
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
   )

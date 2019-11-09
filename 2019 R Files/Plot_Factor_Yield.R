@@ -110,7 +110,7 @@ for(i in oList){
     ggtitle(paste(i[2])) +
     theme_void() +
     theme(
-      legend.position = legen.pos,
+      legend.position = legend.pos,
       legend.box = "vertical",
       plot.title = element_text(size = 10, hjust = 0.5), 
       axis.text = element_blank(), 
@@ -180,9 +180,10 @@ legend2 <- F_GG_LEGEND(D.PLOT_LIST.Legend[[2]])
 #### PLOTTING #####
 p1 <- ggplot( data = D.FACTORS.PLOT ) +
   aes( x = ff, y = middle ) + 
-  geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
-  geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
-  geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
+  geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
+  #geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
+  #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
+  geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 2.5 ) +
   geom_text(data =  D.FACTORS.PLOT[(D.FACTORS.PLOT$chistar == 1 & D.FACTORS.PLOT$ff == 'Yes'),], aes( x = ff, y = 17, label = "*"), angle = 0, vjust = 0, hjust = -5, color = "black", size = 8 ) +
   facet_wrap( ~ c, strip.position = "top", scales = "free_x", ncol = 3  ) +
   xlab("") + ylab("Loss rate [%]") + 
@@ -202,6 +203,7 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
   scale_x_discrete(
   ) +
   scale_y_continuous(
+    limits = c(0, NA),
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
   )

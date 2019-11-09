@@ -113,8 +113,10 @@ D.COST.PLOT <- D.COST.PLOT %>% group_by(a) %>%
 #### PLOTTING #####
 p1 <- ggplot( data = D.FACTORS.PLOT ) +
   aes( x = ff, y = middle ) + 
-  geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
-  geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
+  #geom_boxplot(aes(lower = lowerlim, middle = middle, upper = upperlim, ymin = 0, ymax = 0), stat = "identity", coef = 0)+
+  geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
+  #geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
+  #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
   facet_wrap( ~ c, strip.position = "top", scales = "free_x", ncol = 3  ) +
   xlab("") + ylab("Loss rate [%]") + 
@@ -135,6 +137,7 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
   scale_x_discrete(
   ) +
   scale_y_continuous(
+    limits = c(0, NA),
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
   )
@@ -147,7 +150,7 @@ p2 <- ggplot( data = D.PLOT_T ) +
   ggtitle("(C) Amount of different treatment methods used") +
   theme_classic() + 
   theme(
-    plot.title = element_text(hjust = 0), 
+    plot.title = element_text(hjust = 0, size = 12), 
     axis.title.x = element_text(colour = "black", margin = margin(b = 22)), 
     axis.text.x = element_text(size = 9, face = "bold"),
     axis.text.y = element_text(angle = 0, size = 10),
@@ -157,7 +160,7 @@ p2 <- ggplot( data = D.PLOT_T ) +
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 1000, 50 ),
+    breaks = seq( 0, 1000, 100 ),
     limits = c( 0, max(D.PLOT_T$n)+100 )
   )
 
@@ -170,7 +173,7 @@ p3 <- ggplot() +
   theme_classic() + 
   scale_fill_identity() + # as we use our own colors
   theme(
-    plot.title = element_text(hjust = 0), 
+    plot.title = element_text(hjust = 0, size = 12), 
     axis.title.x = element_text(colour = "black" ), 
     axis.text.x = element_text(angle = -55, hjust = 0, size = 9, face = "bold"),
     axis.text.y = element_text(angle = 0, size = 10),

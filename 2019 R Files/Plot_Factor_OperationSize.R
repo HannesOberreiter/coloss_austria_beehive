@@ -42,9 +42,10 @@ D.FACTORS$ff <- factor( D.FACTORS$ff,
 #### PLOTTING #####
 p1 <- ggplot( data = D.FACTORS ) +
   aes( x = ff, y = middle ) + 
-  geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
-  geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
-  geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
+  geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
+  #geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
+  #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
+  geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 2.5 ) +
   xlab("") + ylab("Loss rate [%]") + 
   #ggtitle("Loss rate by operation size") +
   theme_classic() + 
@@ -62,6 +63,7 @@ p1 <- ggplot( data = D.FACTORS ) +
   scale_x_discrete(
   ) +
   scale_y_continuous(
+    limit = c(0, NA),
     expand = c( 0 , 0 ),
     breaks = seq( 0, 45, 5 )
   )

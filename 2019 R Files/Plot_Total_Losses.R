@@ -101,8 +101,9 @@ color_rule <- ifelse(D.STATES$alpha == 0, NA, "gray")
 
 p1 <- 
   ggplot( D.STATES, aes( x = ff, y = middle )) +
-  geom_bar( aes(alpha = alpha), colour = "black", fill = color_rule, show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
-  geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), alpha = 1, size = 1.0 )+ 
+  geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
+  #geom_bar( aes(alpha = alpha), colour = "black", fill = color_rule, show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
+  #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), alpha = 1, size = 1.0 )+ 
   xlab("") + ylab("Loss rate [%]") + 
   ggtitle("(A) Overall loss rate - Austria & States") +
   theme_classic() + 

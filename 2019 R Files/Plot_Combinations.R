@@ -279,8 +279,9 @@ ggsave("./img/Plot_Treatment_Combination2.pdf", p1, width = 14, height = 8.5, un
 
 p4 <- 
   ggplot( CACHE.COMB.PLOT, aes( x = Combination, y = middle, shape = `Combination (ny/nx)` )) +
-  geom_bar( alpha = 0, fill = "white", show.legend = FALSE, color = "gray20", stat = "identity", linetype = "longdash" ) + 
-  geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), color = "gray20", size = 1.0, show.legend = FALSE ) + 
+  geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
+  #geom_bar( alpha = 0, fill = "white", show.legend = FALSE, color = "gray20", stat = "identity", linetype = "longdash" ) + 
+  #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), color = "gray20", size = 1.0, show.legend = FALSE ) + 
   # background point
   geom_point( shape = 21, size = 7, fill = "black", color = "black", show.legend = FALSE) + 
   # point with symbol
@@ -288,17 +289,17 @@ p4 <-
   # use defined shapes and color with better visibility
   scale_shape_manual( values = shapeLetters[1:20] ) +
   
-  geom_text( aes( x = Combination, y = 2, label = paste("n = ", n )), angle = 0, color = "black", size = 3 ) +
-  ggtitle("Combination of treatment methods loss rates") +
+  geom_text( aes( x = Combination, y = 0.5, label = paste("n = ", n )), angle = 0, color = "black", size = 3 ) +
+  #ggtitle("Combination of treatment methods loss rates") +
   xlab("") + ylab("Loss rate [%]") +
   theme_classic() + 
   theme(
     plot.title = element_text(size=20), 
-    axis.title.x = element_text(colour = "black", size = 13 ), 
-    axis.title.y = element_text(colour = "black", size = 13 ), 
+    axis.title.x = element_text(colour = "black", size = 15 ), 
+    axis.title.y = element_text(colour = "black", size = 15 ), 
     
-    axis.text.x = element_text(angle = 0, size = 10, face = "bold"),
-    axis.text.y = element_text(angle = 0, size = 10, face = "bold"),
+    axis.text.x = element_text(angle = 0, size = 13, face = "bold"),
+    axis.text.y = element_text(angle = 0, size = 13, face = "bold"),
     
     axis.line = element_line( linetype = "solid" ),
     panel.grid.major.y = element_line( colour = "grey" ),
@@ -307,8 +308,10 @@ p4 <-
   scale_x_discrete(
   ) +
   scale_y_continuous(
+    limits = c(0, NA),
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
   )
+
 
 ggsave("./img/Plot_Treatment_Combination3.pdf", p4, width = 12, height = 6.5, units = "in")

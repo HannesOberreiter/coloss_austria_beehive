@@ -68,9 +68,11 @@ D.FACTORS.SPRING <- D.FACTORS
 
 p1 <- ggplot( data = D.FACTORS ) +
   aes( x = ff, y = middle ) + 
-  geom_bar( colour = "black", alpha = 0.3, fill = "cornflowerblue", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
-  geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
-  geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
+  geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "cornflowerblue") +
+  
+  #geom_bar( colour = "black", alpha = 0.3, fill = "cornflowerblue", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
+  #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
+  geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 2.5 ) +
   geom_text(data = D.FACTORS[(D.FACTORS$chistar == 1 & D.FACTORS$ff == 'Yes'),], aes( x = ff, y = 20, label = "*"), angle = 0, vjust = 0, hjust = -5, color = "black", size = 8 ) +
   facet_wrap( ~ letter, strip.position = "top", scales = "free_x", ncol = 5  ) +
   xlab("") + ylab("Loss rate [%]") + 
@@ -148,9 +150,10 @@ D.FACTORS.SUMMER <- D.FACTORS
 
 p1 <- ggplot( data = D.FACTORS ) +
   aes( x = ff, y = middle ) + 
-  geom_bar( colour = "black", alpha = 0.3, fill = "forestgreen", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
-  geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
-  geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
+  geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "forestgreen") +
+  #geom_bar( colour = "black", alpha = 0.3, fill = "forestgreen", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
+  #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
+  geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 2.5 ) +
   geom_text(data = D.FACTORS[(D.FACTORS$chistar == 1 & D.FACTORS$ff == 'Yes'),], aes( x = ff, y = 20, label = "*"), angle = 0, vjust = 0, hjust = -5, color = "black", size = 8 ) +
   facet_wrap( ~ letter, strip.position = "top", scales = "free_x", ncol = 4  ) +
   xlab("") + ylab("Loss rate [%]") + 
@@ -231,9 +234,11 @@ D.FACTORS[(D.FACTORS$chistar == 1 & D.FACTORS$ff == 'Yes'),]
 
 p1 <- ggplot( data = D.FACTORS ) +
   aes( x = ff, y = middle ) + 
-  geom_bar( colour = "black", alpha = 0.3, fill = "grey13", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
-  geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
-  geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
+  geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "grey13", alpha = 0.3) +
+  
+  #geom_bar( colour = "black", alpha = 0.3, fill = "grey13", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
+  #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
+  geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 2.5 ) +
   
   ## commented out because we dont have a significant row TODO change with If?
   

@@ -62,8 +62,9 @@ D.FACTORS.PLOT$ff <- factor( D.FACTORS.PLOT$ff,
 #### PLOTTING #####
 p1 <- ggplot( data = D.FACTORS.PLOT ) +
   aes( x = ff, y = middle ) + 
-  geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
-  geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
+  geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
+  #geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
+  #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 2.5 ) +
   geom_text(data =  D.FACTORS.PLOT[(D.FACTORS.PLOT$chistar == 1 & D.FACTORS.PLOT$ff == 'Yes'),], aes( x = ff, y = 20, label = "*"), angle = 0, vjust = 0, hjust = -3, color = "black", size = 8 ) +
   facet_wrap( ~ c, strip.position = "top", scales = "free_x", ncol = 5, labeller = label_wrap_gen(width=30)  ) +
@@ -85,6 +86,7 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
   scale_x_discrete(
   ) +
   scale_y_continuous(
+    limits = c(0, NA),
     expand = c( 0 , 0 ),
     breaks = seq( 0, 25, 5 )
   )
