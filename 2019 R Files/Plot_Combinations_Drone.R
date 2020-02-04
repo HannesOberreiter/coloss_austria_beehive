@@ -11,6 +11,7 @@
 SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
 setwd( SCRIPT.DIR )
 
+
 # Import Header
 source( "Partials_Header.r" )
 source( "Partials_Header_Treatment.r" )
@@ -21,6 +22,10 @@ source( "Partials_Functions.r" )
 #### START CODE #####
 
 #### DRONE BROOD REMOVAL #####
+
+# Remove people which did not answer or did no treatment
+D.FULL <- D.FULL[(D.FULL$T_amount_total > 0 | (D.FULL$varroa_treated == "Nein" & !is.na(D.FULL$varroa_treated))), ]
+
 
 # List of Factors we want in our Plot
 oList = list(
@@ -64,6 +69,7 @@ p1 <-
   geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
   #geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 1.0 ) + 
+  geom_point(size = 3) + 
   geom_text( aes( x = xAxisTemp, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
   xlab("") + ylab("Loss rate [%]") + 
   #ggtitle("Drone brood removal") +
