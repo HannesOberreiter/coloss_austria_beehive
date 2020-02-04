@@ -115,6 +115,12 @@ xAxisMaxLength <- nrow(CACHE.COMB)
 LETTERS2<-c(LETTERS[1:26], paste0("A",LETTERS[1:26]))
 xAxisTemp <- LETTERS2[1:xAxisMaxLength]
 CACHE.COMB <- cbind(CACHE.COMB, xAxisTemp)
+names(CACHE.COMB)[29] <- "xAxisTempOld"
+
+# Order the Dataframe by n
+ordered_DF <- CACHE.COMB[order(CACHE.COMB$n, decreasing = TRUE),]
+CACHE.COMB <- ordered_DF
+CACHE.COMB <- cbind(CACHE.COMB, xAxisTemp)
 
 # Save to File, before we need to convert it into a matrix. Dont know why, seems some problems with the data format.
 CACHE.COMB.MATRIX <- as.matrix(CACHE.COMB)
@@ -277,17 +283,24 @@ ggsave("./img/Plot_Treatment_Combination1.pdf", p, width = 14, height = 8, units
 ggsave("./img/Plot_Treatment_Combination2.pdf", p1, width = 14, height = 8.5, units = "in")
 
 
+threecolors <- c("white", "gray", "black")
+threetextcolors <- c("black", "black", "white")
+CACHE.COMB.PLOT$circle_color <- threecolors[CACHE.COMB.PLOT$t]
+CACHE.COMB.PLOT$text_color <- threetextcolors[CACHE.COMB.PLOT$t]
+CACHE.COMB.PLOT$t <- as.factor(CACHE.COMB.PLOT$t)
+
 p4 <- 
   ggplot( CACHE.COMB.PLOT, aes( x = Combination, y = middle, shape = `Combination (ny/nx)` )) +
   geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
   #geom_bar( alpha = 0, fill = "white", show.legend = FALSE, color = "gray20", stat = "identity", linetype = "longdash" ) + 
   #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), color = "gray20", size = 1.0, show.legend = FALSE ) + 
   # background point
-  geom_point( shape = 21, size = 7, fill = "black", color = "black", show.legend = FALSE) + 
-  # point with symbol
-  geom_point( size = 3, stroke = 1, show.legend = FALSE, color = "white") + 
+  geom_point( aes(fill = t), shape = 21, size = 7, color = "black", show.legend = FALSE) + 
+  geom_point( aes(colour = t), size = 3, stroke = 1, show.legend = FALSE) + 
   # use defined shapes and color with better visibility
   scale_shape_manual( values = shapeLetters[1:20] ) +
+  scale_fill_manual(values=threecolors) +
+  scale_colour_manual(values = threetextcolors) +
   
   geom_text( aes( x = Combination, y = 0.5, label = paste("n = ", n )), angle = 0, color = "black", size = 3 ) +
   #ggtitle("Combination of treatment methods loss rates") +
@@ -312,6 +325,5 @@ p4 <-
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
   )
-
 
 ggsave("./img/Plot_Treatment_Combination3.pdf", p4, width = 12, height = 6.5, units = "in")
