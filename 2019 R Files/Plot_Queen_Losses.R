@@ -140,6 +140,7 @@ p1 <-
   geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
   #geom_bar( aes(alpha = alpha), colour = "black", fill = color_rule, show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 1.0 )+ 
+  geom_point(size = 3) + 
   xlab("") + ylab("Queen related loss rate [%]") + 
   ggtitle("(A) Overall losses due queen problems - Austria & states") +
   theme_classic() + 
@@ -190,6 +191,7 @@ p4 <- ggplot( data = D.PLOT_Q1 ) +
   #geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
   geom_text( aes( x = young_rate_group, y = 0.5, label = paste("n = ", n )), color = "black", size = 2.5 ) +
+  geom_point(size = 3) + 
   xlab("Amount of young queens [%]") + ylab("Loss rate [%] (colonies died out during winter)") + 
   ggtitle("(C) Loss rate to relative amount of young queens w/o queen related losses") +
   theme_classic() + 
@@ -217,6 +219,7 @@ p5 <- ggplot( data = D.PLOT_Q2 ) +
   geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
   #geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
+  geom_point(size = 3) + 
   geom_text( aes( x = young_rate_group, y = 0.2, label = paste("n = ", n )), color = "black", size = 2.5 ) +
   xlab("Amount of  young queens [%]") + ylab("Loss rate [%] (due to queen problems)") + 
   ggtitle("(D) Queen related loss rate to relative amount of young queens") +
@@ -282,6 +285,7 @@ p6 <- ggplot( data = C.QP ) +
   geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
   #geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
+  geom_point(size = 3) + 
   geom_text( aes( x = ff, y = 0.2, label = paste("n = ", n )), color = "black", size = 2.5 ) +
   xlab("") + ylab("Loss rate [%] (due to queen problems)") + 
   ggtitle("(C) Subjective queen problems to queen related loss rate") +
@@ -309,7 +313,7 @@ p7 <- ggplot( data = C.QP2 ) +
   aes( x = ff, y = middle ) + 
   geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
   #geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
-  #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
+  geom_point(size = 3) + 
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), color = "black", size = 2.5 ) +
   xlab("") + ylab("Loss rate [%] (colonies died out during winter)") + 
   ggtitle("(B) Subjective queen problems to loss rate w/o queen related losses") +

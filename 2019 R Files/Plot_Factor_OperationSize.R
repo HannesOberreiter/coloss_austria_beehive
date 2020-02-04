@@ -43,6 +43,7 @@ D.FACTORS$ff <- factor( D.FACTORS$ff,
 p1 <- ggplot( data = D.FACTORS ) +
   aes( x = ff, y = middle ) + 
   geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
+  geom_point(size = 3) + 
   #geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 2.5 ) +

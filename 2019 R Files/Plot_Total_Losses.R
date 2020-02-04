@@ -104,6 +104,7 @@ p1 <-
   geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
   #geom_bar( aes(alpha = alpha), colour = "black", fill = color_rule, show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), alpha = 1, size = 1.0 )+ 
+  geom_point(size = 3) + 
   xlab("") + ylab("Loss rate [%]") + 
   ggtitle("(A) Overall loss rate - Austria & States") +
   theme_classic() + 

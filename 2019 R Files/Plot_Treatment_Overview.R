@@ -86,7 +86,10 @@ D.PLOT_T$T_amount <- as.factor( D.PLOT_T$T_amount )
 # Get Columns which are starting with List value
 x <- grepl("(T_vcount_)", colnames(D.FULL), fixed = FALSE, perl = TRUE)
 # sum the col values
+
 VC_count <- colSums(D.FULL[  , x ], na.rm = TRUE)
+VC_percent <- VC_count / nrow(D.FULL[(D.FULL$varroa_checked == "Ja" & !is.na(D.FULL$varroa_checked)),]) * 100
+VC_percent <- round(VC_percent, 1)
 VC_text <- c("Apr. 18", "May", "June", "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec.", "Jan.", "Feb.", "Mar.", "Apr. 19")
 VC_color <- c("cornflowerblue", "cornflowerblue", "forestgreen", "forestgreen", "forestgreen", "forestgreen", "forestgreen", "grey13", "grey13", "grey13", "cornflowerblue", "cornflowerblue", "cornflowerblue")
 
@@ -117,6 +120,7 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
   geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
   #geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
   #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
+  geom_point(size = 3) + 
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
   facet_wrap( ~ c, strip.position = "top", scales = "free_x", ncol = 3  ) +
   xlab("") + ylab("Loss rate [%]") + 
@@ -167,6 +171,7 @@ p2 <- ggplot( data = D.PLOT_T ) +
 
 p3 <- ggplot() +
   aes( x = VC_text, y = VC_count, fill = VC_color) + 
+  geom_text( aes( label = paste(VC_percent, "%", sep = "" )), angle = 60, vjust = 0, hjust = -0.1, color = "black", size = 3 ) +
   geom_bar( colour = "black", alpha = 1, show.legend = FALSE, stat = "identity", linetype = "solid") + 
   xlab("Months 2018 - 2019") + ylab("Number of beekeepers (n)") + 
   ggtitle("(D) Month of monitoring varroa infestation level") +
@@ -184,9 +189,9 @@ p3 <- ggplot() +
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
+    limits = c(0, max(VC_count + 200)),
     breaks = seq( 0, 1000, 100 )
   )
-
 
 #gtitle = textGrob( "Treatment survey data overview" , gp=gpar( fontsize = 20 , face = "bold" ) )
 
