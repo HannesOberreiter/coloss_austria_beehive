@@ -67,15 +67,19 @@ D.PLOT_LIST = list()
 TitleLettersTemp <- LETTERS[1:27]
 count <- 0
 
+# Generate Vector with total Frequencies for Ordering inside Loop
+sum_cat <- D.PLOT.HIST %>% group_by(ff) %>% summarize(y = sum(y))
+sum_cat <- sum_cat[order(sum_cat$y, decreasing = TRUE),]
+
 # Plotting via loop, using now treatmentList as this has combinded synthetics
-for( i in treatmentListwMix){
+for( i in sum_cat$ff){
   
   ylab.text <- ifelse((count %in% c(0, 4, 8)), "Number of beekeepers (n)", "")
   count <- count + 1
   
   # Title of plot
-  title <- paste("(", TitleLettersTemp[count], ") - ", i[3], sep = "")
-  loopPlot <- D.PLOT.HIST[D.PLOT.HIST$ff == i[3], ]
+  title <- paste("(", TitleLettersTemp[count], ") - ", i, sep = "")
+  loopPlot <- D.PLOT.HIST[D.PLOT.HIST$ff == i, ]
   loopPlot$t <- title
   # our plot
   p_cache <- ggplot(
@@ -105,10 +109,10 @@ for( i in treatmentListwMix){
       # this prevents decimal points happening
       labels = scales::number_format(accuracy = 1),
       #breaks = seq( 0, 1000, 100 )
-      limits = c( 0, max(D.PLOT.HIST$y[D.PLOT.HIST$ff == i[3]])+10 )
+      limits = c( 0, max(D.PLOT.HIST$y[D.PLOT.HIST$ff == i])+15 )
     )
   # save plot into list
-  D.PLOT_LIST[[i[1]]] <- p_cache
+  D.PLOT_LIST[[count]] <- p_cache
 }
 
 #gtitle = textGrob( "Treatment method histogram by months" , gp=gpar( fontsize = 20 , face = "bold" ) )
