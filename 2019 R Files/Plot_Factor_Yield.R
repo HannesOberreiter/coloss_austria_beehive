@@ -30,6 +30,15 @@ oList = list(
   c("melezitose", "(F) Melezitose")
 )
 
+mapList = list(
+  c("brassica_napus", "(G) Rapeseed"),
+  c("zea_mays", "(H) Maize"),
+  c("helianthus_annuus", "(I) Sunflower"),
+  c("late_catch_crop", "(J) Late catch crop"),
+  c("honeydew", "(K) Honeydew"),
+  c("melezitose", "(L) Melezitose")
+)
+
 # Create dummy Dataframe, to insert rows later
 D.FACTORS <- 
   setNames( 
@@ -78,7 +87,7 @@ D.CACHE <- list()
 # simple counter for legend arrangement
 count <- 0
 
-for(i in oList){
+for(i in mapList){
   
   # simple counter for legend arrangement
   count <- count + 1
