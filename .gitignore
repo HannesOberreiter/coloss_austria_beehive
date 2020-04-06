@@ -45,9 +45,8 @@ vignettes/*.pdf
 *.pdf
 
 # 2020 Output Folder
-/2020 R Files/2020 R Files/anova/
-/2020 R Files//Daten/
-/2020 R Files/laender_95_geo
-/2020 R Files//histo/
-/2020 R Files//boostrap/
-/2020 R Files/bezirke_95_geo
+/2020_R_Files/anova
+/2020_R_Files/Daten
+/2020_R_Files/histo
+/2020_R_Files/boostrap
+/2020_R_Files/VGD_modf
