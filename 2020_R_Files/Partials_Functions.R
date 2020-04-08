@@ -346,5 +346,31 @@ F_SINGLE_PLOT <- function(df){
   return(p)
 }
 
+# Histo Blar Plots
+F_HISTO_PLOT <- function(df, xtext, ytext, ttext){
+  p <- ggplot( data = df ) +
+    aes( x = val, y = n) + 
+    geom_bar( colour = "black", alpha = 1, fill = "black", show.legend = FALSE, stat = "identity", linetype = "solid") + 
+    geom_text( aes( label = paste(np, "%", sep = "" )), angle = 55, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
+    xlab(xtext) + ylab(ytext) + 
+    ggtitle(ttext) +
+    theme_classic() + 
+    theme(
+      plot.title = element_text(hjust = 0), 
+      axis.title.x = element_text(colour = "black" ), 
+      axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
+      axis.line = element_line( linetype = "solid" )
+    ) +
+    scale_x_discrete(
+    ) +
+    scale_y_continuous(
+      expand = c( 0 , 0 ),
+      breaks = seq( 0, 950, 100 ),
+      limits = c( 0, max(df$n)+100 )
+    )
+  
+  return(p)
+}
+
 
 
