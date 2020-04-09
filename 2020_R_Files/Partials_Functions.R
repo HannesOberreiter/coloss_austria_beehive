@@ -316,10 +316,10 @@ F_BOOTSTRAP <- function(df, fact, percent = 100){
 
 # Simple function to generate a single plot
 # we use this to make easier changes on all plots if necessary
-F_SINGLE_PLOT <- function(df){
+F_SINGLE_PLOT <- function(df, barfill="white", xangle = 0, xhjust = 0.5){
   p <- ggplot(data = df) +
     aes( x = ff, y = middle) +
-    geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
+    geom_crossbar(aes( ymin = lowerlim, ymax = upperlim, fill = I(barfill) )) +
     geom_point(size = 3) + 
     geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 2.5 ) +
     xlab("") + ylab("Verlustrate [%]") + 
@@ -329,7 +329,7 @@ F_SINGLE_PLOT <- function(df){
       strip.placement = "outside",
       plot.title = element_text(), 
       axis.title.x = element_text(colour = "black" ), 
-      axis.text.x = element_text(angle = 0, hjust = 0.5, size = 9, face = "bold"),
+      axis.text.x = element_text(angle = xangle, hjust = xhjust, size = 9, face = "bold"),
       axis.text.y = element_text(size = 10, face = "bold"),
       axis.line = element_line( linetype = "solid" ),
       panel.grid.major.y = element_line( colour = "grey" ),
