@@ -5,7 +5,7 @@
 ##############################
 ##############################
 
-####### Compare anonyme vs not-anonyme (= without given contact adress) ###########
+####### Operation Size of Participants ###########
 
 # Set Working directory (uses API of RStudio)
 SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
@@ -20,26 +20,27 @@ source( "Partials_Functions.r" )
 #### START CODE #####
 D.FULL <- D.RAW
 
-# Create dummy Dataframe, to insert rows later
-D.FACTORS <- 
-  setNames( 
-    data.frame( matrix( ncol = 12, nrow = 0)), 
-    c( "ff", "c", "n", "hives_winter", "lost_a", "lost_b", "lost_c", "hives_lost_rate", "lowerlim", "middle", "upperlim", "chi")
-    )
 
-CACHE.M     <- F_EXTRACT_N( D.FULL, "contact", "Anonymität" )
-CACHE.BIND  <- F_GLM_FACTOR( D.FULL, "contact", D.FULL$contact, TRUE )
-CACHE.BIND  <- cbind( CACHE.M, CACHE.BIND )
-D.FACTORS   <- rbind( D.FACTORS, CACHE.BIND )
+K.SEQ <- c( seq( 0, 150, 10 ), Inf )
+K.GROUPS <- c( "1-10", "11-20", "21-30", "31-40", "41-50", "51-60", "61-70", "71-80", "81-90", "91-100", "101-110", "111-120", "121-130", "131-140", "141-150", ">150")
 
-# cleanup
-rm(CACHE.M, CACHE.BIND)
+# Add Sequences to our DF
+D.FULL$size_group <- cut( D.FULL$hives_winter, K.SEQ, label = K.GROUPS, include.lowest = TRUE, right = TRUE )
 
-D.FACTORS.PLOT <- D.FACTORS
-D.FACTORS.PLOT$ff[ D.FACTORS.PLOT$ff == 1 ] <- "Nicht-Anonyme Teilnahme"
-D.FACTORS.PLOT$ff[ D.FACTORS.PLOT$ff == 0 ] <- "Anonyme Teilnahme"
+# Create Plot DF
+D.SIZE.PLOT <- D.FULL %>%
+  group_by( size_group ) %>%
+  summarise(
+    n = n(),
+    np = F_NUMBER_FORMAT(n() / nrow(D.FULL) * 100),
+    n_h = sum( hives_winter ),
+    n_hp = F_NUMBER_FORMAT( sum( hives_winter ) / sum( D.FULL$hives_winter ) * 100 )
+  )
 
-p <- F_SINGLE_PLOT(D.FACTORS.PLOT)
+# rename because funcion uses 'val' as x values
+colnames(D.SIZE.PLOT)[1] = 'val'
 
-ggsave("./img/plot_anonymity.pdf", p, width = 5, height = 4, units = "in")
+p <- F_HISTO_PLOT(D.SIZE.PLOT, "Völker / Imker", "Teilnehmende Imkereien (n)", "" )
+
+ggsave("./img/plot_overview_betrieb.pdf", p, width = 6, height = 3.5, units = "in")
 
