@@ -20,12 +20,19 @@ F_GLM_SINGLE <- function( x )
 }
 
 # GLM, with Factor
-# x = Dataframe, f = factor as string, xf = factor from dataframe, chi = TRUE when you want to return column with stars if chisqr is significant
-F_GLM_FACTOR <- function( x, f, xf, chi = FALSE )
+# x = Dataframe, f = factor as string, xf = factor from dataframe, chi = TRUE when you want to return column with stars if chisqr is significant, na_omit = standard TRUE, if you want NAs reported set to false
+F_GLM_FACTOR <- function( x, f, xf, chi = FALSE, na_omit = TRUE)
 {
   # get column via string
   x$ff <- get( f, pos = x ) 
+  # create string for NAs otherwise they will be removed
+  if(!na_omit){
+    x$ff[is.na(x$ff)] <- 'No Answer'
+    xf[is.na(xf)] <- 'No Answer'
+  }
+  print(x$ff)
   #print(x$ff)
+  x$ff <- as.factor(x$ff)
   GLM.FULL <- glm( 
     cbind( hives_lost_e, hives_spring_e ) ~ as.factor( ff ) ,
     family = quasibinomial( link = "logit" ), 
@@ -79,14 +86,14 @@ F_NUMBER_FORMAT <- function(x)
 
 # Extract our N into a DF
 # x = Dataframe, f = level, c = Name for Factor
-F_EXTRACT_N <- function( x, f, c )
+F_EXTRACT_N <- function( x_df, column, type_name, omit_na = TRUE )
   {
   # get our factor position inside the dataframe
-  x$ff = get( f, pos = x ) 
-  F.CACHE <- x %>% 
+  x_df$ff = get( column, pos = x_df ) 
+  F.CACHE <- x_df %>% 
     group_by( ff ) %>% 
     summarize(
-      c = c,
+      c = type_name,
       n = n(),
       hives_winter = sum(hives_winter),
       lost_a = sum(lost_a, na.rm = FALSE),
@@ -96,7 +103,9 @@ F_EXTRACT_N <- function( x, f, c )
                 ( sum( hives_lost_e ) / sum( hives_winter ) * 100 ), 1), nsmall = 2))
     )
   print( F.CACHE )
-  F.CACHE <- F.CACHE %>% na.omit()
+  if(omit_na){
+    F.CACHE <- F.CACHE %>% na.omit()
+  }
   return( F.CACHE )
 }
 
