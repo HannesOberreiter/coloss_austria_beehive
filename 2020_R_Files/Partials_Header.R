@@ -49,6 +49,13 @@ D.RAW$lost_a[ is.na( D.RAW$lost_a )] <- 0 # Lost - Queen
 D.RAW$lost_b[ is.na( D.RAW$lost_b )] <- 0 # Lost - Elements
 D.RAW$lost_c[ is.na( D.RAW$lost_c )] <- 0 # Lost - Other
 
+# Symptomes clean NAs
+D.RAW$symp_a[ is.na( D.RAW$symp_a )] <- 0
+D.RAW$symp_b[ is.na( D.RAW$symp_b )] <- 0
+D.RAW$symp_c[ is.na( D.RAW$symp_c )] <- 0
+D.RAW$symp_d[ is.na( D.RAW$symp_d )] <- 0
+D.RAW$symp_e[ is.na( D.RAW$symp_e )] <- 0
+
 # Add Spring hive amount
 D.RAW$hives_spring <- D.RAW$hives_winter - D.RAW$hives_lost
 # Values without loss by elements
