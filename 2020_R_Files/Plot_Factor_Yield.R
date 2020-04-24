@@ -60,7 +60,8 @@ D.FACTORS$ff <- factor( D.FACTORS$ff, levels = c( "Ja", "Nein", "Unsicher"))
 
 #### DISTRICTS Plot Matrix ####
 # Create DISTRICT DF & calculate loss rates
-D.DISTRICTS <- D.FULL %>% 
+D.FULL.DIS <- D.FULL[ D.FULL[, "district"] != "In mehr als einem Bezirk",  ]
+D.DISTRICTS <- D.FULL.DIS %>% 
   group_by( district, state ) %>% 
   summarize( n = n(),
              hives_lost = F_NUMBER_FORMAT(sum( hives_lost_e ) / sum( hives_winter ) * 100)
