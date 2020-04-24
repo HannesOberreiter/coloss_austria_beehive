@@ -1,5 +1,5 @@
 ### Survey Bee Hive Losses ###
-# (c) 2019 Hannes Oberreiter #
+# (c) 2020 Hannes Oberreiter #
 
 # Header File, here we set up basic libaries variables and import the excel
 
@@ -32,8 +32,8 @@ setwd( SCRIPT.DIR )
 FILE.NAME <- "data.xlsx"
 SHEET.NAME <- "Winterverluste"
 # Load Excel File
-D.RAW <- read_excel( FILE.NAME, sheet = SHEET.NAME, skip = 1 ) #Skip first 5 rows, as it is the original names
-D.RAW <- D.RAW[, !grepl("[0-9]", colnames(D.RAW))] # Remove all cols which were empty and auto generated
+D.RAW <- read_excel( FILE.NAME, sheet = SHEET.NAME, skip = 1 )
+D.RAW <- D.RAW[, !grepl("[...]", colnames(D.RAW))] # Remove all cols which were empty and auto generated
 # Drop NA Rows sometimes error while importing from Excel
 D.RAW <- D.RAW[ rowSums( is.na( D.RAW )) != ncol( D.RAW ), ]
 
