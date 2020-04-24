@@ -15,6 +15,8 @@ source( "Partials_Functions.r" )
 # ----- START CODE -----
 
 # years and increase over summer and loss over upcoming winter in percent
+# increase is over given year (spring - spring) and loss is for following spring next year.
+# eg. 2013/2014 increase 24.4% from spring 2013 - winter 2013; loss 12.0% from winter 2013 - spring 2014
 years      = c(2013, 2014, 2015, 2016, 2017, 2018, 2019)
 increase   = c(24.4, 24.6, 44.4, 44.9, 35.2, 25.4)
 loss       = c(12.0, 28.6, 7.6, 22.5, 11.6, 15.3)
