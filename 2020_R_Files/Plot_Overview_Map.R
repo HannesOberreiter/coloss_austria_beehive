@@ -23,9 +23,9 @@ D.MAP.PLOT <- F_MAP_CLUSTER( D.MAP.PLOT )
 
 
 p <- ggplot() + 
-  geom_polygon(data = MF_DISTRICTS, aes( x = MF_DISTRICTS$long, y = MF_DISTRICTS$lat, group = MF_DISTRICTS$group ), fill="white", color = "black", size = 0.2 ) + 
-  geom_path(data = MF_STATES, aes(x = MF_STATES$long, y = MF_STATES$lat, group = MF_STATES$group), color = "black", size = 0.6 ) + 
-  geom_point(data = D.MAP.PLOT, aes(x = D.MAP.PLOT$longitude, y = D.MAP.PLOT$latitude, size = D.MAP.PLOT$n), color = "gray", fill = "darkblue", stroke = 0.3, shape = 21 ) + 
+  geom_polygon(data = MF_DISTRICTS, aes( x = long, y = lat, group = group ), fill="white", color = "black", size = 0.2 ) + 
+  geom_path(data = MF_STATES, aes(x = long, y = lat, group = group), color = "black", size = 0.6 ) + 
+  geom_point(data = D.MAP.PLOT, aes(x = longitude, y = latitude, size = n), color = "gray", fill = "darkblue", stroke = 0.3, shape = 21 ) + 
   coord_quickmap() +
   xlab( "" ) + ylab( "" ) + labs( colour = "Anzahl Imkereien (n)", size = "Anzahl Imkereien (n)") +
   scale_size_continuous(range = c(1, 3.5), breaks = c(1, 5, 10, 15)) + 
@@ -73,8 +73,8 @@ MF_DISTRICTS = left_join( MF_DISTRICTS, D.DISTRICTS, by = c( "id" = "district" )
 rm(CACHE.DIS, D.FULL.DIS)
 
 p2 <- ggplot() + 
-  geom_polygon(data = MF_DISTRICTS, aes( x = MF_DISTRICTS$long, y = MF_DISTRICTS$lat, group = MF_DISTRICTS$group, fill = MF_DISTRICTS$hives_lost ), color = "black", size = 0.2 ) + 
-  geom_path(data = MF_STATES, aes(x = MF_STATES$long, y = MF_STATES$lat, group = MF_STATES$group), color = "black", size = 0.6 ) + 
+  geom_polygon(data = MF_DISTRICTS, aes( x = long, y = lat, group = group, fill = hives_lost ), color = "black", size = 0.2 ) + 
+  geom_path(data = MF_STATES, aes(x = long, y = lat, group = group), color = "black", size = 0.6 ) + 
   coord_quickmap() +
   scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white", limits = c(0, 70), breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100) ) +
   xlab( "" ) + ylab( "" ) + labs( fill = "Verlustrate [%]") +
