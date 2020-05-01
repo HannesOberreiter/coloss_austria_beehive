@@ -3,9 +3,6 @@
 
 # Header File, here we set up basic libaries variables and import the excel
 
-# We are using packrat for package management and reproducible
-# install.packages("packrat")
-
 # ---- Clear Enviroment  ----
 rm(list=ls())
 # Set Working directory (uses API of RStudio)
@@ -13,7 +10,14 @@ SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
 setwd( SCRIPT.DIR )
 
 # ---- Set Packrat Working directory ----
-#packrat::init(options = list(auto.snapshot = TRUE, vcs.ignore.src = TRUE))
+# We are using packrat for package management and reproducible
+# install.packages("packrat")
+# packrat::init(options = list(auto.snapshot = TRUE, vcs.ignore.src = TRUE))
+if(!any(grepl("packrat", packrat::search_path()$lib.dir))){
+  print("Packrat is not ready, please open next time the project file")
+  print("Now activating packrat")
+  packrat::on()
+}
 
 # ---- Load Library's ----
 library( tidyverse )
