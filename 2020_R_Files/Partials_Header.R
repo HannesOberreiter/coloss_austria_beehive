@@ -3,30 +3,28 @@
 
 # Header File, here we set up basic libaries variables and import the excel
 
+# We are using packrat for package management and reproducible
+# install.packages("packrat")
+
 # ---- Clear Enviroment  ----
 rm(list=ls())
+# Set Working directory (uses API of RStudio)
+SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
+setwd( SCRIPT.DIR )
+
+# ---- Set Packrat Working directory ----
+#packrat::init(options = list(auto.snapshot = TRUE, vcs.ignore.src = TRUE))
 
 # ---- Load Library's ----
-library( ggplot2 )
-library( ggrepel )
-library( gridExtra )
-library( grid )
+library( tidyverse )
 library( readxl )
-library( reshape2 )
-library( dplyr )
-library( tidyr )
-library( scales )
-#library( Rcmdr )
+library( gridExtra )
 library( boot )
 library( rstudioapi ) # to set dirname
 library( colorspace ) # better colorpalettes for maps
 library( svMisc ) # only for combination function to get a progress bar
 
 #---- Read XLS ----
-# Set Working directory (uses API of RStudio)
-SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
-setwd( SCRIPT.DIR )
-
 # Variables and Names
 # Our working files, will be imported from excel
 FILE.NAME <- "data.xlsx"
