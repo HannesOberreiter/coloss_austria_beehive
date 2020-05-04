@@ -4,7 +4,7 @@
 # (c) 2020 Hannes Oberreiter #
 ##############################
 ##############################
-
+ 
 ####### TREATMENT HISTOGRAMM PLOT ###########
 
 # Set Working directory (uses API of RStudio)
@@ -24,7 +24,7 @@ D.FULL <- D.RAW
 # List of our Months for plot x axis
 V.LABEL <- c("Apr.", "Mai", "Juni", "Juli", "Aug.", "Sept.", "Okt.", "Nov.", "Dez.", "Jan.", "Feb.", "März")
 # Color our bars to represent our spring, summer, winter treatments
-V.COLOR <- c("cornflowerblue", "cornflowerblue", "forestgreen", "forestgreen", "forestgreen", "forestgreen", "forestgreen", "grey13", "grey13", "grey13", "white", "white")
+V.COLOR <- c("cornflowerblue", "cornflowerblue", "forestgreen", "forestgreen", "forestgreen", "forestgreen", "forestgreen", "azure3", "azure3", "azure3", "white", "white")
 
 # Create dummy Dataframe, to insert rows later
 D.FACTORS <- 
