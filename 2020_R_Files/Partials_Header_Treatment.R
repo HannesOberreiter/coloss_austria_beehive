@@ -6,6 +6,7 @@
 
 # List of Factors we want in our Plot
 treatmentList = list(
+  c("T_vcount", "T_vcount_total", "Varroa Kontrolle"),
   c("T_drone_", "T_drone_total", "Drone brood removal"),
   c("T_hyperthermia_", "T_hyperthermia_total", "Hyperthermia"),
   c("T_biotechnical_", "T_biotechnical_total", "Other biotechnical method"),
@@ -136,13 +137,17 @@ D.CACHE <- list()
 for(i in treatmentList){
   # Get Columns which are starting with List value
   # double blackslash otherwise R wont escape the backslash
-  treatmentexp <- paste("(", i[1], ")\\S*0[1-9]|(", i[1], ")\\S*1[0]", sep = "")
-  x <- grepl(treatmentexp, colnames(D.RAW), fixed = FALSE)
+  # WE USE HERE all 12 months for spring, summer, winter we only use 01-10 months!
+  treatmentexp10 <- paste("(", i[1], ")\\S*0[1-9]|(", i[1], ")\\S*1[0]", sep = "")
+  treatmentexp12 <- paste("(", i[1], ")\\S*0[1-9]|(", i[1], ")\\S*1[0-2]", sep = "")
+  x10 <- grepl(treatmentexp10, colnames(D.RAW), fixed = FALSE)
+  x12 <- grepl(treatmentexp12, colnames(D.RAW), fixed = FALSE)
   # sum the row values (means 1 = for 1 month, 2 = 2 months etc.)
-  D.CACHE[[i[2]]] <- rowSums(D.RAW[, x], na.rm = TRUE)
+  D.CACHE[[i[2]]] <- rowSums(D.RAW[, x10], na.rm = TRUE)
+  D.CACHE[[paste(i[2], "12", sep = "")]] <- rowSums(D.RAW[, x12], na.rm = TRUE)
   # create a yes (1) no (2) list too
   xn <- paste( i[2], "_yn", sep = "")
-  D.CACHE[[xn]] <- ifelse((rowSums(D.RAW[, x], na.rm = TRUE)) > 0, 1, 0)
+  D.CACHE[[xn]] <- ifelse((rowSums(D.RAW[, x10], na.rm = TRUE)) > 0, 1, 0)
 }
 
 # sum rows for total different methods and seasons
@@ -157,3 +162,4 @@ x <- grep("_yn", colnames(D.CACHE), fixed = TRUE)
 D.CACHE$T_amount <- rowSums(D.CACHE[, x], na.rm = TRUE)
 D.RAW <- cbind(D.RAW, D.CACHE)
 
+rm(xn, x10, x12, x, treatmentexp, treatmentexp10, treatmentexp12)
