@@ -20,10 +20,10 @@ source( "Partials_Functions.r" )
 
 #### START CODE #####
 D.FULL <- D.RAW
+# Remove participants which did not answer varroa_treated (this includes eg. beekeeping journal without given question)
+D.FULL <- D.FULL[!is.na(D.FULL$varroa_treated)]
 
-#### DRONE BROOD REMOVAL #####
-# Remove illogical answers and newspaper as these questions are not included
-D.FULL <- D.FULL[!(D.FULL$T_amount > 0 & D.FULL$varroa_treated == "Nein" | D.FULL$submitted == "Zeitung"),]
+#### COMBINATION #####
 
 # List of Factors we want in our Plot
 L.oList = list(
@@ -65,3 +65,23 @@ p <- F_SINGLE_PLOT(D.PLOTC, D.PLOTC$alpha)
 
 ggsave("./img/plot_treatment_drone_combination.pdf", p, width = 6, height = 3.5, units = "in")
 
+rm(L.oList, p, V.ColComb1, V.ColComb2, V.ColComb3, V.LABELS, L.CACHE, L.CacheList)
+
+#### MULTIPLE MONTHS ####
+V.LABELS <- c("0 Monate", "1-3 Monate", ">3 Monate")
+D.SUP    <- D.FULL
+# generate groups
+D.SUP$g  <- V.LABELS[1]
+D.SUP$g[D.SUP$T_drone_total12 > 1] <- V.LABELS[2]
+D.SUP$g[D.SUP$T_drone_total12 > 3] <- V.LABELS[3]
+# calculate GLM
+CACHE.M <- F_EXTRACT_N( D.SUP, "g", "drone removal" )
+CACHE.BIND <- F_GLM_FACTOR( D.SUP, "g", get( "g", pos = D.SUP), TRUE )
+D.FACTORS <- cbind( CACHE.M, CACHE.BIND )
+# cleanup
+rm(CACHE.BIND, CACHE.M)
+# Ordering
+D.FACTORS$ff <- factor( D.FACTORS$ff, levels = V.LABELS)
+# Generate Plot
+p2 <- F_SINGLE_PLOT(D.FACTORS)
+ggsave("./img/plot_treatment_drone_grouped.pdf", p2, width = 5, height = 4, units = "in")
