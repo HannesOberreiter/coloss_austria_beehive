@@ -47,7 +47,7 @@ rm(D.FACTORS)
 
 #### VARROA Monitor Histogramm ####
 # Get Columns which are starting with List value
-V.EXPR <- paste("(", "T_vcount", ")\\S*0[1-9]|(", "T_vcount", ")\\S*1[0-2]", sep = "")
+V.EXPR <- "(T_vcount_0[1-9])|(T_vcount_1[0-2])"
 V.LOGICAL <- grepl(V.EXPR, colnames(D.FULL), fixed = FALSE)
 V.COUNT <- colSums(D.FULL[  , V.LOGICAL ], na.rm = TRUE)
 V.PERCENT <- V.COUNT / nrow(D.FULL[(D.FULL$varroa_checked == "Ja" & !is.na(D.FULL$varroa_checked)),]) * 100
@@ -149,11 +149,12 @@ L.CACHE[[4]]$short <- "Keine \n Kontrolle"
 L.CACHE[[3]] <- F_COMBINATION(D.SUPC, V.ColComb3, 3, L.CacheList, V.ColComb1, 1)
 L.CACHE[[2]] <- F_COMBINATION(D.SUPC, V.ColComb2, 2, L.CacheList, V.ColComb1, 1)
 L.CACHE[[1]] <- F_COMBINATION(D.SUPC, V.ColComb1, 1, L.CacheList, V.ColComb1, 1)
-
+L.CACHE[[1]]$short <- paste("Nur ", L.CACHE[[1]]$short, sep = "")
+# automatically generate tibble from list
 D.PLOTC <- bind_rows(L.CACHE)
 
 V.LABELS <- D.PLOTC$short
-V.LABELS <- str_replace_all(V.LABELS, "&", "\n")
+V.LABELS <- str_replace_all(V.LABELS, "&", " & \n")
 D.PLOTC$ff <- V.LABELS
 D.PLOTC$ff <- factor( D.PLOTC$ff, levels = V.LABELS )
 D.PLOTC$alpha <- 'white'
@@ -162,4 +163,3 @@ D.PLOTC$alpha[D.PLOTC$negative == 0] <- 'grey'
 p4 <- F_SINGLE_PLOT(D.PLOTC, D.PLOTC$alpha)
 
 ggsave("./img/plot_treatment_varroa_combination.pdf", p4, width = 6, height = 3.5, units = "in")
-
