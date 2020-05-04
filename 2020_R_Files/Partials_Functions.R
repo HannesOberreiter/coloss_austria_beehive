@@ -30,8 +30,6 @@ F_GLM_FACTOR <- function( x, f, xf, chi = FALSE, na_omit = TRUE)
     x$ff[is.na(x$ff)] <- 'No Answer'
     xf[is.na(xf)] <- 'No Answer'
   }
-  print(x$ff)
-  #print(x$ff)
   x$ff <- as.factor(x$ff)
   GLM.FULL <- glm( 
     cbind( hives_lost_e, hives_spring_e ) ~ as.factor( ff ) ,
@@ -181,7 +179,7 @@ F_COMBINATION <- function( x, d, itn, CacheList, ColComb1, negative = 1 ){
     cost.df$b <- 1
     # send to bootstrap 
 
-    cost.boot <- F_BOOTSTRAP(cost.df, shortname, 1)
+        cost.boot <- F_BOOTSTRAP(cost.df, shortname, 1)
     # Standard Derivation from mean with 95% square root n, using qt because t-distribution
     #sd.cost <- sd(CACHE.COMB$costs, na.rm = TRUE)
     #se.cost = sd.cost / sqrt(cost_count)
@@ -282,6 +280,20 @@ F_GG_LEGEND <- function(a.gplot){
 # we use it because the data is not normally distributed and we cannot fit GLM
 # df = dataframe contain columns a (difference), b (sum end), f (factor), percent (if percent then you can leave empty otherwise use 1)
 F_BOOTSTRAP <- function(df, fact, percent = 100){
+  # not worth to calculate anything if sample is below 5
+  if(nrow(df) < 5){
+    print("Not enough samples for bootstrapping")
+    x <- data.frame(
+      "state" = NA, 
+      "n" = NA,
+      "mean" = NA,
+      "lower.ci" = NA,
+      "upper.ci" = NA
+    )
+    return( x )
+  }
+
+  
   # Simple Mean Function, will calculate total sample mean
   mean.fun <- function(d, i) 
   {    
