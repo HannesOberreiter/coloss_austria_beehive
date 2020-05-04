@@ -72,7 +72,10 @@ D.RAW$lost_rate_e <- D.RAW$hives_lost_e / D.RAW$hives_winter * 100
 D.RAW$hives_per_apiary <- D.RAW$hives_winter / D.RAW$apiaries
 # hive production this season before winter
 D.RAW$hives_production <- D.RAW$hives_winter - D.RAW$hives_spring_before
-
+# Type of submitting
+D.RAW$submitted <- "Internet"
+D.RAW$submitted[grepl("P", D.RAW$id, fixed = TRUE)] <- 'Papier'
+D.RAW$submitted[grepl("Z", D.RAW$id, fixed = TRUE)] <- 'Zeitung'
 
 # ---- Remove Temporary -----
 rm(FILE.NAME, SHEET.NAME)
