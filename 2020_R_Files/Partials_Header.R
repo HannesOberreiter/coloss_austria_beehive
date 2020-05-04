@@ -21,6 +21,7 @@ if(!any(grepl("packrat", packrat::search_path()$lib.dir))){
 
 # ---- Load Library's ----
 library( tidyverse )
+library( ggsignif )
 library( readxl )
 library( gridExtra )
 library( boot )
