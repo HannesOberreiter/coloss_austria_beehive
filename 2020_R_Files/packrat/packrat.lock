@@ -168,6 +168,12 @@ Version: 3.3.0
 Hash: 0c4c6d28acdded392fce8d3d65f088de
 Requires: digest, glue, gtable, isoband, rlang, scales, tibble, withr
 
+Package: ggsignif
+Source: CRAN
+Version: 0.6.0
+Hash: 6315f8e2744f4398657b170d2c2ee123
+Requires: ggplot2
+
 Package: glue
 Source: CRAN
 Version: 1.4.0
