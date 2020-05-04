@@ -168,4 +168,8 @@ x <- x[!(x %in% t)]
 D.CACHE$T_amount <- rowSums(D.CACHE[, x], na.rm = TRUE)
 D.RAW <- cbind(D.RAW, D.CACHE)
 
-rm(xn, x10, x12, x, t, treatmentexp, treatmentexp10, treatmentexp12)
+#### Overrule "wrong" User Input for varroa checked and treated question
+D.RAW$varroa_checked[D.RAW$varroa_checked == "Nein" & D.RAW$T_vcount_total12 > 0] <- "Ja"
+D.RAW$varroa_treated[D.RAW$varroa_treated == "Nein" & D.RAW$T_amount > 0]         <- "Ja"
+
+rm(xn, x10, x12, x, t, i, treatmentexp, treatmentexp10, treatmentexp12, D.CACHE)
