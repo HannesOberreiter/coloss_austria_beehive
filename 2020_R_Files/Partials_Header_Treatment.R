@@ -6,7 +6,7 @@
 
 # List of Factors we want in our Plot
 treatmentList = list(
-  c("T_vcount", "T_vcount_total", "Varroa Kontrolle"),
+  c("T_vcount_", "T_vcount_total", "Varroa Kontrolle"),
   c("T_drone_", "T_drone_total", "Drone brood removal"),
   c("T_hyperthermia_", "T_hyperthermia_total", "Hyperthermia"),
   c("T_biotechnical_", "T_biotechnical_total", "Other biotechnical method"),
@@ -150,16 +150,22 @@ for(i in treatmentList){
   D.CACHE[[xn]] <- ifelse((rowSums(D.RAW[, x10], na.rm = TRUE)) > 0, 1, 0)
 }
 
-# sum rows for total different methods and seasons
+# sum rows for total different methods and SEASONS
 # sum rows by yn column, that way we get amount of different treatments used
 x <- grep("(yn_)", colnames(D.RAW), fixed = FALSE)
-D.RAW$T_amount_total <- rowSums(D.RAW[, x], na.rm = TRUE)
+# Exclude Varroa Control from Treatment Counts
+t <- grep("(vcount_totalyn_)", colnames(D.RAW), fixed = FALSE)
+x <- x[!(x %in% t)]
+D.RAW$T_season <- rowSums(D.RAW[, x], na.rm = TRUE)
 
 # Convert List to Dataframe
 D.CACHE <- data.frame(D.CACHE)
 # sum rows by yn column, that way we get amount of different treatments used
 x <- grep("_yn", colnames(D.CACHE), fixed = TRUE)
+# Exclude Varroa Control from Treatment Counts
+t <- grep("(vcount_total_yn)", colnames(D.CACHE), fixed = FALSE)
+x <- x[!(x %in% t)]
 D.CACHE$T_amount <- rowSums(D.CACHE[, x], na.rm = TRUE)
 D.RAW <- cbind(D.RAW, D.CACHE)
 
-rm(xn, x10, x12, x, treatmentexp, treatmentexp10, treatmentexp12)
+rm(xn, x10, x12, x, t, treatmentexp, treatmentexp10, treatmentexp12)
