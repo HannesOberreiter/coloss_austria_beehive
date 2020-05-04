@@ -22,9 +22,9 @@ source( "Partials_Functions.r" )
 D.FULL <- D.RAW
 
 # List of our Months for plot x axis
-V.LABEL <- c("Apr.", "Mai", "Juni", "Juli", "Aug.", "Sept.", "Okt.", "Nov.", "Dez.", "Jan.")
+V.LABEL <- c("Apr.", "Mai", "Juni", "Juli", "Aug.", "Sept.", "Okt.", "Nov.", "Dez.", "Jan.", "Feb.", "März")
 # Color our bars to represent our spring, summer, winter treatments
-V.COLOR <- c("cornflowerblue", "cornflowerblue", "forestgreen", "forestgreen", "forestgreen", "forestgreen", "forestgreen", "grey13", "grey13", "grey13")
+V.COLOR <- c("cornflowerblue", "cornflowerblue", "forestgreen", "forestgreen", "forestgreen", "forestgreen", "forestgreen", "grey13", "grey13", "grey13", "white", "white")
 
 # Create dummy Dataframe, to insert rows later
 D.FACTORS <- 
@@ -36,7 +36,7 @@ D.FACTORS <-
 # Loop over our treatment list to extract all treatments and their months of usage
 for( i in fulltreatmentList){
   # regex string
-  treatmentexp <- paste("(", i[1], ")0[1-9]|(", i[1], ")1[0]", sep = "")
+  treatmentexp <- paste("(", i[1], ")0[1-9]|(", i[1], ")1[0-2]", sep = "")
   # get logical expression of columns with given regex
   x <- grepl(treatmentexp, colnames(D.FULL), fixed = FALSE, perl = TRUE)
   # sum the col values
@@ -58,7 +58,8 @@ D.SYNTHETIC <- D.FACTORS[D.FACTORS$group == 1, ] %>% group_by(x, vc_color) %>%
     ff = "Chemische Methoden(+)",
     y = sum(y),
     group = 1
-  )
+  ) %>%
+  arrange(factor( D.SYNTHETIC$x, levels = c( V.LABEL )))
 
 # reorder cols
 D.SYNTHETIC <- D.SYNTHETIC[c( "ff", "x", "y", "group", "vc_color" )]
