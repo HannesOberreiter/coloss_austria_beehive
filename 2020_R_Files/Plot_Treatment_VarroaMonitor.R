@@ -21,6 +21,9 @@ source( "Partials_Functions.r" )
 #### START CODE #####
 D.FULL <- D.RAW
 
+# Remove participants which did not answer varroa_checked (this includes eg. beekeeping journal without given question)
+D.FULL <- D.FULL[!is.na(D.FULL$varroa_checked)]
+
 #### YES / NO PLOT #####
 
 # Create dummy Dataframe, to insert rows later
@@ -87,35 +90,24 @@ rm(V.EXPR, V.COUNT, V.LOGICAL, V.MONTHS, V.MONTHS.COLOR)
 
 #### Multiple Months ####
 V.LABELS <- c("0 Monate", "1-3 Monate", ">3 Monate")
-
 # Remove if people were checking but did not answer the months (otherwise our 0 months will be wrong!)
 D.SUP <- D.FULL[!(D.FULL$T_vcount_total12 == 0 & D.FULL$varroa_checked == "Ja"),]
-
+# generate grouping
 D.SUP$monitoring_groups <- V.LABELS[1]
 D.SUP$monitoring_groups[D.SUP$T_vcount_total12 > 1] <- V.LABELS[2]
 D.SUP$monitoring_groups[D.SUP$T_vcount_total12 > 3] <- V.LABELS[3]
-
-# Create dummy Dataframe, to insert rows later
-D.FACTORS <- 
-  setNames( 
-    data.frame( matrix( ncol = 12, nrow = 0)), 
-    c( "ff", "c", "n", "hives_winter", "lost_a", "lost_b", "lost_c", "hives_lost_rate", "lowerlim", "middle", "upperlim", "chi")
-  )
-
+# calculate glm
 CACHE.M <- F_EXTRACT_N( D.SUP, "monitoring_groups", "monitoring_groups" )
 CACHE.BIND <- F_GLM_FACTOR( D.SUP, "monitoring_groups", get( "monitoring_groups", pos = D.SUP), TRUE )
-CACHE.BIND <- cbind( CACHE.M, CACHE.BIND )
-D.FACTORS <- rbind( D.FACTORS, CACHE.BIND )
-
+D.FACTORS <- cbind( CACHE.M, CACHE.BIND )
+# cleanup
 rm(CACHE.BIND, CACHE.M)
-
 # Ordering
 D.FACTORS$ff <- factor( D.FACTORS$ff, levels = V.LABELS)
-
+# plotting
 p3 <- F_SINGLE_PLOT(D.FACTORS)
-
 ggsave("./img/plot_treatment_varroa_grouped.pdf", p3, width = 5, height = 4, units = "in")
-
+# cleanup
 rm(D.FACTORS, V.LABELS, V.PERCENT, D.SUP)
 
 #### Combination ####
