@@ -114,12 +114,8 @@ F_EXTRACT_N <- function( x_df, column, type_name, omit_na = TRUE )
 # ColComb1 = our single intereger array of all treatments collumns,
 # negative = standard 1, then it selecteds only participants which did use the combination, set to 0 to select the people which did not use this combination
 F_COMBINATION <- function( x, d, itn, CacheList, ColComb1, negative = 1 ){
-  # our dummy dataframe, which will be returned
-  D.COMB <- 
-    setNames( 
-      data.frame( matrix( ncol = 28, nrow = 0)), 
-      c( "t", "s1", "c1", "s2", "c2", "s3", "c3", "s4", "c4", "s5", "c5", "s6", "c6", "colnames", "short", "n", "lowerlim", "middle", "upperlim", "c_min", "c_1q", "c_median", "c_mean", "c_3q", "c_max", "c_n", "c_ci_upper", "c_ci_lower")
-    )
+  # dummy list will later be converted to dataframe
+  D.COMB <-list()
   counter <- 1
   countermax <- length(d)
   # loop through column numbers
@@ -134,8 +130,8 @@ F_COMBINATION <- function( x, d, itn, CacheList, ColComb1, negative = 1 ){
     # temporary colnames, to check later if values are ordered to correct treatments in df
     coln <- ""
     # reset our name fields
-    cname = list()
-    sname = list()
+    cname = ""
+    sname = ""
     shortname = ""
     # loop for multiple combination, single treatment method is only single run
     for( n in 1:itn ){
@@ -145,18 +141,24 @@ F_COMBINATION <- function( x, d, itn, CacheList, ColComb1, negative = 1 ){
       CACHE.COMB <- CACHE.COMB[ CACHE.COMB[, i[n]] == negative , ]
       coln <- paste( coln, colnames(CACHE.COMB[i[n]]), sep = " ")
       # Names for Export
-      cname[n] = as.character( CacheList$X3[ CacheList$ColComb1 == i[n] ])
-      sname[n] = as.character( CacheList$X2[ CacheList$ColComb1 == i[n] ])
-      shortname <- paste(shortname, CacheList$X4[ CacheList$ColComb1 == i[n] ], sep = " " )
+      cname[n] = as.character( CacheList$X3[ CacheList$V.ColComb1 == i[n] ])
+      sname[n] = as.character( CacheList$X2[ CacheList$V.ColComb1 == i[n] ])
+
+      shortname <- ifelse(n == 1,
+                          paste(CacheList$X4[ CacheList$V.ColComb1 == i[n] ]),
+                          paste(shortname, CacheList$X4[ CacheList$V.ColComb1 == i[n]], sep = "&" )
+                          )
     }
     
     # if no data is available we skip it
     if( nrow( CACHE.COMB ) == 0 ) next
-    
+
     if(negative == 1){
       # count numbers without given treatment, if it is bigger than 0 it means there are other treatments in combination
       # drop = FALSE tocreate a one-column dataframe and no vector if there is only one column left
+      print(d1)
       CACHE.COMB$comb_count <- rowSums(CACHE.COMB[ , d1, drop = FALSE ], na.rm = TRUE)
+      print(CACHE.COMB$comb_count)
       # only get the count 0 ones, because then we are sure there is no combination
       CACHE.COMB <- CACHE.COMB[CACHE.COMB[, "comb_count"] == 0, ]
     }
@@ -165,20 +167,21 @@ F_COMBINATION <- function( x, d, itn, CacheList, ColComb1, negative = 1 ){
     # create dummy columns, to insert the values from GLM
     CACHE.BIND <- c(NA,NA,NA)
     # if less than 15 rows we skip it
-    if( nrow( CACHE.COMB ) < 15) next
+    #if( nrow( CACHE.COMB ) < 15) next
+    if( nrow( CACHE.COMB ) == 0) next
     if( nrow( CACHE.COMB ) > 9) CACHE.BIND <- F_GLM_SINGLE( CACHE.COMB )
-    
+
     # Get Costs of Varroa Treatment per Hive
     cost <- summary(CACHE.COMB$costs, na.rm = TRUE)
-    
-    # create cost dataframe without na's
+
+        # create cost dataframe without na's
     cost.df <- CACHE.COMB$costs[!(is.na(CACHE.COMB$costs))]
     cost.df <- tibble(cost.df)
     names(cost.df) <- "a"
     cost.df$b <- 1
     # send to bootstrap 
+
     cost.boot <- F_BOOTSTRAP(cost.df, shortname, 1)
-    
     # Standard Derivation from mean with 95% square root n, using qt because t-distribution
     #sd.cost <- sd(CACHE.COMB$costs, na.rm = TRUE)
     #se.cost = sd.cost / sqrt(cost_count)
@@ -193,10 +196,11 @@ F_COMBINATION <- function( x, d, itn, CacheList, ColComb1, negative = 1 ){
     ghisto_Plot <- ggplot(ghisto_DF, aes(x = costs)) + geom_histogram()
     histo_save <- paste("./histo/Hist_", shortname ,".pdf", sep = "")
     ggsave(histo_save, ghisto_Plot, width = 5, height = 5, units = "in")
+
     
-    # Add row to Dummy DF
-    D.COMB <- D.COMB %>% add_row(
+    D.COMB[[counter]] <- tibble(
       t = itn, 
+      negative = negative,
       
       s1 = sname[1],
       c1 = cname[1],
@@ -230,9 +234,10 @@ F_COMBINATION <- function( x, d, itn, CacheList, ColComb1, negative = 1 ){
       c_ci_lower = cost.boot$lower.ci
       
     )
+    
   }
   # Return full DF
-  return (D.COMB)
+  return (bind_rows(D.COMB))
 }
 
 # Our custom cluster function
