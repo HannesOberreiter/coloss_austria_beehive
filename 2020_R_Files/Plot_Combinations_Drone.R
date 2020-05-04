@@ -1,7 +1,7 @@
 ##############################
 ##############################
 ### Survey Bee Hive Losses ###
-# (c) 2019 Hannes Oberreiter #
+# (c) 2020 Hannes Oberreiter #
 ##############################
 ##############################
 
@@ -11,7 +11,6 @@
 SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
 setwd( SCRIPT.DIR )
 
-
 # Import Header
 source( "Partials_Header.r" )
 source( "Partials_Header_Treatment.r" )
@@ -20,75 +19,49 @@ source( "Partials_Header_Treatment.r" )
 source( "Partials_Functions.r" )
 
 #### START CODE #####
+D.FULL <- D.RAW
 
 #### DRONE BROOD REMOVAL #####
-
-# Remove people which did not answer or did no treatment
-D.FULL <- D.FULL[(D.FULL$T_amount_total > 0 | (D.FULL$varroa_treated == "Nein" & !is.na(D.FULL$varroa_treated))), ]
-
+# Remove illogical answers and newspaper as these questions are not included
+D.FULL <- D.FULL[!(D.FULL$T_amount > 0 & D.FULL$varroa_treated == "Nein" | D.FULL$submitted == "Zeitung"),]
 
 # List of Factors we want in our Plot
-oList = list(
-  c("A", "SPRING", "Drone brood removal"),
-  c("B", "SUMMER", "Drone brood removal"),
-  c("C", "WINTER", "Drone brood removal")
+L.oList = list(
+  c("A", "SPRING", "Drone brood removal", "Frühling"),
+  c("B", "SUMMER", "Drone brood removal", "Sommer"),
+  c("C", "WINTER", "Drone brood removal", "Herbst")
 )
 
 # Get column number with yn_* in it
-ColComb1 <- grep("T_drone_totalyn_", colnames(D.FULL), fixed = TRUE)
+V.ColComb1 <- grep("T_drone_totalyn_", colnames(D.FULL), fixed = TRUE)
 # Calculate every possible combination
-ColComb2 <- combn( ColComb1 , 2, simplify = FALSE )
-ColComb3 <- combn( ColComb1 , 3, simplify = FALSE )
+V.ColComb2 <- combn( V.ColComb1 , 2, simplify = FALSE )
+V.ColComb3 <- combn( V.ColComb1 , 3, simplify = FALSE )
 
 # Add to our oList with the names the ColNumber for better inserting later
-CacheList <- data.frame(t(sapply(oList, c)))
-CacheList <- cbind(CacheList, ColComb1)
+L.CacheList <- data.frame(t(sapply(L.oList, c)))
+L.CacheList <- cbind(L.CacheList, V.ColComb1)
 
+L.CACHE = list()
 # negative logic, participants which did not 
-CACHE.COMB.negative <- F_COMBINATION(D.FULL, ColComb1, 1, CacheList, ColComb1, 0)[1:2,]
-CACHE.COMB.negative$ff <- "No"
-CACHE.COMB1.negative <- F_COMBINATION(D.FULL, ColComb2, 2, CacheList, ColComb1,0)[1,]
-CACHE.COMB1.negative$ff <- "No"
+L.CACHE[[4]] <- F_COMBINATION(D.FULL, V.ColComb3, 3, L.CacheList, V.ColComb1, 0)
+L.CACHE[[4]]$short <- "Kein \n entfernen der \n Drohnenbrut"
+# positive combinations
+L.CACHE[[3]] <- F_COMBINATION(D.FULL, V.ColComb3, 3, L.CacheList, V.ColComb1, 1)
+L.CACHE[[2]] <- F_COMBINATION(D.FULL, V.ColComb2, 2, L.CacheList, V.ColComb1, 1)
+L.CACHE[[1]] <- F_COMBINATION(D.FULL, V.ColComb1, 1, L.CacheList, V.ColComb1, 1)
+L.CACHE[[1]]$short <- paste("Nur ", L.CACHE[[1]]$short, sep = "")
+# automatically generate tibble from list
+D.PLOTC <- bind_rows(L.CACHE)
 
-# positive logic, participants which did
-CACHE.COMB <- F_COMBINATION(D.FULL, ColComb1, 1, CacheList, ColComb1, 1)
-CACHE.COMB$ff <- "Yes"
-CACHE.COMB1 <- F_COMBINATION(D.FULL, ColComb2, 2, CacheList, ColComb1)
-CACHE.COMB1$ff <- "Yes"
+V.LABELS <- D.PLOTC$short
+V.LABELS <- str_replace_all(V.LABELS, "&", " & \n")
+D.PLOTC$ff <- V.LABELS
+D.PLOTC$ff <- factor( D.PLOTC$ff, levels = V.LABELS )
+D.PLOTC$alpha <- 'white'
+D.PLOTC$alpha[D.PLOTC$negative == 0] <- 'grey'
 
-CACHE.COMB.PLOT <- rbind(CACHE.COMB, CACHE.COMB1, CACHE.COMB1.negative)
-#CACHE.COMB1 <- F_COMBINATION(D.FULL, ColComb3, 3, CacheList, ColComb1)
-#CACHE.COMB <- rbind(CACHE.COMB, CACHE.COMB1)
+p <- F_SINGLE_PLOT(D.PLOTC, D.PLOTC$alpha)
 
-# D.COMB <- D.COMB[D.COMB$n != 0, ]
+ggsave("./img/plot_treatment_drone_combination.pdf", p, width = 6, height = 3.5, units = "in")
 
-xAxisTemp <- c("Only in spring", "Only in summer", "Spring and summer", "No drone brood removal")
-
-p1 <- 
-  ggplot( CACHE.COMB.PLOT, aes( x = xAxisTemp, y = middle )) +
-  geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
-  #geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
-  #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 1.0 ) + 
-  geom_point(size = 3) + 
-  geom_text( aes( x = xAxisTemp, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
-  xlab("") + ylab("Loss rate [%]") + 
-  #ggtitle("Drone brood removal") +
-  theme_classic() + 
-  theme(
-    plot.title = element_text(), 
-    axis.title.x = element_text(colour = "black" ), 
-    axis.text.x = element_text(angle = 0, size = 8, face = "bold"),
-    axis.line = element_line( linetype = "solid" ),
-    panel.grid.major.y = element_line( colour = "grey" ),
-    panel.grid.minor.y = element_line( colour = "grey" )
-  ) +
-  scale_x_discrete(
-    limits = xAxisTemp
-  ) +
-  scale_y_continuous(
-    limits = c(0, NA),
-    expand = c( 0 , 0 ),
-    breaks = seq( 0, 100, 5 )
-  )
-
-ggsave("./img/Plot_Drone_Removal.pdf", p1, width = 6, height = 3, units = "in")
