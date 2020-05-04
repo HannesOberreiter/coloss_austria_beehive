@@ -156,7 +156,10 @@ V.LABELS <- D.PLOTC$short
 V.LABELS <- str_replace_all(V.LABELS, "&", "\n")
 D.PLOTC$ff <- V.LABELS
 D.PLOTC$ff <- factor( D.PLOTC$ff, levels = V.LABELS )
-p4 <- F_SINGLE_PLOT(D.PLOTC)
+D.PLOTC$alpha <- 'white'
+D.PLOTC$alpha[D.PLOTC$negative == 0] <- 'grey'
+
+p4 <- F_SINGLE_PLOT(D.PLOTC, D.PLOTC$alpha)
 
 ggsave("./img/plot_treatment_varroa_combination.pdf", p4, width = 6, height = 3.5, units = "in")
 
