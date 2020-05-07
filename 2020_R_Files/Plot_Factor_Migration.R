@@ -18,20 +18,11 @@ source( "Partials_Header.r" )
 source( "Partials_Functions.r" )
 
 #### START CODE #####
-
 D.FULL <- D.RAW
-
-# Create dummy Dataframe, to insert rows later
-D.FACTORS <- 
-  setNames( 
-    data.frame( matrix( ncol = 12, nrow = 0)), 
-    c( "ff", "c", "n", "hives_winter", "lost_a", "lost_b", "lost_c", "hives_lost_rate", "lowerlim", "middle", "upperlim", "chi")
-  )
 
 CACHE.M <- F_EXTRACT_N( D.FULL, "op_migratory_beekeeper", "migratory_beekeeper", FALSE)
 CACHE.BIND <- F_GLM_FACTOR( D.FULL, "op_migratory_beekeeper", get( "op_migratory_beekeeper", pos = D.FULL ), TRUE, FALSE)
-CACHE.BIND <- cbind( CACHE.M, CACHE.BIND )
-D.FACTORS <- rbind( D.FACTORS, CACHE.BIND )
+D.FACTORS <- cbind( CACHE.M, CACHE.BIND )
 
 rm(CACHE.M, CACHE.BIND)
 

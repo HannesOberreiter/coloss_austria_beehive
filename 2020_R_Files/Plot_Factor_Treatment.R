@@ -30,12 +30,10 @@ D.FULL <- D.FULL[D.FULL$varroa_treated == "Ja" & D.FULL$T_amount > 0]
 #D.FULL$hives_spring_e <- D.FULL$hives_spring_queen
 
 V.SEASONS <- c("spring", "summer", "winter")
-V.COLORS <- c("cornflowerblue", "forestgreen", "azure3")
+V.COLORS  <- c("cornflowerblue", "forestgreen", "azure3")
 
 # temporary list
 D.FACTORS = list()
-
-D.FULL$T_drone_totalyn_spring
 
 for( i in treatmentList[-1]){
   for(j in V.SEASONS){
@@ -54,13 +52,11 @@ for( i in treatmentList[-1]){
 # Change List to tibble
 D.FACTORS <- bind_rows(D.FACTORS)
 # cleanup
-rm(i,j,V.REGEX, CACHE.M, CACHE.BIND)
+rm(i, j, V.REGEX, CACHE.M, CACHE.BIND)
 # Rename 1 and 0
 D.FACTORS$ff <- ifelse(D.FACTORS$ff == 1, "Ja", "Nein")
 # Ordering
 D.FACTORS$ff <- factor( D.FACTORS$ff, levels = c( "Ja", "Nein"))
-# Chistar Label
-D.FACTORS$chistar_label <- ifelse(D.FACTORS$chistar == 1, "*", "")
 
 # Creating xAxisLetters and add it to DF
 V.LETTERS <- c(LETTERS[1:26], paste0("A",LETTERS[1:26]))
@@ -86,24 +82,13 @@ for (i in 1:length(V.SEASONS)) {
   
   # generate chistar brackets temporary dataframe
   D.TEMP <- D.FACTORS[D.FACTORS$season == V.season & D.FACTORS$chistar == 1,]
-  D.ANNOTATION <- 
-    data.frame(
-      letter = D.TEMP$letter[D.TEMP$ff == "Ja"], 
-      start  = D.TEMP$ff[D.TEMP$ff == "Ja"], 
-      end    = D.TEMP$ff[D.TEMP$ff == "Nein"], 
-      y      = ifelse(
-        (D.TEMP$upperlim[D.TEMP$ff == "Ja"] > D.TEMP$upperlim[D.TEMP$ff == "Nein"]), 
-        D.TEMP$upperlim[D.TEMP$ff == "Ja"],
-        D.TEMP$upperlim[D.TEMP$ff == "Nein"]) + 5, 
-      label  = D.TEMP$chistar_label[D.TEMP$ff == "Ja"]
-    )
+  D.ANNOTATION <- F_CHISTAR_DF(D.TEMP, "Ja", "Nein", "letter")
   
   L.PLOTS[[V.season]] <- ggplot( data = D.FACTORS[D.FACTORS$season == V.season,] ) +
     aes( x = ff, y = middle ) + 
     geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = V.color) +
     geom_point(size = 3) + 
     geom_text(aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 2.5 ) +
-    geom_signif(data=D.ANNOTATION, aes(xmin=start, xmax=end, annotations=label, y_position=y), textsize = 8, manual=TRUE) +
     facet_wrap( ~ letter, strip.position = "top", scales = "free_x", ncol = 5  ) +
     xlab("") + ylab("Verlustrate [%]") + 
     theme_classic() + 
@@ -125,7 +110,14 @@ for (i in 1:length(V.SEASONS)) {
       breaks = seq( 0, 100, 5 ),
       limits = c( 0, 30 )
     )
+  
+  if(nrow(D.ANNOTATION)> 0){
+    L.PLOTS[[V.season]] <- L.PLOTS[[V.season]] + geom_signif(data=D.ANNOTATION, aes(xmin=start, xmax=end, annotations=label, y_position=y), textsize = 8, manual=TRUE)
+  }
 }
+L.PLOTS[[1]]
+L.PLOTS[[2]]
+L.PLOTS[[3]]
 
 ggsave("./img/plot_treatment_spring.pdf", L.PLOTS[[1]], width = 12, height = 8, units = "in")
 ggsave("./img/plot_treatment_summer.pdf", L.PLOTS[[2]], width = 12, height = 8, units = "in")

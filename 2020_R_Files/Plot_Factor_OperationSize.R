@@ -29,17 +29,9 @@ D.FULL$operation_size2 <- ifelse(D.FULL$hives_winter < 51, V.LABEL[1], V.LABEL[4
 D.FULL$operation_size3 <- ifelse(D.FULL$hives_winter < 51, V.LABEL[3], V.LABEL[4])
 D.FULL$operation_size3[D.FULL$hives_winter < 26] <- V.LABEL[2]
 
-# Create dummy Dataframe, to insert rows later
-D.FACTORS <- 
-  setNames( 
-    data.frame( matrix( ncol = 11, nrow = 0)), 
-    c( "ff", "c", "n", "hives_winter", "lost_a", "lost_b", "lost_c", "hives_lost_rate", "lowerlim", "middle", "upperlim")
-    )
-
 CACHE.M <- F_EXTRACT_N( D.FULL, "operation_size2", "operation_size2" )
 CACHE.BIND <- F_GLM_FACTOR( D.FULL, "operation_size2", get( "operation_size2", pos = D.FULL ) )
-CACHE.BIND <- cbind( CACHE.M, CACHE.BIND )
-D.FACTORS <- rbind( D.FACTORS, CACHE.BIND )
+D.FACTORS <- cbind( CACHE.M, CACHE.BIND )
 
 CACHE.M <- F_EXTRACT_N( D.FULL, "operation_size3", "operation_size3" )
 CACHE.BIND <- F_GLM_FACTOR( D.FULL, "operation_size3", get( "operation_size3", pos = D.FULL ) )
