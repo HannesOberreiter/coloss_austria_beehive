@@ -10,14 +10,9 @@ SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
 setwd( SCRIPT.DIR )
 
 # ---- Set Packrat Working directory ----
-# We are using packrat for package management and reproducible
-# install.packages("packrat")
-# packrat::init(options = list(auto.snapshot = TRUE, vcs.ignore.src = TRUE))
-if(!any(grepl("packrat", packrat::search_path()$lib.dir))){
-  print("Packrat is not ready, please open next time the project file")
-  print("Now activating packrat")
-  packrat::on()
-}
+# We are using renv for package management and reproducible
+# install.packages("renv")
+renv::activate()
 
 # ---- Load Library's ----
 library( tidyverse )

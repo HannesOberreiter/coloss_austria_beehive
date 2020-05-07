@@ -5,11 +5,10 @@
 
 # ---- MAP Libraries ----
 library( rgdal )
-
+library( maptools )
 
 SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
 setwd( SCRIPT.DIR )
-
 
 # Folder and Name ned to be the same
 SHAPEFILE.NAME.AUSTRIA <- "VGD_modf"
