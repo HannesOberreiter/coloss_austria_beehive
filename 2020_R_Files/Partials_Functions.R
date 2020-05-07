@@ -365,7 +365,8 @@ F_CHISTAR_DF <- function(D.INPUT, V.START = "Ja", V.END = "Nein", V.GROUP = FALS
     )
   
   if(V.GROUP != FALSE){
-    D.ANNOTATION <- cbind(D.ANNOTATION, letter = D.TEMP[D.TEMP$ff == V.START, c(V.GROUP)])
+    D.ANNOTATION <- cbind(D.ANNOTATION, D.TEMP[D.TEMP$ff == V.START, c(V.GROUP)])
+    names(D.ANNOTATION)[5] <- V.GROUP
   }
   
   return (D.ANNOTATION)
