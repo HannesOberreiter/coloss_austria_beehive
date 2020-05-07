@@ -80,10 +80,6 @@ for (i in 1:length(V.SEASONS)) {
   V.season = V.SEASONS[i]
   V.color <- V.COLORS[i]
   
-  # generate chistar brackets temporary dataframe
-  D.TEMP <- D.FACTORS[D.FACTORS$season == V.season & D.FACTORS$chistar == 1,]
-  D.ANNOTATION <- F_CHISTAR_DF(D.TEMP, "Ja", "Nein", "letter")
-  
   L.PLOTS[[V.season]] <- ggplot( data = D.FACTORS[D.FACTORS$season == V.season,] ) +
     aes( x = ff, y = middle ) + 
     geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = V.color) +
@@ -111,6 +107,9 @@ for (i in 1:length(V.SEASONS)) {
       limits = c( 0, 30 )
     )
   
+  # generate chistar brackets temporary dataframe
+  D.TEMP <- D.FACTORS[D.FACTORS$season == V.season & D.FACTORS$chistar == 1,]
+  D.ANNOTATION <- F_CHISTAR_DF(D.TEMP, "Ja", "Nein", "letter")
   if(nrow(D.ANNOTATION)> 0){
     L.PLOTS[[V.season]] <- L.PLOTS[[V.season]] + geom_signif(data=D.ANNOTATION, aes(xmin=start, xmax=end, annotations=label, y_position=y), textsize = 8, manual=TRUE)
   }

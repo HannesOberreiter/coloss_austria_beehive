@@ -32,13 +32,7 @@ oList = list(
   c("flow_melezitose", "(F) Waldtracht mit Melezitose")
 )
 
-# Create dummy Dataframe, to insert rows later
-D.FACTORS <- 
-  setNames( 
-    data.frame( matrix( ncol = 12, nrow = 0)), 
-    c( "ff", "c", "n", "hives_winter", "lost_a", "lost_b", "lost_c", "hives_lost_rate", "lowerlim", "middle", "upperlim", "chi")
-    )
-
+D.FACTORS = list()
 # Loop through list and create for all factors CI
 for( i in oList){
   temp.n <- get( i[1], pos = D.FULL )
@@ -48,10 +42,9 @@ for( i in oList){
   D.FULL_C <- D.FULL
   CACHE.M <- F_EXTRACT_N( D.FULL_C, i[1], i[2] )
   CACHE.BIND <- F_GLM_FACTOR( D.FULL_C, i[1], get( i[1], pos = D.FULL_C ), TRUE )
-  CACHE.BIND <- cbind( CACHE.M, CACHE.BIND )
-  D.FACTORS <- rbind( D.FACTORS, CACHE.BIND )
+  D.FACTORS[[i[1]]] <- cbind( CACHE.M, CACHE.BIND )
 }
-
+D.FACTORS <- bind_rows(D.FACTORS)
 # Cleanup
 rm(CACHE.BIND, CACHE.M)
 
@@ -166,7 +159,6 @@ for(i in oList){
 legend1 <- F_GG_LEGEND(D.PLOT_LIST.Legend[[1]])
 legend2 <- F_GG_LEGEND(D.PLOT_LIST.Legend[[2]])
 
-
 #### PLOTTING #####
 p1 <- ggplot( data = D.FACTORS ) +
   aes( x = ff, y = middle ) + 
@@ -175,7 +167,7 @@ p1 <- ggplot( data = D.FACTORS ) +
   #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
   geom_point(size = 3) + 
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 2.5 ) +
-  geom_text(data =  D.FACTORS[(D.FACTORS$chistar == 1 & D.FACTORS$ff == 'Ja'),], aes( x = ff, y = 17, label = "*"), angle = 0, vjust = 0, hjust = -5, color = "black", size = 8 ) +
+  #geom_text(data =  D.FACTORS[(D.FACTORS$chistar == 1 & D.FACTORS$ff == 'Ja'),], aes( x = ff, y = 17, label = "*"), angle = 0, vjust = 0, hjust = -5, color = "black", size = 8 ) +
   facet_wrap( ~ c, strip.position = "top", scales = "free_x", ncol = 3  ) +
   xlab("") + ylab("Verlustrate [%]") + 
   theme_classic() + 
@@ -194,11 +186,17 @@ p1 <- ggplot( data = D.FACTORS ) +
   scale_x_discrete(
   ) +
   scale_y_continuous(
-    limits = c(0, NA),
+    limits = c(0, max(D.FACTORS$upperlim)+5),
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
   )
 
+# Adding significant stars
+D.ANNOTATION <- F_CHISTAR_DF(D.FACTORS, "Ja", "Nein", "c")
+if(nrow(D.ANNOTATION)> 0){
+  p1 <- p1 + geom_signif(data=D.ANNOTATION, aes(xmin=start, xmax=end, annotations=label, y_position=y), textsize = 8, manual=TRUE)
+}
+p1
 # Cleanup
 rm(count, i, label.fill, label.point, label.size, legen.pos, legend.pos, temp.n, oList, D.PLOT_LIST.Legend, D.CACHE.Legend, D.CACHE, D.CA)
 
