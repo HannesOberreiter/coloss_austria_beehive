@@ -14,7 +14,7 @@ Most years (folder) have the same build up:
 
 ## Version Control
 
-Starting with project 2020 we are using packrat for version control. 
+Starting with project 2020 we are using renv for version control. 
 
 ## MIT Licence 
 Copyright (c) 2019 Hannes Oberreiter
