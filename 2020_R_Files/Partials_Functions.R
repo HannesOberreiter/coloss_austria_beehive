@@ -339,10 +339,42 @@ F_BOOTSTRAP <- function(df, fact, percent = 100){
   return( x )
 }
 
+# Function which generates a dataframe to draw significant results onto plot
+# D.INPUT = our initial dataframe (see return from F_GLM_FACTOR)
+# V.START and V.END the two groups to connect
+# V.GROUP if multiple plots are arranged with facet_grid we need here to define column which are used for grouping the grid
+# V.LABEL here we can define what we want to see above the connected significant line
+F_CHISTAR_DF <- function(D.INPUT, V.START = "Ja", V.END = "Nein", V.GROUP = FALSE, V.LABEL = "*"){
+  # generate chistar brackets temporary dataframe
+  D.TEMP <- D.INPUT[D.INPUT$chistar == 1,]
+
+  if(nrow(D.TEMP) == 0){
+    print("No signifikant results inside given DF")
+    return(D.ANNOTATION <- data.frame())
+  }
+  
+  D.ANNOTATION <- 
+    data.frame(
+      start  = D.TEMP$ff[D.TEMP$ff == V.START], 
+      end    = D.TEMP$ff[D.TEMP$ff == V.END], 
+      y      = ifelse(
+        (D.TEMP$upperlim[D.TEMP$ff == V.START] > D.TEMP$upperlim[D.TEMP$ff == V.END]), 
+        D.TEMP$upperlim[D.TEMP$ff == V.START],
+        D.TEMP$upperlim[D.TEMP$ff == V.END]) + 2, 
+      label  = V.LABEL
+    )
+  
+  if(V.GROUP != FALSE){
+    D.ANNOTATION <- cbind(D.ANNOTATION, letter = D.TEMP[D.TEMP$ff == V.START, c(V.GROUP)])
+  }
+  
+  return (D.ANNOTATION)
+}
+
 
 # Simple function to generate a single plot
 # we use this to make easier changes on all plots if necessary
-F_SINGLE_PLOT <- function(df, barfill="white", xangle = 0, xhjust = 0.5){
+F_SINGLE_PLOT <- function(df, significant = data.frame(), barfill="white", xangle = 0, xhjust = 0.5){
   p <- ggplot(data = df) +
     aes( x = ff, y = middle) +
     geom_crossbar(aes( ymin = lowerlim, ymax = upperlim, fill = I(barfill) )) +
@@ -364,10 +396,14 @@ F_SINGLE_PLOT <- function(df, barfill="white", xangle = 0, xhjust = 0.5){
     scale_x_discrete(
     ) +
     scale_y_continuous(
-      limit = c(0, max(df$upperlim)+2),
+      limit = c(0, max(df$upperlim)+5),
       expand = c( 0 , 0 ),
       breaks = seq( 0, 45, 5 )
     )
+  
+  if(nrow(significant)>0){
+    p <- p + geom_signif(data=significant, aes(xmin=start, xmax=end, annotations=label, y_position=y), textsize = 8, manual=TRUE)
+  }
   
   return(p)
 }
