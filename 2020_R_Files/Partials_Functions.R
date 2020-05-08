@@ -29,8 +29,11 @@ F_GLM_FACTOR <- function( x, f, xf, chi = FALSE, na_omit = TRUE)
   if(!na_omit){
     x$ff[is.na(x$ff)] <- 'No Answer'
     xf[is.na(xf)] <- 'No Answer'
+  } else {
+    x <- x[!is.na(x$ff),]
   }
   x$ff <- as.factor(x$ff)
+
   GLM.FULL <- glm( 
     cbind( hives_lost_e, hives_spring_e ) ~ as.factor( ff ) ,
     family = quasibinomial( link = "logit" ), 
@@ -375,7 +378,7 @@ F_CHISTAR_DF <- function(D.INPUT, V.START = "Ja", V.END = "Nein", V.GROUP = FALS
 
 # Simple function to generate a single plot
 # we use this to make easier changes on all plots if necessary
-F_SINGLE_PLOT <- function(df, significant = data.frame(), barfill="white", xangle = 0, xhjust = 0.5){
+F_SINGLE_PLOT <- function(df, significant = data_frame(empty=numeric()), barfill="white", xangle = 0, xhjust = 0.5){
   p <- ggplot(data = df) +
     aes( x = ff, y = middle) +
     geom_crossbar(aes( ymin = lowerlim, ymax = upperlim, fill = I(barfill) )) +
