@@ -196,7 +196,7 @@ D.ANNOTATION <- F_CHISTAR_DF(D.FACTORS, "Ja", "Nein", "c")
 if(nrow(D.ANNOTATION)> 0){
   p1 <- p1 + geom_signif(data=D.ANNOTATION, aes(xmin=start, xmax=end, annotations=label, y_position=y), textsize = 8, manual=TRUE)
 }
-p1
+
 # Cleanup
 rm(count, i, label.fill, label.point, label.size, legen.pos, legend.pos, temp.n, oList, D.PLOT_LIST.Legend, D.CACHE.Legend, D.CACHE, D.CA)
 

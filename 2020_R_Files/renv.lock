@@ -555,6 +555,13 @@
       "Repository": "CRAN",
       "Hash": "a60887cdff80ba8a4b34a624b281b448"
     },
+    "rgeos": {
+      "Package": "rgeos",
+      "Version": "0.5-2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "dc2f6aa3dcc81a47fee312acd9afa2b0"
+    },
     "rjson": {
       "Package": "rjson",
       "Version": "0.2.20",

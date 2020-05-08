@@ -1,5 +1,5 @@
 ### Survey Bee Hive Losses ###
-# (c) 2019-2020 Hannes Oberreiter #
+# (c) 2020 Hannes Oberreiter #
 
 ####### STATE Losses ###########
 

@@ -54,11 +54,8 @@ D.RAW$symp_c[ is.na( D.RAW$symp_c )] <- 0
 D.RAW$symp_d[ is.na( D.RAW$symp_d )] <- 0
 D.RAW$symp_e[ is.na( D.RAW$symp_e )] <- 0
 
-# Add Spring hive amount
-D.RAW$hives_spring <- D.RAW$hives_winter - D.RAW$hives_lost
 # Values without loss by elements
 D.RAW$hives_lost_e <- ifelse( is.na( D.RAW$lost_b ), D.RAW$hives_lost, D.RAW$hives_lost - D.RAW$lost_b)
-D.RAW$hives_spring_e <- D.RAW$hives_winter - D.RAW$hives_lost_e
 # Values for Queens
 D.RAW$hives_spring_queen <- ifelse( is.na( D.RAW$lost_a ), NA, D.RAW$hives_winter - D.RAW$lost_a )
 # Loss rate per company
@@ -66,8 +63,6 @@ D.RAW$lost_rate <- D.RAW$hives_lost / D.RAW$hives_winter * 100
 D.RAW$lost_rate_e <- D.RAW$hives_lost_e / D.RAW$hives_winter * 100
 # hives per apiary
 D.RAW$hives_per_apiary <- D.RAW$hives_winter / D.RAW$apiaries
-# hive production this season before winter
-D.RAW$hives_production <- D.RAW$hives_winter - D.RAW$hives_spring_before
 # Type of submitting
 D.RAW$submitted <- "Internet"
 D.RAW$submitted[grepl("P", D.RAW$id, fixed = TRUE)] <- 'Papier'

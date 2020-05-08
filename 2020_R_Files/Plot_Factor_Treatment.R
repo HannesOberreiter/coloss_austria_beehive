@@ -104,7 +104,7 @@ for (i in 1:length(V.SEASONS)) {
     scale_y_continuous(
       expand = c( 0 , 0 ),
       breaks = seq( 0, 100, 5 ),
-      limits = c( 0, 30 )
+      limits = c(0, max(D.FACTORS$upperlim)+5)
     )
   
   # generate chistar brackets temporary dataframe
