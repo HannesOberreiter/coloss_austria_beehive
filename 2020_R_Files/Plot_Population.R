@@ -55,57 +55,52 @@ print("#################")
 # }
 
 ##### Generate Plot from fixed values #####
+
 # years and increase over summer and loss over upcoming winter in percent
 # increase is over given year (spring - spring) and loss is for following spring next year.
 # eg. 2013/2014 increase 24.4% from spring 2013 - winter 2013; loss 12.0% from winter 2013 - spring 2014
-years      = c(2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020)
-increase   = c(24.4, 24.6, 44.4, 44.9, 35.2, 25.4, D.RETURN$summer_percentage)
-loss       = c(12.0, 28.6, 7.6, 22.5, 11.6, 15.3, D.RETURN$winter_loss_percentage*-1)
-# Start Value for calculating the populationsdynamics
-start = 100
-
-# calculate % for use with multiplying
-p_i = increase/100
-p_l = loss/100
-len   = length(years)
-
-# dummy frame
-D_DATA <- tibble(
-  year = numeric(),
-  season = character(),
-  value = numeric()
+V.YEARS      = c(2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020)
+D.CONST <- tibble(
+  V.INCREASE   = c(24.4, 24.6, 44.4, 44.9, 35.2, 25.4, D.RETURN$summer_percentage) / 100,
+  V.LOSS       = c(12.0, 28.6, 7.6, 22.5, 11.6, 15.3, D.RETURN$winter_loss_percentage*-1) / 100
 )
+# Start Value for calculating the populationsdynamics
+V.START = 100
 
-for(i in 1:len){
+for(i in 1:length(V.YEARS)){
   # first year start = startvalue
   if(i == 1){
-    D_DATA = D_DATA %>% add_row(
-      year = years[i],
+    V.CALC = V.START
+    D.POP = tibble(
+      year = V.YEARS[i],
       season = 'Frühjahr',
-      value = start
+      value = V.START
     )
   }
-  if(i < len){
-    start = start + start*p_i[i]
-    D_DATA = D_DATA %>% add_row(
-      year = years[i],
+  if(i < length(V.YEARS)){
+    V.CALC = V.CALC + V.CALC*D.CONST$V.INCREASE[i]
+    D.POP = D.POP %>% add_row(
+      year = V.YEARS[i],
       season = 'Herbst',
-      value = start
+      value = V.CALC
     )
-    start = start - start*p_l[i]
-    D_DATA = D_DATA %>% add_row(
-      year = years[i+1],
+    V.CALC = V.CALC - V.CALC*D.CONST$V.LOSS[i]
+    D.POP = D.POP %>% add_row(
+      year = V.YEARS[i],
       season = 'Frühjahr',
-      value = start
+      value = V.CALC
     )
   }
 }
 
-# idu is used to plot the points on an x axis
-D_DATA$idu <- as.numeric(row.names(D_DATA))
-D_DATA$value <- round(D_DATA$value)
+# Cleanup
+rm(i, V.CALC)
 
-p <- ggplot(data = D_DATA) +
+# idu is used to plot the points on an x axis
+D.POP$idu <- as.numeric(row.names(D.POP))
+D.POP$value <- round(D.POP$value)
+
+p <- ggplot(data = D.POP) +
   aes(x = idu, y = value) +
   geom_point(aes(colour = season), show.legend = FALSE, size = 5) + 
   geom_line(aes(group = 1)) +
@@ -124,15 +119,15 @@ p <- ggplot(data = D_DATA) +
     panel.grid.major.y = element_line( colour = "grey" )
   ) +
   scale_x_continuous(
-    limits = c( NA, max(D_DATA$idu)+0.5 ),
-    breaks = seq(1.5,len*2,2),
-    labels = years
+    limits = c( NA, max(D.POP$idu)+0.5 ),
+    breaks = seq(1.5,length(V.YEARS)*2,2),
+    labels = V.YEARS
     #labels= D_DATA$season
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, max(D_DATA$value)+50, 50 ),
-    limits = c( 0, max(D_DATA$value)+50 )
+    breaks = seq( 0, max(D.POP$value)+50, 50 ),
+    limits = c( 0, max(D.POP$value)+50 )
   )
 
 ggsave("./img/plot_population.pdf", p, width = 6, height = 3.5, units = "in")
