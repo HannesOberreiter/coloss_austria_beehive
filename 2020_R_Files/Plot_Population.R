@@ -10,16 +10,57 @@ SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
 setwd( SCRIPT.DIR )
 
 # ---- Import ----
+source( "Partials_Header.r")
 source( "Partials_Functions.r" )
-
 # ----- START CODE -----
 
+#### Calculate net gain of new colonies over summer season
+D.FULL <- D.RAW
+
+D.PROD <- tibble(
+    spring = D.FULL$hives_spring_before,
+    summer_change = D.FULL$hives_winter - D.FULL$hives_spring_before,
+    winter = D.FULL$hives_winter,
+    winter_loss = D.FULL$hives_winter - D.FULL$hives_lost
+)
+# Drop rows without answer for spring number of colonies
+D.PROD <- D.PROD[!is.na(D.PROD$spring),]
+
+# calculte net change percentages
+D.RETURN <- lapply(D.PROD, sum)
+D.RETURN$summer_percentage <- D.RETURN$winter * 100 / D.RETURN$spring - 100
+D.RETURN$winter_loss_percentage <- D.RETURN$winter_loss * 100 / D.RETURN$winter - 100
+D.RETURN <- bind_rows(D.RETURN)
+
+D.RETURN$summer_percentage      <- F_NUMBER_FORMAT(D.RETURN$summer_percentage)
+D.RETURN$winter_loss_percentage <- F_NUMBER_FORMAT(D.RETURN$winter_loss_percentage)
+
+print("#################")
+print("#####RESULTS#####")
+print(D.RETURN)
+print("#################")
+
+# Old logic when we tried to use bootstrap to generate a CI for the population
+# sample.boot <- boot(D.PROD, F.SUM, R = 9999, t = 6)
+# d = org data from bootstrap, i = indices from bootstrap, t = column to return (5 = summer percentage, 6 = winter percentage)
+# F.SUM <- function(d, i, t = 1){
+#   D.RETURN <- lapply(d[i,], sum)
+#   D.RETURN$summer_percentage <- D.RETURN$winter * 100 / D.RETURN$spring - 100
+#   D.RETURN$winter_loss_percentage <- D.RETURN$winter_loss * 100 / D.RETURN$winter - 100
+#   # print("Returning following column:")
+#   # print(names(D.RETURN)[t])
+#   r <- D.RETURN[[t]]
+#   # print(r)
+#   return(r)
+# }
+
+##### Generate Plot from fixed values #####
 # years and increase over summer and loss over upcoming winter in percent
 # increase is over given year (spring - spring) and loss is for following spring next year.
 # eg. 2013/2014 increase 24.4% from spring 2013 - winter 2013; loss 12.0% from winter 2013 - spring 2014
-years      = c(2013, 2014, 2015, 2016, 2017, 2018, 2019)
-increase   = c(24.4, 24.6, 44.4, 44.9, 35.2, 25.4)
-loss       = c(12.0, 28.6, 7.6, 22.5, 11.6, 15.3)
+years      = c(2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020)
+increase   = c(24.4, 24.6, 44.4, 44.9, 35.2, 25.4, D.RETURN$summer_percentage)
+loss       = c(12.0, 28.6, 7.6, 22.5, 11.6, 15.3, D.RETURN$winter_loss_percentage*-1)
 # Start Value for calculating the populationsdynamics
 start = 100
 
@@ -84,7 +125,7 @@ p <- ggplot(data = D_DATA) +
   ) +
   scale_x_continuous(
     limits = c( NA, max(D_DATA$idu)+0.5 ),
-    breaks = seq(1.5,14,2),
+    breaks = seq(1.5,len*2,2),
     labels = years
     #labels= D_DATA$season
   ) +
@@ -94,6 +135,5 @@ p <- ggplot(data = D_DATA) +
     limits = c( 0, max(D_DATA$value)+50 )
   )
 
-p
 ggsave("./img/plot_population.pdf", p, width = 6, height = 3.5, units = "in")
  
