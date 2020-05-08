@@ -37,11 +37,11 @@ D.FACTORS = list()
 for( i in oList){
   temp.n <- get( i[1], pos = D.FULL )
   # remove "Unsicher" because AINOVA Test?
-  #D.FULL_C <- subset( D.FULL, temp.n != "Unsicher" & D.FULL$migratory_beekeeper == "Nein" )
-  #D.FULL_C <- subset( D.FULL, temp.n != "Unsicher" )
-  D.FULL_C <- D.FULL
+  #D.FULL_C <- subset( D.FULL, temp.n != "Unsicher" & D.FULL$op_migratory_beekeeper == "Nein" )
+  D.FULL_C <- subset( D.FULL, temp.n != "Unsicher" )
+  #D.FULL_C <- D.FULL
   CACHE.M <- F_EXTRACT_N( D.FULL_C, i[1], i[2] )
-  CACHE.BIND <- F_GLM_FACTOR( D.FULL_C, i[1], get( i[1], pos = D.FULL_C ), TRUE )
+  CACHE.BIND <- F_GLM_FACTOR( D.FULL_C, i[1], get( i[1], pos = D.FULL_C ), TRUE, TRUE )
   D.FACTORS[[i[1]]] <- cbind( CACHE.M, CACHE.BIND )
 }
 D.FACTORS <- bind_rows(D.FACTORS)
