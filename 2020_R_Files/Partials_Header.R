@@ -4,7 +4,7 @@
 # Header File, here we set up basic libaries variables and import the excel
 
 # ---- Clear Enviroment  ----
-rm(list=ls())
+rm(list=ls()[!ls() %in% c("MAP_AUSTRIA", "MF_DISTRICTS", "MF_STATES")])
 # Set Working directory (uses API of RStudio)
 SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
 setwd( SCRIPT.DIR )
@@ -56,6 +56,7 @@ D.RAW$symp_e[ is.na( D.RAW$symp_e )] <- 0
 
 # Values without loss by elements
 D.RAW$hives_lost_e <- ifelse( is.na( D.RAW$lost_b ), D.RAW$hives_lost, D.RAW$hives_lost - D.RAW$lost_b)
+D.RAW$hives_spring_e <- D.RAW$hives_winter - D.RAW$hives_lost_e	
 # Values for Queens
 D.RAW$hives_spring_queen <- ifelse( is.na( D.RAW$lost_a ), NA, D.RAW$hives_winter - D.RAW$lost_a )
 # Loss rate per company
