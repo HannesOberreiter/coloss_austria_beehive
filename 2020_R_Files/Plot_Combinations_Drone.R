@@ -61,11 +61,11 @@ D.PLOTC$ff <- factor( D.PLOTC$ff, levels = V.LABELS )
 D.PLOTC$alpha <- 'white'
 D.PLOTC$alpha[D.PLOTC$negative == 0] <- 'grey'
 
-p <- F_SINGLE_PLOT(D.PLOTC, D.PLOTC$alpha)
+p <- F_SINGLE_PLOT(D.PLOTC, data_frame(empty=numeric()), D.PLOTC$alpha)
 
 ggsave("./img/plot_treatment_drone_combination.pdf", p, width = 6, height = 3.5, units = "in")
 
-rm(L.oList, p, V.ColComb1, V.ColComb2, V.ColComb3, V.LABELS, L.CACHE, L.CacheList)
+rm(L.oList, V.ColComb1, V.ColComb2, V.ColComb3, V.LABELS, L.CACHE, L.CacheList)
 
 #### MULTIPLE MONTHS ####
 V.LABELS <- c("0 Monate", "1-3 Monate", ">3 Monate")
@@ -84,4 +84,5 @@ rm(CACHE.BIND, CACHE.M)
 D.FACTORS$ff <- factor( D.FACTORS$ff, levels = V.LABELS)
 # Generate Plot
 p2 <- F_SINGLE_PLOT(D.FACTORS)
+
 ggsave("./img/plot_treatment_drone_grouped.pdf", p2, width = 5, height = 4, units = "in")

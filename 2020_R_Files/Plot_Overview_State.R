@@ -38,7 +38,7 @@ D.STATES$ff <- factor( D.STATES$ff, levels = OrderVector )
 D.STATES <- D.STATES[ order( factor( D.STATES$ff, levels = OrderVector )),]
 D.STATES$ff <- c("AUT", "Bgld.", "Ktn.", "NÖ", "OÖ", "Sbg.", "Stmk.", "T", "Vbg.", "W")
 
-p <- F_SINGLE_PLOT(D.STATES, D.STATES$alpha)
+p <- F_SINGLE_PLOT(D.STATES, data_frame(empty=numeric()), D.STATES$alpha)
 
 ggsave("./img/plot_overview_states.pdf", p, width = 6, height = 3.5, units = "in")
 
