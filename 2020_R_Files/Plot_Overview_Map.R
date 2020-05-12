@@ -19,8 +19,7 @@ D.FULL <- D.RAW
 
 #### CREATE MAP CLUSTER ####
 D.MAP.PLOT <- subset( D.FULL, select = c( "latitude", "longitude" ) )
-D.MAP.PLOT <- F_MAP_CLUSTER( D.MAP.PLOT )
-
+D.MAP.PLOT <- F_MAP_CLUSTER( D.MAP.PLOT, 4 )
 
 p <- ggplot() + 
   geom_polygon(data = MF_DISTRICTS, aes( x = long, y = lat, group = group ), fill="white", color = "black", size = 0.2 ) + 
@@ -28,7 +27,7 @@ p <- ggplot() +
   geom_point(data = D.MAP.PLOT, aes(x = longitude, y = latitude, size = n), color = "gray", fill = "darkblue", stroke = 0.3, shape = 21 ) + 
   coord_quickmap() +
   xlab( "" ) + ylab( "" ) + labs( colour = "Anzahl Imkereien (n)", size = "Anzahl Imkereien (n)") +
-  scale_size_continuous(range = c(1, 3.5), breaks = c(1, 5, 10, 15)) + 
+  scale_size_continuous(range = c(1, 4), breaks = c(1, 10, round(max(D.MAP.PLOT$n)/2, digits = 0), max(D.MAP.PLOT$n))) + 
   ggtitle("") +
   theme_void() +
   theme(
@@ -39,7 +38,6 @@ p <- ggplot() +
     axis.ticks = element_blank(),
     panel.grid.major = element_blank()
   )
-
 
 ggsave("./img/plot_overview_map.pdf", p, width = 6, height = 3.5, units = "in")
 
@@ -66,17 +64,18 @@ D.DISTRICTS <- D.DISTRICTS[ D.DISTRICTS[, "n" ] > 5, ]
 write.csv( D.DISTRICTS, file = paste("./", "District_Losses.csv", sep = "" ) )
 
 # add data to map
-MF_DISTRICTS$values = 0
-MF_DISTRICTS = left_join( MF_DISTRICTS, D.DISTRICTS, by = c( "id" = "district" ), copy = TRUE )
+MF_DISTRICTS_TEMP <- MF_DISTRICTS
+MF_DISTRICTS_TEMP$values = 0
+MF_DISTRICTS_TEMP = left_join( MF_DISTRICTS_TEMP, D.DISTRICTS, by = c( "id" = "district" ), copy = TRUE )
 
 # cleanup
 rm(CACHE.DIS, D.FULL.DIS)
 
 p2 <- ggplot() + 
-  geom_polygon(data = MF_DISTRICTS, aes( x = long, y = lat, group = group, fill = hives_lost ), color = "black", size = 0.2 ) + 
-  geom_path(data = MF_STATES, aes(x = long, y = lat, group = group), color = "black", size = 0.6 ) + 
+  geom_polygon(data = MF_DISTRICTS_TEMP, aes( x = long, y = lat, group = group, fill = hives_lost ), color = "Grey", size = 0.2 ) + 
+  geom_path(data = MF_STATES, aes(x = long, y = lat, group = group), color = "Black", size = 0.2 ) + 
   coord_quickmap() +
-  scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white", limits = c(0, 70), breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100) ) +
+  scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white", limits = c(0, max(MF_DISTRICTS_TEMP$hives_lost)), breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100) ) +
   xlab( "" ) + ylab( "" ) + labs( fill = "Verlustrate [%]") +
   #ggtitle("(C) Districts - Loss rate (white = n < 6)") +
   theme_void() +
@@ -90,6 +89,3 @@ p2 <- ggplot() +
   )
 
 ggsave("./img/plot_map_loss_district.pdf", p2, width = 6, height = 3.5, units = "in")
-
-
-

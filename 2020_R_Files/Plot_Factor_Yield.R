@@ -38,8 +38,8 @@ for( i in oList){
   temp.n <- get( i[1], pos = D.FULL )
   # remove "Unsicher" because AINOVA Test?
   #D.FULL_C <- subset( D.FULL, temp.n != "Unsicher" & D.FULL$op_migratory_beekeeper == "Nein" )
-  D.FULL_C <- subset( D.FULL, temp.n != "Unsicher" )
-  #D.FULL_C <- D.FULL
+  #D.FULL_C <- subset( D.FULL, temp.n != "Unsicher" )
+  D.FULL_C <- D.FULL
   CACHE.M <- F_EXTRACT_N( D.FULL_C, i[1], i[2] )
   CACHE.BIND <- F_GLM_FACTOR( D.FULL_C, i[1], get( i[1], pos = D.FULL_C ), TRUE, TRUE )
   D.FACTORS[[i[1]]] <- cbind( CACHE.M, CACHE.BIND )
@@ -63,8 +63,9 @@ D.DISTRICTS <- D.FULL.DIS %>%
 D.DISTRICTS <- subset( D.DISTRICTS, D.DISTRICTS$n > 5 )
 
 #### ADD DATA TO MAP_D #####
-MF_DISTRICTS$values = 0
-MF_DISTRICTS = left_join( MF_DISTRICTS, D.DISTRICTS, by = c( "id" = "district" ), copy = TRUE )
+MF_DISTRICTS_TEMP <- MF_DISTRICTS
+MF_DISTRICTS_TEMP$values = 0
+MF_DISTRICTS_TEMP = left_join( MF_DISTRICTS_TEMP, D.DISTRICTS, by = c( "id" = "district" ), copy = TRUE )
 
 #### MAPS ####
 D.PLOT_LIST <- list()
@@ -80,20 +81,20 @@ for(i in oList){
   legend.pos = "bottom"
 
   D.FULL$ff <- get( i[1], pos = D.FULL ) 
-  D.CA <- subset( D.FULL, (D.FULL$ff == "Ja" & D.FULL$op_migratory_beekeeper == "Ja"), select = c( "latitude", "longitude" ) )
-  D.CACHE[[i[1]]] <- F_MAP_CLUSTER(D.CA)
+  D.CA <- subset( D.FULL, (D.FULL$ff == "Ja" & D.FULL$op_migratory_beekeeper != "Ja" & D.FULL$district != "In mehr als einem Bezirk"), select = c( "latitude", "longitude" ) )
+  D.CACHE[[i[1]]] <- F_MAP_CLUSTER(D.CA, 4)
   # We need here aes_string!! inside functions or loops!
   # https://www.rdocumentation.org/packages/ggplot2/versions/1.0.0/topics/aes_string
   p_cache <-
     ggplot() + 
-    geom_polygon(data = MF_DISTRICTS, aes( x = MF_DISTRICTS$long, y = MF_DISTRICTS$lat, group = MF_DISTRICTS$group, fill = MF_DISTRICTS$hives_lost ), show.legend = label.fill, color = "Grey", size = 0.2 ) + 
-    geom_path(data = MF_STATES, aes(x = MF_STATES$long, y = MF_STATES$lat, group = MF_STATES$group), color = "Grey", size = 0.6 ) + 
+    geom_polygon(data = MF_DISTRICTS_TEMP, aes( x = MF_DISTRICTS_TEMP$long, y = MF_DISTRICTS_TEMP$lat, group = MF_DISTRICTS_TEMP$group, fill = MF_DISTRICTS_TEMP$hives_lost ), show.legend = label.fill, color = "Grey", size = 0.2 ) + 
+    geom_path(data = MF_STATES, aes(x = MF_STATES$long, y = MF_STATES$lat, group = MF_STATES$group), color = "Black", size = 0.2 ) + 
     geom_point(data = D.CACHE[[i[1]]], aes_string(x = D.CACHE[[i[1]]]$longitude, y = D.CACHE[[i[1]]]$latitude, size = D.CACHE[[i[1]]]$n), color = "blue", fill = "black", stroke = 0.2, shape = 21, show.legend = label.point ) + 
     coord_quickmap() +
     # Info, when you want to join the legends for size and colour they need exact the same limits and breaks otherwise it wont work
     xlab( "" ) + ylab( "" ) + labs( colour = "Meldungen (n)", size = "Meldungen (n)", fill = "Verlustrate [%]" ) +
-    scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white", limits = c(0, 70), breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100) ) +
-    scale_size_continuous( range = c(0.1, 3), breaks = c( 1, 5, 10, 15, 20 ), limits = c(0, 20), guide = label.size ) + 
+    scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white", limits = c(0, max(D.DISTRICTS$hives_lost)), breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100) ) +
+    scale_size_continuous( range = c(0.1, 3), breaks = c( 1, 10, 25), limits = c(0, 25), guide = label.size ) + 
     ggtitle(paste(i[2])) +
     theme_void() +
     theme(
@@ -112,9 +113,8 @@ D.CACHE.Legend <- list()
 D.PLOT_LIST.Legend <- list()
 
 count <- 0
-
 for(i in oList){
-  
+  # we only need to draw 2 plots for legend
   if (count == 3) {
     break
   }
@@ -126,22 +126,18 @@ for(i in oList){
   label.size <- ifelse(count == 2, "legend", "none")
   legen.pos <- 'bottom'
   
-  D.FULL$ff <- get( i[1], pos = D.FULL ) 
-  # only show on map if crop was present and not migratory beekeeprs
-  D.CA <- subset( D.FULL, (D.FULL$ff == "Ja" & D.FULL$op_migratory_beekeeper == "Nein"), select = c( "latitude", "longitude" ) )
-  D.CACHE.Legend[[i[1]]] <- F_MAP_CLUSTER(D.CA)
   # We need here aes_string!! inside functions or loops!
   # https://www.rdocumentation.org/packages/ggplot2/versions/1.0.0/topics/aes_string
   p_cache <-
     ggplot() + 
-    geom_polygon(data = MF_DISTRICTS, aes( x = MF_DISTRICTS$long, y = MF_DISTRICTS$lat, group = MF_DISTRICTS$group, fill = MF_DISTRICTS$hives_lost ), show.legend = label.fill, color = "Grey", size = 0.2 ) + 
-    geom_path(data = MF_STATES, aes(x = MF_STATES$long, y = MF_STATES$lat, group = MF_STATES$group), color = "Grey", size = 0.6 ) + 
+    geom_polygon(data = MF_DISTRICTS_TEMP, aes( x = MF_DISTRICTS_TEMP$long, y = MF_DISTRICTS_TEMP$lat, group = MF_DISTRICTS_TEMP$group, fill = MF_DISTRICTS_TEMP$hives_lost ), show.legend = label.fill, color = "Grey", size = 0.2 ) + 
+    #geom_path(data = MF_STATES, aes(x = MF_STATES$long, y = MF_STATES$lat, group = MF_STATES$group), color = "Grey", size = 0.6 ) + 
     geom_point(data = D.CACHE[[i[1]]], aes_string(x = D.CACHE[[i[1]]]$longitude, y = D.CACHE[[i[1]]]$latitude, size = D.CACHE[[i[1]]]$n), color = "blue", fill = "black", stroke = 0.2, shape = 21, show.legend = label.point ) + 
-    coord_quickmap() +
+    #coord_quickmap() +
     # Info, when you want to join the legends for size and colour they need exact the same limits and breaks otherwise it wont work
     xlab( "" ) + ylab( "" ) + labs( colour = "Meldungen (n)", size = "Meldungen (n)", fill = "Verlustrate [%]" ) +
-    scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white", limits = c(0, 70), breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100) ) +
-    scale_size_continuous( range = c(0.1, 3), breaks = c( 1, 5, 10, 15, 20 ), limits = c(0, 20), guide = label.size ) + 
+    scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white", limits = c(0, max(D.DISTRICTS$hives_lost)), breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100) ) +
+    scale_size_continuous( range = c(0.1, 3), breaks = c( 1, 10, 25), limits = c(0, 25), guide = label.size ) + 
     ggtitle(paste(i[2])) +
     theme_void() +
     theme(
@@ -192,13 +188,17 @@ p1 <- ggplot( data = D.FACTORS ) +
   )
 
 # Adding significant stars
-D.ANNOTATION <- F_CHISTAR_DF(D.FACTORS, "Ja", "Nein", "c")
+D.ANNOTATION <- F_CHISTAR_DF(D.FACTORS, "Ja", "Unsicher", "c")
+
 if(nrow(D.ANNOTATION)> 0){
-  p1 <- p1 + geom_signif(data=D.ANNOTATION, aes(xmin=start, xmax=end, annotations=label, y_position=y), textsize = 8, manual=TRUE)
+  # using simple text
+  p1 <- p1 + geom_text(data=D.ANNOTATION, aes(x="Nein", y=y, label=label), size=8)
+  # using brackets
+  #p1 <- p1 + geom_signif(data=D.ANNOTATION, aes(xmin=start, xmax=end, annotations=label, y_position=y), textsize = 8, manual=TRUE)
 }
 
 # Cleanup
-rm(count, i, label.fill, label.point, label.size, legen.pos, legend.pos, temp.n, oList, D.PLOT_LIST.Legend, D.CACHE.Legend, D.CACHE, D.CA)
+#rm(count, i, label.fill, label.point, label.size, legen.pos, legend.pos, temp.n, oList, D.PLOT_LIST.Legend, D.CACHE.Legend, D.CACHE, D.CA)
 
 # Layout for maps and Legend
 lay <- rbind( 
@@ -213,4 +213,3 @@ p2 <- arrangeGrob(D.PLOT_LIST[[1]], D.PLOT_LIST[[2]], D.PLOT_LIST[[3]], D.PLOT_L
 # Save Files
 ggsave("./img/plot_factor_yield.pdf", p1, width = 11, height = 6, units = "in")
 ggsave("./img/plot_factor_yield_map.pdf", p2, width = 8, height = 6, units = "in")
-
