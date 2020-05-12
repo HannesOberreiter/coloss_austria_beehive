@@ -22,28 +22,19 @@ source( "Partials_Functions.r" )
 D.FULL <- D.RAW
 
 # Remove participants which did not answer varroa_checked (this includes eg. beekeeping journal without given question)
-D.FULL <- D.FULL[!is.na(D.FULL$varroa_checked)]
+D.FULL <- D.FULL[!is.na(D.FULL$varroa_checked),]
 
 #### YES / NO PLOT #####
-
-# Create dummy Dataframe, to insert rows later
-D.FACTORS <- 
-  setNames( 
-    data.frame( matrix( ncol = 12, nrow = 0)), 
-    c( "ff", "c", "n", "hives_winter", "lost_a", "lost_b", "lost_c", "hives_lost_rate", "lowerlim", "middle", "upperlim", "chi")
-  )
-
-CACHE.M <- F_EXTRACT_N( D.FULL, "varroa_checked", "varroa_checked" )
+CACHE.M    <- F_EXTRACT_N( D.FULL, "varroa_checked", "varroa_checked" )
 CACHE.BIND <- F_GLM_FACTOR( D.FULL, "varroa_checked", get( "varroa_checked", pos = D.FULL), TRUE )
-CACHE.BIND <- cbind( CACHE.M, CACHE.BIND )
-D.FACTORS <- rbind( D.FACTORS, CACHE.BIND )
+D.FACTORS  <- cbind( CACHE.M, CACHE.BIND )
 
 rm(CACHE.BIND, CACHE.M)
 
 # Ordering
 D.FACTORS$ff <- factor( D.FACTORS$ff, levels = c("Ja", "Nein", "Unsicher"))
-
-p1 <- F_SINGLE_PLOT(D.FACTORS)
+D.SIGN <- F_CHISTAR_DF(D.FACTORS)
+p1 <- F_SINGLE_PLOT(D.FACTORS, D.SIGN)
 ggsave("./img/plot_treatment_varroa_checked.pdf", p1, width = 5, height = 4, units = "in")
 
 rm(D.FACTORS)
@@ -97,9 +88,9 @@ D.SUP$monitoring_groups <- V.LABELS[1]
 D.SUP$monitoring_groups[D.SUP$T_vcount_total12 > 1] <- V.LABELS[2]
 D.SUP$monitoring_groups[D.SUP$T_vcount_total12 > 3] <- V.LABELS[3]
 # calculate glm
-CACHE.M <- F_EXTRACT_N( D.SUP, "monitoring_groups", "monitoring_groups" )
+CACHE.M    <- F_EXTRACT_N( D.SUP, "monitoring_groups", "monitoring_groups" )
 CACHE.BIND <- F_GLM_FACTOR( D.SUP, "monitoring_groups", get( "monitoring_groups", pos = D.SUP), TRUE )
-D.FACTORS <- cbind( CACHE.M, CACHE.BIND )
+D.FACTORS  <- cbind( CACHE.M, CACHE.BIND )
 # cleanup
 rm(CACHE.BIND, CACHE.M)
 # Ordering
@@ -152,6 +143,7 @@ D.PLOTC$ff <- factor( D.PLOTC$ff, levels = V.LABELS )
 D.PLOTC$alpha <- 'white'
 D.PLOTC$alpha[D.PLOTC$negative == 0] <- 'grey'
 
-p4 <- F_SINGLE_PLOT(D.PLOTC, D.PLOTC$alpha)
-
+# Only plot combinations with at least 15 answers
+D.PLOTC15 <- D.PLOTC[D.PLOTC$n > 15,]
+p4 <- F_SINGLE_PLOT(D.PLOTC15, data_frame(), D.PLOTC15$alpha)
 ggsave("./img/plot_treatment_varroa_combination.pdf", p4, width = 6, height = 3.5, units = "in")

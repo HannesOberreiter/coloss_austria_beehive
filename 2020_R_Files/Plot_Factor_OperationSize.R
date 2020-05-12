@@ -18,7 +18,6 @@ source( "Partials_Header.r" )
 source( "Partials_Functions.r" )
 
 #### START CODE #####
-
 D.FULL <- D.RAW
 
 # Label and Ordering
@@ -29,12 +28,12 @@ D.FULL$operation_size2 <- ifelse(D.FULL$hives_winter < 51, V.LABEL[1], V.LABEL[4
 D.FULL$operation_size3 <- ifelse(D.FULL$hives_winter < 51, V.LABEL[3], V.LABEL[4])
 D.FULL$operation_size3[D.FULL$hives_winter < 26] <- V.LABEL[2]
 
-CACHE.M <- F_EXTRACT_N( D.FULL, "operation_size2", "operation_size2" )
-CACHE.BIND <- F_GLM_FACTOR( D.FULL, "operation_size2", get( "operation_size2", pos = D.FULL ) )
-D.FACTORS <- cbind( CACHE.M, CACHE.BIND )
+CACHE.M    <- F_EXTRACT_N( D.FULL, "operation_size2", "operation_size2" )
+CACHE.BIND <- F_GLM_FACTOR( D.FULL, "operation_size2", get( "operation_size2", pos = D.FULL ), TRUE)
+D.FACTORS  <- cbind( CACHE.M, CACHE.BIND )
 
 CACHE.M <- F_EXTRACT_N( D.FULL, "operation_size3", "operation_size3" )
-CACHE.BIND <- F_GLM_FACTOR( D.FULL, "operation_size3", get( "operation_size3", pos = D.FULL ) )
+CACHE.BIND <- F_GLM_FACTOR( D.FULL, "operation_size3", get( "operation_size3", pos = D.FULL ), TRUE )
 CACHE.BIND <- cbind( CACHE.M, CACHE.BIND )
 D.FACTORS <- rbind( D.FACTORS, CACHE.BIND )
 
@@ -42,10 +41,12 @@ rm(CACHE.M, CACHE.BIND)
 
 # Ordering
 D.FACTORS$ff <- factor( D.FACTORS$ff, levels = V.LABEL)
+D.SIGN2 <- F_CHISTAR_DF(D.FACTORS[D.FACTORS$c == "operation_size2",], "1-50 Völker", "> 50 Völker")
+D.SIGN3 <- F_CHISTAR_DF(D.FACTORS[D.FACTORS$c == "operation_size3",], "1-25 Völker", "> 50 Völker")
 
 #### PLOTTING #####
-p2 <- F_SINGLE_PLOT(D.FACTORS[D.FACTORS$c == "operation_size2",])
-p3 <- F_SINGLE_PLOT(D.FACTORS[D.FACTORS$c == "operation_size3",])
+p2 <- F_SINGLE_PLOT(D.FACTORS[D.FACTORS$c == "operation_size2",], D.SIGN2)
+p3 <- F_SINGLE_PLOT(D.FACTORS[D.FACTORS$c == "operation_size3",], D.SIGN3)
 
 ggsave("./img/plot_factor_operationsize2.pdf", p2, width = 5, height = 4, units = "in")
 ggsave("./img/plot_factor_operationsize3.pdf", p3, width = 5, height = 4, units = "in")
