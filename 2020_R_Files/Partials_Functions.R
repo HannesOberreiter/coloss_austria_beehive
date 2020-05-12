@@ -35,7 +35,7 @@ F_GLM_FACTOR <- function( x, f, xf, chi = FALSE, na_omit = TRUE)
   x$ff <- as.factor(x$ff)
 
   GLM.FULL <- glm( 
-    cbind( hives_lost_e, hives_spring_e ) ~ as.factor( ff ) ,
+    cbind( hives_lost_e, hives_spring_e ) ~ ff ,
     family = quasibinomial( link = "logit" ), 
     data = x, na.action = na.omit )
   SUMMARY.FULL <- summary( GLM.FULL )
@@ -243,13 +243,14 @@ F_COMBINATION <- function( x, d, itn, CacheList, ColComb1, negative = 1 ){
 
 # Our custom cluster function
 # x = subseted Dataframe (lat, long), you need to do beforehand the logic what data you want
-F_MAP_CLUSTER <- function( x ){
+# number_clusters = divides the n with the given number, it tells us how many clusters we want to find
+F_MAP_CLUSTER <- function( x, number_clusters = 2){
   # I do not really understand how else we should do this, because it is not a real "Cluster" Search
   # Creating our clustering without deep mathematics, high k-means then remove one cluster frame and only keep up to 3 when they to overlap
   x <- x %>% na.omit()
   # kmeans for simple automatic cluster search, 1/4 seems to work good with this data
   # 1/4 for beekeeper distribution
-  c <- kmeans(x, ( nrow(x)/2) )
+  c <- kmeans(x, ( nrow(x)/number_clusters) )
   # Extract Data from kmeans
   CENTERS <- as.data.frame( c$centers )
   CENTERS$cluster <- seq.int( nrow(CENTERS) )  
