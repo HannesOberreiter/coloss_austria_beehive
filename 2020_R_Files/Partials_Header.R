@@ -30,7 +30,9 @@ library( svMisc ) # only for combination function to get a progress bar
 FILE.NAME <- "data.xlsx"
 SHEET.NAME <- "Winterverluste"
 # Load Excel File
-D.RAW <- read_excel( FILE.NAME, sheet = SHEET.NAME, skip = 1 )
+V.COL_TYPES_IMPORT <- c(rep("guess", 311))
+V.COL_TYPES_IMPORT[12] <- "text" # workaround for ID column which was imported as numeric
+D.RAW <- read_excel( FILE.NAME, sheet = SHEET.NAME, skip = 1, col_types = V.COL_TYPES_IMPORT, trim_ws = TRUE)
 D.RAW <- D.RAW[, !grepl("[...]", colnames(D.RAW))] # Remove all cols which were empty and auto generated
 # Drop NA Rows sometimes error while importing from Excel
 D.RAW <- D.RAW[ rowSums( is.na( D.RAW )) != ncol( D.RAW ), ]
@@ -53,6 +55,8 @@ D.RAW$symp_b[ is.na( D.RAW$symp_b )] <- 0
 D.RAW$symp_c[ is.na( D.RAW$symp_c )] <- 0
 D.RAW$symp_d[ is.na( D.RAW$symp_d )] <- 0
 D.RAW$symp_e[ is.na( D.RAW$symp_e )] <- 0
+# sum the symptomes
+D.RAW$symp_total = D.RAW$symp_a + D.RAW$symp_b + D.RAW$symp_c + D.RAW$symp_d + D.RAW$symp_e
 
 # Values without loss by elements
 D.RAW$hives_lost_e <- ifelse( is.na( D.RAW$lost_b ), D.RAW$hives_lost, D.RAW$hives_lost - D.RAW$lost_b)
@@ -70,6 +74,6 @@ D.RAW$submitted[grepl("P", D.RAW$id, fixed = TRUE)] <- 'Papier'
 D.RAW$submitted[grepl("Z", D.RAW$id, fixed = TRUE)] <- 'Zeitung'
 
 # ---- Remove Temporary -----
-rm(FILE.NAME, SHEET.NAME)
+rm(FILE.NAME, SHEET.NAME, V.COL_TYPES_IMPORT)
 
 
