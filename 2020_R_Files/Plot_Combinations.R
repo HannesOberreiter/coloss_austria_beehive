@@ -1,7 +1,7 @@
 ##############################
 ##############################
 ### Survey Bee Hive Losses ###
-# (c) 2019 Hannes Oberreiter #
+# (c) 2020 Hannes Oberreiter #
 ##############################
 ##############################
 
@@ -20,6 +20,7 @@ source( "Partials_Functions.r" )
 
 
 #### START CODE #####
+D.FULL <- D.RAW
 
 # List of Factors we want in our Plot
 # CAREFUL with ordering, they will be correct only if they are in order with column numbers
@@ -68,8 +69,10 @@ oList = list(
   
 )
 
-# Drop Drone brood removal columns as they would get picked up with our next regex
+# Drop Drone Brood and Varroa Count columns as they would get picked up with our next regex
 D.FULL <- D.FULL[, -grep("T_drone", colnames(D.FULL))]
+D.FULL <- D.FULL[, -grep("T_vcount", colnames(D.FULL))]
+
 # Remove other columns which are low represented and would only blow our combinations
 D.FULL <- D.FULL[, -grep("T_formic_short_totalyn_winter", colnames(D.FULL))]
 D.FULL <- D.FULL[, -grep("T_formic_long_totalyn_winter", colnames(D.FULL))]
@@ -85,12 +88,12 @@ D.FULL <- D.FULL[, -grep("T_synthetic", colnames(D.FULL))]
 D.FULL <- D.FULL[, -grep("T_other", colnames(D.FULL))]
 
 # Get column number with yn_* in it
-ColComb1 <- grep("totalyn_", colnames(D.FULL), fixed = TRUE)
+V.ColComb1 <- grep("totalyn_", colnames(D.FULL), fixed = TRUE)
 # Add to our oList with the names the ColNumber for better inserting later
 CacheList <- data.frame(t(sapply(oList, c)))
-CacheList <- cbind(CacheList, ColComb1)
+CacheList <- cbind(CacheList, V.ColComb1)
 # First run, means "only" treatments no combinations
-CACHE.COMB <- F_COMBINATION(D.FULL, ColComb1, 1, CacheList, ColComb1)
+CACHE.COMB <- F_COMBINATION(D.FULL, V.ColComb1, 1, CacheList, V.ColComb1)
 
 # Numer of max. combinations, first round gets jumped because we already have done it before
 # no combinations with at least 15n were found with 4 different treatments
@@ -99,25 +102,25 @@ nMaxComb <- 3
 # create the max runs
 for(i in 2:nMaxComb){
   # Calculate every possible combination
-  ColCombN <- combn( ColComb1 , i, simplify = FALSE )
+  V.ColCombN <- combn( V.ColComb1 , i, simplify = FALSE )
   # get our data
-  CACHE.COMB.N <- F_COMBINATION(D.FULL, ColCombN, i, CacheList, ColComb1)
+  CACHE.COMB.N <- F_COMBINATION(D.FULL, V.ColCombN, i, CacheList, ColComb1)
   # save rows to our main df
   CACHE.COMB <- rbind(CACHE.COMB, CACHE.COMB.N)
 }
 
 # We dont allow negative values, they get generated because our bootstrap CI dont know there are no negative values
 CACHE.COMB$c_ci_lower[CACHE.COMB$c_ci_lower < 0] <- 0
-
+# Safety Dump
 dump <- CACHE.COMB
-
+CACHE.COMB <- dump
 # Creating xAxisLetters and add it to DF
 xAxisMaxLength <- nrow(CACHE.COMB)
 # Small function to generate more than 26 letters eg Z AA AB 
 LETTERS2<-c(LETTERS[1:26], paste0("A",LETTERS[1:26]))
 xAxisTemp <- LETTERS2[1:xAxisMaxLength]
 CACHE.COMB <- cbind(CACHE.COMB, xAxisTemp)
-names(CACHE.COMB)[29] <- "xAxisTempOld"
+names(CACHE.COMB)[30] <- "xAxisTempOld"
 
 # Order the Dataframe by n
 ordered_DF <- CACHE.COMB[order(CACHE.COMB$n, decreasing = TRUE),]
@@ -323,6 +326,49 @@ p4 <-
   scale_x_discrete(
   ) +
   scale_y_continuous(
+    limits = c(0, NA),
+    expand = c( 0 , 0 ),
+    breaks = seq( 0, 100, 5 )
+  )
+
+# Austria Total Loss Rate
+AUSTRIA.BIND <- F_GLM_SINGLE( D.RAW )
+
+p5 <- 
+  ggplot( CACHE.COMB.PLOT, aes( y = short, x = middle, shape = `Combination (ny/nx)` )) +
+  geom_crossbar(aes( xmin = lowerlim, xmax = upperlim ), fill = "white") +
+  #geom_bar( alpha = 0, fill = "white", show.legend = FALSE, color = "gray20", stat = "identity", linetype = "longdash" ) + 
+  #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), color = "gray20", size = 1.0, show.legend = FALSE ) + 
+  # background point
+  geom_vline(xintercept = AUSTRIA.BIND[1], linetype="dashed", color = "red", size=0.5) +
+  geom_vline(xintercept = AUSTRIA.BIND[2], color = "red", size=0.5) + 
+  geom_vline(xintercept = AUSTRIA.BIND[3], linetype="dashed", color = "red", size=0.5) +
+  geom_point( aes(fill = t), shape = 21, size = 7, color = "black", show.legend = FALSE) + 
+  geom_point( aes(colour = t), size = 3, stroke = 1, show.legend = FALSE) + 
+  # use defined shapes and color with better visibility
+  scale_shape_manual( values = shapeLetters[1:20] ) +
+  scale_fill_manual(values=threecolors) +
+  scale_colour_manual(values = threetextcolors) +
+  
+  geom_text( aes( y = short, x = 2, label = paste("n = ", n )), angle = 0, color = "black", size = 3 ) +
+  #ggtitle("Combination of treatment methods loss rates") +
+  ylab("") + xlab("Loss rate [%]") +
+  theme_classic() + 
+  theme(
+    plot.title = element_text(size=20), 
+    axis.title.x = element_text(colour = "black", size = 15 ), 
+    axis.title.y = element_text(colour = "black", size = 15 ), 
+    
+    axis.text.x = element_text(angle = 0, size = 13, face = "bold"),
+    axis.text.y = element_text(angle = 0, size = 13, face = "bold"),
+    
+    axis.line = element_line( linetype = "solid" ),
+    panel.grid.major.x = element_line( colour = "grey" ),
+    #panel.grid.minor.x = element_line( colour = "grey" )
+  ) +
+  scale_y_discrete(
+  ) +
+  scale_x_continuous(
     limits = c(0, NA),
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
