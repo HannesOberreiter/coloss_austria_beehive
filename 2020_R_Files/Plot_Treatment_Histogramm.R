@@ -50,7 +50,7 @@ for( i in fulltreatmentList){
 }
 
 # cleanup
-rm(x_m1, i, x, x_group, x_sums, xn)
+rm(x_m1, i, x, x_group, x_sums)
 
 # group synthetic methods into a dummy df
 D.SYNTHETIC <- D.FACTORS[D.FACTORS$group == 1, ] %>% group_by(x, vc_color) %>% 
@@ -59,7 +59,7 @@ D.SYNTHETIC <- D.FACTORS[D.FACTORS$group == 1, ] %>% group_by(x, vc_color) %>%
     y = sum(y),
     group = 1
   ) %>%
-  arrange(factor( D.SYNTHETIC$x, levels = c( V.LABEL )))
+  arrange(factor( x, levels = c( V.LABEL )))
 
 # reorder cols
 D.SYNTHETIC <- D.SYNTHETIC[c( "ff", "x", "y", "group", "vc_color" )]
