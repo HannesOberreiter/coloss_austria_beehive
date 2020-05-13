@@ -432,8 +432,8 @@ F_HISTO_PLOT <- function(df, xtext, ytext, ttext){
     ) +
     scale_y_continuous(
       expand = c( 0 , 0 ),
-      breaks = seq( 0, 950, 100 ),
-      limits = c( 0, max(df$n)+100 )
+      breaks = seq( 0, max(df$n)*1.1, 100 ),
+      limits = c( 0, max(df$n)*1.1 )
     )
   
   return(p)
