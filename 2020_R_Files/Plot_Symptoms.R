@@ -60,35 +60,43 @@ V.c_vector =  F_NUMBER_FORMAT(V.symptomes_C / V.total_lost_C * 100)
 V.ac_vector = F_NUMBER_FORMAT(V.symptomes_T / V.total_lost_T * 100)
 V.w_vector =  F_NUMBER_FORMAT(V.symptomes_W / V.total_lost_W * 100)
 # generate plotting data frame
-D.PLOT = tibble(
+D.PLOT_P = tibble(
   symptomes = c("a)", "b)", "c)", "d)", "e)"),
   a  = V.c_vector,
   ac = V.ac_vector,
   w  = V.w_vector
+)
+D.PLOT_T = tibble(
+  symptomes = c("a)", "b)", "c)", "d)", "e)"),
+  a  = V.symptomes_C,
+  ac = V.symptomes_T,
+  w  = V.symptomes_W
 )
 # label strings
 V.string_a  = paste("Symptome bezogen auf \n tote Völker (Völker ohne \n Königinnen Probleme) \n n =", nrow(D.LOSS_CORRECT), "Imker,", V.total_lost_C, "Völker", sep = " ")
 V.string_ac = paste("Symptome bezogen auf \n Gesamtverlust (verlorene \n Völker und Völker mit \n Königinnen Problemen) \n n =", nrow(D.LOSS_TOTAL), "Imker", V.total_lost_T, "Völker", sep = " ")
 V.string_w  = paste("Alle Symptomnennungen \n (inkl. Mehrfachnennungen \n sowie unvollständige Angaben) \n n =", nrow(D.LOSS_WRONG), "Imker,", V.total_lost_W, "Völker", sep = " ")
 # transform dataframe to long format
-D.PLOT.LONG <- pivot_longer(D.PLOT, cols=-"symptomes", names_to ='variable', values_to = "value")
-D.PLOT.LONG$variable <- as.character(D.PLOT.LONG$variable)
+D.PLOT_P.LONG <- pivot_longer(D.PLOT_P, cols=-"symptomes", names_to ='variable', values_to = "value")
+D.PLOT_T.LONG <- pivot_longer(D.PLOT_T, cols=-"symptomes", names_to ='variable', values_to = "totals")
+D.PLOT <- left_join(D.PLOT_P.LONG, D.PLOT_T.LONG)
+D.PLOT$variable <- as.character(D.PLOT$variable)
 # Add long labels
-D.PLOT.LONG$Gruppe <- ""
-D.PLOT.LONG$Gruppe[D.PLOT.LONG$variable == 'a']  = V.string_a
-D.PLOT.LONG$Gruppe[D.PLOT.LONG$variable == 'ac'] = V.string_ac
-D.PLOT.LONG$Gruppe[D.PLOT.LONG$variable == 'w']  = V.string_w
+D.PLOT$Gruppe <- ""
+D.PLOT$Gruppe[D.PLOT$variable == 'a']  = V.string_a
+D.PLOT$Gruppe[D.PLOT$variable == 'ac'] = V.string_ac
+D.PLOT$Gruppe[D.PLOT$variable == 'w']  = V.string_w
 # Ordering
-D.PLOT.LONG$Gruppe<- factor( D.PLOT.LONG$Gruppe, levels = c(V.string_a, V.string_ac, V.string_w))
+D.PLOT$Gruppe<- factor( D.PLOT$Gruppe, levels = c(V.string_a, V.string_ac, V.string_w))
 
 # cleanup
 # rm(CACHE.M, CACHE.BIND)
 
-p <- ggplot(D.PLOT.LONG, aes(symptomes, value)) +  
+p <- ggplot(D.PLOT, aes(symptomes, totals)) +  
   geom_bar( aes(fill = Gruppe), position = position_dodge(.9), stat="identity", colour = "black", alpha = 1, show.legend = TRUE, linetype = "solid") + 
-  xlab("Symptome") + ylab("Angaben der Imker [%]") + 
+  xlab("Symptome") + ylab("Angaben der Imker [n]") + 
   geom_text( 
-    aes(fill = Gruppe, y = value + 0.3, label = paste(value, "%", sep = "" )), 
+    aes(fill = Gruppe, y = totals + 0.3, label = paste(value, "%", sep = "" )), 
     position = position_dodge(.9), angle = 55, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
   scale_fill_grey(start = 0, end = 1) +  
   theme_classic() + 
@@ -102,9 +110,9 @@ p <- ggplot(D.PLOT.LONG, aes(symptomes, value)) +
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 100, 10 ),
-    limits = c( 0, max(D.PLOT.LONG$value)+10 )
+    breaks = seq( 0, max(D.PLOT$totals)*1.1, 100 ),
+    limits = c( 0, max(D.PLOT$totals)*1.1 )
   )
 
-ggsave("./img/plot_symptome.pdf", p, width = 5, height = 4, units = "in")
+ggsave("./img/plot_symptome.pdf", p, width = 8, height = 4, units = "in")
 
