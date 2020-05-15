@@ -157,9 +157,9 @@ F_COMBINATION <- function( x, d, itn, CacheList, ColComb1, negative = 1 ){
     if(negative == 1){
       # count numbers without given treatment, if it is bigger than 0 it means there are other treatments in combination
       # drop = FALSE tocreate a one-column dataframe and no vector if there is only one column left
-      print(d1)
+      #print(d1)
       CACHE.COMB$comb_count <- rowSums(CACHE.COMB[ , d1, drop = FALSE ], na.rm = TRUE)
-      print(CACHE.COMB$comb_count)
+      #print(CACHE.COMB$comb_count)
       # only get the count 0 ones, because then we are sure there is no combination
       CACHE.COMB <- CACHE.COMB[CACHE.COMB[, "comb_count"] == 0, ]
     }
