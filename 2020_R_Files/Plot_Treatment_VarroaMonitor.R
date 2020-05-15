@@ -82,10 +82,10 @@ rm(V.EXPR, V.COUNT, V.LOGICAL, V.MONTHS, V.MONTHS.COLOR)
 #### Multiple Months ####
 V.LABELS <- c("0 Monate", "1-3 Monate", ">3 Monate")
 # Remove if people were checking but did not answer the months (otherwise our 0 months will be wrong!)
-D.SUP <- D.FULL[!(D.FULL$T_vcount_total12 == 0 & D.FULL$varroa_checked == "Ja"),]
+D.SUP <- D.FULL[(D.FULL$varroa_checked == "Ja" | D.FULL$varroa_checked == "Nein") & !(D.FULL$T_vcount_total12 == 0 & D.FULL$varroa_checked == "Ja"),]
 # generate grouping
 D.SUP$monitoring_groups <- V.LABELS[1]
-D.SUP$monitoring_groups[D.SUP$T_vcount_total12 > 1] <- V.LABELS[2]
+D.SUP$monitoring_groups[D.SUP$T_vcount_total12 >= 1] <- V.LABELS[2]
 D.SUP$monitoring_groups[D.SUP$T_vcount_total12 > 3] <- V.LABELS[3]
 # calculate glm
 CACHE.M    <- F_EXTRACT_N( D.SUP, "monitoring_groups", "monitoring_groups" )
