@@ -18,7 +18,6 @@ source( "Partials_Header_Treatment.r" )
 # Import our Custom Functions
 source( "Partials_Functions.r" )
 
-
 #### START CODE #####
 D.FULL <- D.RAW
 
@@ -26,46 +25,40 @@ D.FULL <- D.RAW
 # CAREFUL with ordering, they will be correct only if they are in order with column numbers
 # commented columns are ignored to reduce number of possible combinations, as they are not worth when looked at usage histograms
 
-oList = list(
+V.oList = list(
   
-  c("A", "SPRING", "Hyperthermia", "Sp-Hyp"),
-  c("A", "SPRING", "Biotechnical m.", "Sp-Bio"),
-  #c("A", "SPRING", "Formic acid - ST", "Sp-F-ST"),
-  #c("A", "SPRING", "Formic acid - LT", "Sp-F-LT"),
-  c("A", "SPRING", "Lactic acid", "Sp-Lac"),
-  #c("A", "SPRING", "Ox. acid - trick. pure", "Sp-Ox-T"),
-  c("A", "SPRING", "Ox. acid - sub.", "Sp-Ox-S"),
-  #c("A", "SPRING", "Ox. acid - trick. mix", "Sp-Ox-M"),
-  c("A", "SPRING", "Ox. acid - trick.", "Sp-Ox-T"),
-  #c("A", "SPRING", "Thymol", "Sp-Thy),
-  #c("A", "SPRING", "Synthetic m.", "Sp-Syn"),
-  #c("A", "SPRING", "Another m.", "Sp-Oth"),
+  c("A", "FRÜHJAHR", "Hyperthermie",                 "F-Hyp. "),
+  c("A", "FRÜHJAHR", "Andere biotechnische Methode", "F-Biot. "),
+  c("A", "FRÜHJAHR", "Ameisensäure - Kurzzeit",      "F-AS-KZ "),
+  c("A", "FRÜHJAHR", "Ameisensäure - Langzeit",      "F-AS-LZ "),
+  c("A", "FRÜHJAHR", "Milchsäure",                   "F-Milchs. "),
+  c("A", "FRÜHJAHR", "Oxalsäure - sub.",             "F-Ox-Sub. "),
+  c("A", "FRÜHJAHR", "Oxalsäure - träufeln",         "F-Ox-Träu. "),
+  c("A", "FRÜHJAHR", "Thymol",                       "F-Thy "),
+  c("A", "FRÜHJAHR", "Anderes chem. Produkt",        "F-chem. Pr. "),
+  c("A", "FRÜHJAHR", "Andere Methode",               "F-Andere "),
   
-  c("B", "SUMMER", "Hyperthermia", "Su-Hyp"),
-  c("B", "SUMMER", "Biotechnical m.", "Su-Bio"),
-  c("B", "SUMMER", "Formic acid - ST", "Su-F-ST"),
-  c("B", "SUMMER", "Formic acid - LT", "Su-F-LT"),
-  c("B", "SUMMER", "Lactic acid", "Su-Lac"),
-  #c("B", "SUMMER", "Ox. acid - trick. pure", "Su-Ox-T"),
-  c("B", "SUMMER", "Ox. acid - sub.", "Su-Ox-S"),
-  #c("B", "SUMMER", "Ox. acid - trick. mix.", "Su-Ox-M"),
-  c("B", "SUMMER", "Ox. acid - trick.", "Su-Ox-T"),
-  c("B", "SUMMER", "Thymol", "Su-Thy"),
-  #c("B", "SUMMER", "Synthetic m.", "Su-Syn"),
-  #c("B", "SUMMER", "Another m.", "Su-Oth"),
+  c("B", "SOMMER", "Hyperthermie",                 "S-Hyp."),
+  c("B", "SOMMER", "Andere biotechnische Methode", "S-Biot. "),
+  c("B", "SOMMER", "Ameisensäure - Kurzzeit",      "S-AS-KZ "),
+  c("B", "SOMMER", "Ameisensäure - Langzeit",      "S-AS-LZ "),
+  c("B", "SOMMER", "Milchsäure",                   "S-Milchs. "),
+  c("B", "SOMMER", "Oxalsäure - sub.",             "S-Ox-Sub. "),
+  c("B", "SOMMER", "Oxalsäure - träufeln",         "S-Ox-Träu. "),
+  c("B", "SOMMER", "Thymol",                       "S-Thy. "),
+  c("B", "SOMMER", "Anderes chem. Produkt",        "S-chem. Pr. "),
+  c("B", "SOMMER", "Andere Methode",               "S-Andere "),
   
-  c("C", "WINTER", "Hyperthermia", "Wi-Hyp"),
-  #c("C", "WINTER", "Biotechnical m.", "Wi-Bio"),
-  #c("C", "WINTER", "Formic acid - ST", "Wi-F-ST"),
-  #c("C", "WINTER", "Formic acid - LT", "Wi-F-LT"),
-  c("C", "WINTER", "Lactic acid", "Wi-Lac"),
-  #c("C", "WINTER", "Ox. acid - trick. pure", "Wi-Ox-T"),
-  c("C", "WINTER", "Ox. acid - sub.", "Wi-Ox-S"),
-  #c("C", "WINTER", "Ox. acid - trick. mix.", "Wi-Ox-M")
-  c("C", "WINTER", "Ox. acid - trick.", "Wi-Ox-T")
-  #c("C", "WINTER", "Thymol", "Wi-Thy)
-  #c("C", "WINTER", "Synthetic m.", "Wi-Syn"),
-  #c("C", "WINTER", "Another m.", "Wi-Oth)
+  c("C", "WINTER", "Hyperthermie",                 "W-Hyp. "),
+  c("C", "WINTER", "Andere biotechnische Methode", "W-Biot. "),
+  c("C", "WINTER", "Ameisensäure - Kurzzeit",      "W-AS-KZ "),
+  c("C", "WINTER", "Ameisensäure - Langzeit",      "W-AS-LZ "),
+  c("C", "WINTER", "Milchsäure",                   "W-Milchs. "),
+  c("C", "WINTER", "Oxalsäure - sub.",             "W-Ox-Sub. "),
+  c("C", "WINTER", "Oxalsäure - träufeln",         "W-Ox-Träu. "),
+  c("C", "WINTER", "Thymol",                       "W-Thy. "),
+  c("C", "WINTER", "Anderes chem. Produkt",        "W-chem. Pr. "),
+  c("C", "WINTER", "Andere Methode",               "W-Andere ")
   
 )
 
@@ -73,130 +66,128 @@ oList = list(
 D.FULL <- D.FULL[, -grep("T_drone", colnames(D.FULL))]
 D.FULL <- D.FULL[, -grep("T_vcount", colnames(D.FULL))]
 
+# TODO don't remove columns otherwise participants with some combination will not be included into other combination even if it is not true
 # Remove other columns which are low represented and would only blow our combinations
-D.FULL <- D.FULL[, -grep("T_formic_short_totalyn_winter", colnames(D.FULL))]
-D.FULL <- D.FULL[, -grep("T_formic_long_totalyn_winter", colnames(D.FULL))]
-D.FULL <- D.FULL[, -grep("T_formic_short_totalyn_spring", colnames(D.FULL))]
-D.FULL <- D.FULL[, -grep("T_formic_long_totalyn_spring", colnames(D.FULL))]
-
-D.FULL <- D.FULL[, -grep("T_biotechnical_totalyn_winter", colnames(D.FULL))]
-
-D.FULL <- D.FULL[, -grep("T_thymol_totalyn_spring", colnames(D.FULL))]
-D.FULL <- D.FULL[, -grep("T_thymol_totalyn_winter", colnames(D.FULL))]
-
-D.FULL <- D.FULL[, -grep("T_synthetic", colnames(D.FULL))]
-D.FULL <- D.FULL[, -grep("T_other", colnames(D.FULL))]
+#D.FULL <- D.FULL[, -grep("T_formic_short_totalyn_winter", colnames(D.FULL))]
+#D.FULL <- D.FULL[, -grep("T_formic_long_totalyn_winter", colnames(D.FULL))]
+#D.FULL <- D.FULL[, -grep("T_formic_short_totalyn_spring", colnames(D.FULL))]
+#D.FULL <- D.FULL[, -grep("T_formic_long_totalyn_spring", colnames(D.FULL))]
+#D.FULL <- D.FULL[, -grep("T_biotechnical_totalyn_winter", colnames(D.FULL))]
+#D.FULL <- D.FULL[, -grep("T_thymol_totalyn_spring", colnames(D.FULL))]
+#D.FULL <- D.FULL[, -grep("T_thymol_totalyn_winter", colnames(D.FULL))]
+#D.FULL <- D.FULL[, -grep("T_synthetic", colnames(D.FULL))]
+#D.FULL <- D.FULL[, -grep("T_other", colnames(D.FULL))]
 
 # Get column number with yn_* in it
-V.ColComb1 <- grep("totalyn_", colnames(D.FULL), fixed = TRUE)
+V.ColComb1  <- grep("totalyn_", colnames(D.FULL), fixed = TRUE)
 # Add to our oList with the names the ColNumber for better inserting later
-CacheList <- data.frame(t(sapply(oList, c)))
-CacheList <- cbind(CacheList, V.ColComb1)
+V.CacheList <- data.frame(t(sapply(V.oList, c)))
+rm(V.oList)
+V.CacheList <- cbind(V.CacheList, V.ColComb1)
+
+#### Calculate Combinations ####
+
 # First run, means "only" treatments no combinations
-CACHE.COMB <- F_COMBINATION(D.FULL, V.ColComb1, 1, CacheList, V.ColComb1)
+CACHE.COMB <- F_COMBINATION(D.FULL, V.ColComb1, 1, V.CacheList, V.ColComb1)
 
 # Numer of max. combinations, first round gets jumped because we already have done it before
 # no combinations with at least 15n were found with 4 different treatments
-nMaxComb <- 3
+V.nMaxComb <- 2
 
 # create the max runs
-for(i in 2:nMaxComb){
+for(i in 2:V.nMaxComb){
   # Calculate every possible combination
   V.ColCombN <- combn( V.ColComb1 , i, simplify = FALSE )
   # get our data
-  CACHE.COMB.N <- F_COMBINATION(D.FULL, V.ColCombN, i, CacheList, ColComb1)
+  CACHE.COMB.N <- F_COMBINATION(D.FULL, V.ColCombN, i, V.CacheList, V.ColComb1)
   # save rows to our main df
   CACHE.COMB <- rbind(CACHE.COMB, CACHE.COMB.N)
 }
-
+rm(i, V.nMaxComb, CACHE.COMB.N, V.ColCombN, V.CacheList)
 # We dont allow negative values, they get generated because our bootstrap CI dont know there are no negative values
 CACHE.COMB$c_ci_lower[CACHE.COMB$c_ci_lower < 0] <- 0
 # Safety Dump
-dump <- CACHE.COMB
-CACHE.COMB <- dump
+#dump <- CACHE.COMB
+#CACHE.COMB <- dump
+
+#### Creating Letters ####
+
 # Creating xAxisLetters and add it to DF
-xAxisMaxLength <- nrow(CACHE.COMB)
 # Small function to generate more than 26 letters eg Z AA AB 
-LETTERS2<-c(LETTERS[1:26], paste0("A",LETTERS[1:26]))
-xAxisTemp <- LETTERS2[1:xAxisMaxLength]
-CACHE.COMB <- cbind(CACHE.COMB, xAxisTemp)
-names(CACHE.COMB)[30] <- "xAxisTempOld"
+V.LETTERS2  <- c(LETTERS[1:26], paste0("A",LETTERS[1:26]))
+V.xAxisTemp <- V.LETTERS2[1:nrow(CACHE.COMB)]
+CACHE.COMB  <- cbind(CACHE.COMB, letterBeforeOrdering = V.xAxisTemp)
 
 # Order the Dataframe by n
-ordered_DF <- CACHE.COMB[order(CACHE.COMB$n, decreasing = TRUE),]
-CACHE.COMB <- ordered_DF
-CACHE.COMB <- cbind(CACHE.COMB, xAxisTemp)
+CACHE.COMB <- CACHE.COMB[order(CACHE.COMB$n, decreasing = TRUE),]
+CACHE.COMB <- cbind(CACHE.COMB, letters = V.xAxisTemp)
 
 # Save to File, before we need to convert it into a matrix. Dont know why, seems some problems with the data format.
 CACHE.COMB.MATRIX <- as.matrix(CACHE.COMB)
 write.csv( CACHE.COMB.MATRIX, file = paste("./", "Combination_Treatments.csv", sep = "" ) )
+rm(CACHE.COMB.MATRIX)
+rm(V.LETTERS2, V.xAxisTemp)
 
-# Our Plot subset
-CACHE.COMB.PLOT <- CACHE.COMB[CACHE.COMB$n > 14, ]
+##### Subset our Combination Dataframe ####
+D.COMB <- CACHE.COMB[CACHE.COMB$n > 14, ]
 
-# We remove H because the wide range
-#CACHE.COMB.PLOT <- CACHE.COMB[CACHE.COMB$xAxisTemp != "H", ]
+# Export Subset
+CACHE.COMB.MATRIX <- as.matrix(D.COMB)
+write.csv( CACHE.COMB.MATRIX, file = paste("./", "Combination_Treatments_Subset.csv", sep = "" ) )
+rm(CACHE.COMB.MATRIX)
 
-CACHE.COMB.MATRIX <- as.matrix(CACHE.COMB.PLOT)
-write.csv( CACHE.COMB.MATRIX, file = paste("./", "Combination_Treatments_Plot.csv", sep = "" ) )
-
+#### PLOT SHAPES, COLORS, Col Names ####
 # list of "good" visible forms
-shapeForms <- c(1:18,33:127)
-shapeLetters <- c(65:79, 80:90)
-
-# remove "H" because we removed it from the PLOT
-#shapeLetters <- shapeLetters[shapeLetters != 72]
-
+V.shapeForms   <- c(1:18,33:127)
+V.shapeLetters <- c(65:79, 80:90)
 # list of "distinctiv" colors, actually not used
-disColor20 <- c("#e6194B", "#3cb44b", "#ffe119", "#4363d8", "#f58231", "#911eb4", "#42d4f4", "#f032e6", "#bfef45", "#fabebe", "#469990","#e6beff", "#9A6324", "#fffac8", "#800000", "#aaffc3", "#808000", "#ffd8b1", "#a9a9a9", "#172ab7")
-shadesOfGrey <- colorRampPalette(c("grey50", "grey100"))
+V.disColor20   <- c("#e6194B", "#3cb44b", "#ffe119", "#4363d8", "#f58231", "#911eb4", "#42d4f4", "#f032e6", "#bfef45", "#fabebe", "#469990","#e6beff", "#9A6324", "#fffac8", "#800000", "#aaffc3", "#808000", "#ffd8b1", "#a9a9a9", "#172ab7")
+V.shadesOfGrey <- colorRampPalette(c("grey50", "grey100"))
 
 # rename our letter column so we dont need to fiddle with the plot code
-names(CACHE.COMB.PLOT)[names(CACHE.COMB.PLOT) == 'xAxisTemp'] <- 'Combination'
-CACHE.COMB.PLOT$'Combination (ny/nx)' <- ""
-CACHE.COMB.PLOT$'Combination (ny/nx)' <- paste("(", CACHE.COMB.PLOT$Combination, ")", CACHE.COMB.PLOT$short, " (", CACHE.COMB.PLOT$n, " / ", CACHE.COMB.PLOT$c_n, " )", sep = "")
+names(D.COMB)[names(D.COMB) == 'letters'] <- 'Kombination'
+D.COMB$'Kombination (ny/nx)' <- ""
+D.COMB$'Kombination (ny/nx)' <- paste("(", D.COMB$Kombination, ") ", D.COMB$short, " (", D.COMB$n, " / ", D.COMB$c_n, " )", sep = "")
+D.COMB$'Kombination (ny/nx)' <- str_replace(D.COMB$'Kombination (ny/nx)', "&", "& ")
 
+#### Point Plot ####
 # create limits for point plot with custom column for arrow heads
-CACHE.COMB.PLOT.POINT <- CACHE.COMB.PLOT
+D.PLOT.POINT <- D.COMB
+D.PLOT.POINT <- D.PLOT.POINT %>% mutate(upperlim_max = ifelse(upperlim > 40, 40-middle, NA))
+D.PLOT.POINT <- D.PLOT.POINT %>% mutate(c_ci_upper_max = ifelse(c_ci_upper > 30, 30-c_mean, NA))
+D.PLOT.POINT <- D.PLOT.POINT %>% mutate(upperlim = ifelse(upperlim > 40, middle, upperlim))
+D.PLOT.POINT <- D.PLOT.POINT %>% mutate(c_ci_upper = ifelse(c_ci_upper > 30, c_mean, c_ci_upper))
 
-CACHE.COMB.PLOT.POINT <- CACHE.COMB.PLOT.POINT %>% mutate(upperlim_max = ifelse(upperlim > 40, 40-middle, NA))
-CACHE.COMB.PLOT.POINT <- CACHE.COMB.PLOT.POINT %>% mutate(c_ci_upper_max = ifelse(c_ci_upper > 30, 30-c_mean, NA))
-
-CACHE.COMB.PLOT.POINT <- CACHE.COMB.PLOT.POINT %>% mutate(upperlim = ifelse(upperlim > 40, middle, upperlim))
-CACHE.COMB.PLOT.POINT <- CACHE.COMB.PLOT.POINT %>% mutate(c_ci_upper = ifelse(c_ci_upper > 30, c_mean, c_ci_upper))
-
-p1 <- 
-  ggplot( CACHE.COMB.PLOT.POINT, aes( x = c_mean, y = middle, shape = `Combination (ny/nx)`) ) +
-  # errorbar vertical
-  geom_errorbar( aes( ymin = lowerlim, ymax = upperlim, width = 0.5 ), color = "gray", linetype = "solid", size = 1, alpha = 0.7, show.legend = FALSE, na.rm = TRUE ) + 
-  # errorbar horizontal
-  geom_errorbarh( aes( xmin = c_ci_lower, xmax = c_ci_upper, height = 0.5), color = "gray", linetype = "solid", alpha = 0.7, size = 1, show.legend = FALSE, na.rm = TRUE ) +
- 
+PLOT.POINT <- 
+  ggplot( D.PLOT.POINT, 
+          aes( x = c_mean, y = middle, shape = `Kombination (ny/nx)`) ) +
+  geom_errorbar( 
+    aes( ymin = lowerlim, ymax = upperlim, width = 0.5 ), 
+    color = "gray", linetype = "solid", size = 1, alpha = 0.7, show.legend = FALSE, na.rm = TRUE ) + 
+  geom_errorbarh( 
+    aes( xmin = c_ci_lower, xmax = c_ci_upper, height = 0.5), 
+    color = "gray", linetype = "solid", alpha = 0.7, size = 1, show.legend = FALSE, na.rm = TRUE ) +
    # Arrow Heads if bars are longer than plot
-  geom_segment(aes(x = c_mean, xend = c_mean, y = middle, yend = middle + upperlim_max), 
+  geom_segment(
+    aes(x = c_mean, xend = c_mean, y = middle, yend = middle + upperlim_max), 
                arrow = arrow(length = unit(0.03, "npc")),
                na.rm = TRUE, arrow.fill = "black", color = "gray", linetype = "solid", alpha = 0.7, size = 1) + 
-  geom_segment(aes(x = c_mean, xend = c_mean + c_ci_upper_max, y = middle, yend = middle), 
+  geom_segment(
+    aes(x = c_mean, xend = c_mean + c_ci_upper_max, y = middle, yend = middle), 
                arrow = arrow(length = unit(0.03, "npc")),
                na.rm = TRUE, arrow.fill = "black", color = "gray", linetype = "solid", alpha = 0.7, size = 1) + 
-  
   # background point
   geom_point( shape = 21, size = 10, fill = "black", color = "black", show.legend = TRUE) + 
   # point with symbol
   geom_point( size = 5, color = "white" ) + 
   # use defined shapes and color with better visibility
-  scale_shape_manual( values = shapeLetters[1:20] ) +
-
-
+  scale_shape_manual( values = V.shapeLetters[1:20] ) +
   # custom text repel that text dont overlap
   #geom_label_repel( show.legend = FALSE, hjust = "right", nudge_x = -0.3, nudge_y = -0.9, fontface = "bold", color = "black", segment.alpha = 0) +
-
-  xlab("Cost of treatment materials per colony [Euro]") + ylab("Loss rate [%]") + labs( colour = "Combination ( y(n) / x(n) )", shape = "Combination ( y(n) / x(n) )", fill = "Combination ( y(n) / x(n) )" ) + 
+  xlab("Cost of treatment materials per colony [Euro]") + ylab("Loss rate [%]") + 
+  labs( colour = "Combination ( y(n) / x(n) )", shape = "Combination ( y(n) / x(n) )", fill = "Combination ( y(n) / x(n) )" ) + 
   ggtitle("Combination of treatment methods - loss rate to cost per colony") +
-  
   coord_cartesian(ylim=c(0, 40), xlim=c(0, 30)) + 
-  
-  
   theme_classic() + 
   theme(
     plot.title = element_text(hjust = 0.5, size = 20), 
@@ -215,48 +206,25 @@ p1 <-
     #limits = c(0, 40)
   )
 
-p2 <- 
-  ggplot( CACHE.COMB.PLOT, aes( x = Combination, y = middle, shape = `Combination (ny/nx)` )) +
-  geom_bar( alpha = 0, fill = "white", show.legend = FALSE, color = "gray20", stat = "identity", linetype = "longdash" ) + 
-  geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), color = "gray20", size = 1.0, show.legend = FALSE ) + 
-  # background point
-  geom_point( shape = 21, size = 7, fill = "black", color = "black", show.legend = FALSE) + 
-  # point with symbol
-  geom_point( size = 3, stroke = 1, show.legend = FALSE, color = "white") + 
-  # use defined shapes and color with better visibility
-  scale_shape_manual( values = shapeLetters[1:20] ) +
+ggsave("./img/plot_combination_point.pdf", PLOT.POINT, width = 14, height = 8, units = "in")
 
-  geom_text( aes( x = Combination, y = 2, label = paste("n = ", n )), angle = 0, color = "black", size = 3 ) +
-  ggtitle("(A) Overall loss rate") +
-  xlab("") + ylab("Loss rate [%]") +
-  theme_classic() + 
-  theme(
-    plot.title = element_text(hjust = 0), 
-    axis.title.x = element_text(colour = "black" ), 
-    axis.text.x = element_text(angle = 0, size = 8, face = "bold"),
-    axis.line = element_line( linetype = "solid" ),
-    panel.grid.major.y = element_line( colour = "grey" ),
-    panel.grid.minor.y = element_line( colour = "grey" )
-  ) +
-  scale_x_discrete(
-  ) +
-  scale_y_continuous(
-    expand = c( 0 , 0 ),
-    breaks = seq( 0, 100, 5 )
-  )
+#### PRICE PLOT ####
 
-p3 <- 
-  ggplot( CACHE.COMB.PLOT, aes( x = Combination, y = c_mean, shape = `Combination (ny/nx)` )) +
-  geom_bar( alpha = 0, fill = "white", color = "gray20", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
-  geom_pointrange( aes( ymin = c_ci_lower, ymax = c_ci_upper ), color = "gray20", size = 1.0, show.legend = FALSE ) + 
-  geom_text( aes( x = Combination, y = 2, label = paste("n = ", c_n )), angle = 0, color = "black", size = 3 ) +
-  # background point
+PLOT.COST <- 
+  ggplot( 
+    D.COMB, 
+    aes( x = Kombination, y = c_mean, shape = `Kombination (ny/nx)` )) +
+  geom_bar( 
+    alpha = 0, fill = "white", color = "gray20", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
+  geom_pointrange( 
+    aes( ymin = c_ci_lower, ymax = c_ci_upper ), 
+    color = "gray20", size = 1.0, show.legend = FALSE ) + 
+  geom_text( 
+    aes( x = Kombination, y = 2, label = paste("n = ", c_n )), 
+    angle = 0, color = "black", size = 3 ) +
   geom_point( shape = 21, size = 7, fill = "black", color = "black", show.legend = FALSE) + 
-  # point with symbol
   geom_point( size = 3, stroke = 1, color = "white", show.legend = FALSE) + 
-  # use defined shapes and color with better visibility
-  scale_shape_manual( values = shapeLetters[1:20] ) +
-  
+  scale_shape_manual( values = V.shapeLetters[1:20] ) +
   xlab("") + ylab("Cost per colony [Euro]") + 
   ggtitle("(B) Cost of treatment materials per colony") +
   theme_classic() + 
@@ -272,87 +240,45 @@ p3 <-
   ) +
   scale_y_continuous(
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 100, 5 )
+    breaks = seq( 0, max(D.COMB$c_ci_upper)*1.1, 100 ),
+    limits = c( 0, max(D.COMB$c_ci_upper)*1.1 )
   )
 
-gtitle = textGrob( "Combination of treatment methods" , gp=gpar( fontsize = 20 , face = "bold" ) )
+ggsave("./img/plot_combination_cost.pdf", PLOT.COST, width = 14, height = 8, units = "in")
 
-lay <- rbind( c( 1 ), c( 2 ) )
-
-p <- arrangeGrob( p2, p3,
-                  top = gtitle, 
-                  layout_matrix = lay)
-
-ggsave("./img/Plot_Treatment_Combination1.pdf", p, width = 14, height = 8, units = "in")
-
-ggsave("./img/Plot_Treatment_Combination2.pdf", p1, width = 14, height = 8.5, units = "in")
-
-
-threecolors <- c("white", "gray", "black")
-threetextcolors <- c("black", "black", "white")
-CACHE.COMB.PLOT$circle_color <- threecolors[CACHE.COMB.PLOT$t]
-CACHE.COMB.PLOT$text_color <- threetextcolors[CACHE.COMB.PLOT$t]
-CACHE.COMB.PLOT$t <- as.factor(CACHE.COMB.PLOT$t)
-
-p4 <- 
-  ggplot( CACHE.COMB.PLOT, aes( x = Combination, y = middle, shape = `Combination (ny/nx)` )) +
-  geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
-  #geom_bar( alpha = 0, fill = "white", show.legend = FALSE, color = "gray20", stat = "identity", linetype = "longdash" ) + 
-  #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), color = "gray20", size = 1.0, show.legend = FALSE ) + 
-  # background point
-  geom_point( aes(fill = t), shape = 21, size = 7, color = "black", show.legend = FALSE) + 
-  geom_point( aes(colour = t), size = 3, stroke = 1, show.legend = FALSE) + 
-  # use defined shapes and color with better visibility
-  scale_shape_manual( values = shapeLetters[1:20] ) +
-  scale_fill_manual(values=threecolors) +
-  scale_colour_manual(values = threetextcolors) +
-  
-  geom_text( aes( x = Combination, y = 0.5, label = paste("n = ", n )), angle = 0, color = "black", size = 3 ) +
-  #ggtitle("Combination of treatment methods loss rates") +
-  xlab("") + ylab("Loss rate [%]") +
-  theme_classic() + 
-  theme(
-    plot.title = element_text(size=20), 
-    axis.title.x = element_text(colour = "black", size = 15 ), 
-    axis.title.y = element_text(colour = "black", size = 15 ), 
-    
-    axis.text.x = element_text(angle = 0, size = 13, face = "bold"),
-    axis.text.y = element_text(angle = 0, size = 13, face = "bold"),
-    
-    axis.line = element_line( linetype = "solid" ),
-    panel.grid.major.y = element_line( colour = "grey" ),
-    panel.grid.minor.y = element_line( colour = "grey" )
-  ) +
-  scale_x_discrete(
-  ) +
-  scale_y_continuous(
-    limits = c(0, NA),
-    expand = c( 0 , 0 ),
-    breaks = seq( 0, 100, 5 )
-  )
-
+#### VERTICAL LOSS PLOT ####
+V.threecolors       <- c("white", "gray", "black")
+V.threetextcolors   <- c("black", "black", "white")
+D.COMB$circle_color <- V.threecolors[D.COMB$t]
+D.COMB$text_color   <- V.threetextcolors[D.COMB$t]
+D.COMB$t            <- as.factor(D.COMB$t)
+D.COMB$short        <- str_replace(D.COMB$short, "&", "& ")
 # Austria Total Loss Rate
 AUSTRIA.BIND <- F_GLM_SINGLE( D.RAW )
 
-p5 <- 
-  ggplot( CACHE.COMB.PLOT, aes( y = short, x = middle, shape = `Combination (ny/nx)` )) +
-  geom_crossbar(aes( xmin = lowerlim, xmax = upperlim ), fill = "white") +
-  #geom_bar( alpha = 0, fill = "white", show.legend = FALSE, color = "gray20", stat = "identity", linetype = "longdash" ) + 
-  #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), color = "gray20", size = 1.0, show.legend = FALSE ) + 
-  # background point
+PLOT.LOSS <- 
+  ggplot(
+    D.COMB, 
+    aes( y = short, x = middle, shape = `Kombination (ny/nx)` )) +
+  geom_crossbar(
+    aes( xmin = lowerlim, xmax = upperlim ), fill = "white") +
   geom_vline(xintercept = AUSTRIA.BIND[1], linetype="dashed", color = "red", size=0.5) +
   geom_vline(xintercept = AUSTRIA.BIND[2], color = "red", size=0.5) + 
   geom_vline(xintercept = AUSTRIA.BIND[3], linetype="dashed", color = "red", size=0.5) +
-  geom_point( aes(fill = t), shape = 21, size = 7, color = "black", show.legend = FALSE) + 
-  geom_point( aes(colour = t), size = 3, stroke = 1, show.legend = FALSE) + 
-  # use defined shapes and color with better visibility
-  scale_shape_manual( values = shapeLetters[1:20] ) +
-  scale_fill_manual(values=threecolors) +
-  scale_colour_manual(values = threetextcolors) +
-  
-  geom_text( aes( y = short, x = 2, label = paste("n = ", n )), angle = 0, color = "black", size = 3 ) +
+  geom_point(
+    aes(fill = t), 
+    shape = 21, size = 7, color = "black", show.legend = FALSE) + 
+  geom_point(
+    aes(colour = t), 
+    size = 3, stroke = 1, show.legend = FALSE) + 
+  scale_shape_manual( values = V.shapeLetters[1:20] ) +
+  scale_fill_manual(  values = V.threecolors) +
+  scale_colour_manual(values = V.threetextcolors) +
+  geom_text(
+    aes( y = short, x = 2, label = paste("n = ", n )), 
+    angle = 0, color = "black", size = 3 ) +
   #ggtitle("Combination of treatment methods loss rates") +
-  ylab("") + xlab("Loss rate [%]") +
+  ylab("") + xlab("Verlustrate [%]") +
   theme_classic() + 
   theme(
     plot.title = element_text(size=20), 
@@ -374,4 +300,4 @@ p5 <-
     breaks = seq( 0, 100, 5 )
   )
 
-ggsave("./img/Plot_Treatment_Combination3.pdf", p4, width = 12, height = 6.5, units = "in")
+ggsave("./img/plot_combination_loss.pdf", PLOT.LOSS, width = 12, height = 6.5, units = "in")
