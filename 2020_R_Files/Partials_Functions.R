@@ -379,7 +379,11 @@ F_CHISTAR_DF <- function(D.INPUT, V.START = "Ja", V.END = "Nein", V.GROUP = FALS
 
 # Simple function to generate a single plot
 # we use this to make easier changes on all plots if necessary
-F_SINGLE_PLOT <- function(df, significant = data_frame(empty=numeric()), barfill="white", xangle = 0, xhjust = 0.5){
+F_SINGLE_PLOT <- function(
+  df, significant = data_frame(empty=numeric()), 
+  barfill="white", xangle = 0, xhjust = 0.5,
+  ptitle = FALSE
+  ){
   p <- ggplot(data = df) +
     aes( x = ff, y = middle) +
     geom_crossbar(aes( ymin = lowerlim, ymax = upperlim, fill = I(barfill) )) +
@@ -408,6 +412,9 @@ F_SINGLE_PLOT <- function(df, significant = data_frame(empty=numeric()), barfill
   
   if(nrow(significant)>0){
     p <- p + geom_signif(data=significant, aes(xmin=start, xmax=end, annotations=label, y_position=y), textsize = 8, manual=TRUE)
+  }
+  if(ptitle != FALSE){
+    p <- p + ggtitle(ptitle)
   }
   
   return(p)
