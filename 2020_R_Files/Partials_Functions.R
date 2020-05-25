@@ -422,7 +422,7 @@ F_SINGLE_PLOT <- function(
 }
 
 # Histo Blar Plots
-F_HISTO_PLOT <- function(df, xtext, ytext, ttext){
+F_HISTO_PLOT <- function(df, xtext, ytext, ttext, breaksize = 100){
   p <- ggplot( data = df ) +
     aes( x = val, y = n) + 
     geom_bar( colour = "black", alpha = 1, fill = "black", show.legend = FALSE, stat = "identity", linetype = "solid") + 
@@ -440,7 +440,7 @@ F_HISTO_PLOT <- function(df, xtext, ytext, ttext){
     ) +
     scale_y_continuous(
       expand = c( 0 , 0 ),
-      breaks = seq( 0, max(df$n)*1.1, 100 ),
+      breaks = seq( 0, max(df$n)*1.1, breaksize ),
       limits = c( 0, max(df$n)*1.1 )
     )
   
