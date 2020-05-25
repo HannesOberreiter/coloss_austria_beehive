@@ -41,6 +41,37 @@ p <- ggplot() +
 
 ggsave("./img/plot_overview_map.pdf", p, width = 6, height = 3.5, units = "in")
 
+#### CREATE STATE LOSS MAP ####
+# Calculate Loss Rate
+D.STATES <- F_EXTRACT_N(D.FULL, "state", "STATES")
+CACHE.BIND <- F_GLM_FACTOR( D.FULL, "state", D.FULL$state )
+D.STATES <- cbind(D.STATES, CACHE.BIND)
+rm(CACHE.BIND)
+
+# Add to map
+MF_STATES_TEMP <- MF_STATES
+MF_STATES_TEMP$values = 0
+MF_STATES_TEMP = left_join( MF_STATES_TEMP, D.STATES, by = c( "id" = "ff" ), copy = TRUE )
+
+p1 <- ggplot() + 
+  geom_polygon(data = MF_STATES_TEMP, aes(x = long, y = lat, group = group, fill = middle)) + 
+  geom_path(data = MF_STATES_TEMP, aes(x = long, y = lat, group = group), color = "Black", size = 0.2 ) + 
+  coord_quickmap() +
+  scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white", limits = c(0, max(MF_STATES_TEMP$middle)), breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100) ) +
+  xlab( "" ) + ylab( "" ) + labs( fill = "Verlustrate [%]") +
+  #ggtitle("(C) Districts - Loss rate (white = n < 6)") +
+  theme_void() +
+  theme(
+    legend.position="bottom", 
+    legend.box = "horizontal",
+    plot.title = element_text(), 
+    axis.text = element_blank(), 
+    axis.ticks = element_blank(),
+    panel.grid.major = element_blank()
+  )
+
+ggsave("./img/plot_map_loss_state.pdf", p1, width = 6, height = 3.5, units = "in")
+
 #### CREATE DISTRICT LOSS MAP ####
 
 #### DISTRICTS Plot Matrix ####
