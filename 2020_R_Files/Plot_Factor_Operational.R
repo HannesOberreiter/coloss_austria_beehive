@@ -1,7 +1,7 @@
 ##############################
 ##############################
 ### Survey Bee Hive Losses ###
-# (c) 2019 Hannes Oberreiter #
+# (c) 2020 Hannes Oberreiter #
 ##############################
 ##############################
 
@@ -18,58 +18,71 @@ source( "Partials_Header.r" )
 source( "Partials_Functions.r" )
 
 #### START CODE #####
+D.FULL <- D.RAW
 
 # List of Factors we want in our Plot
-oList = list(
-  c("no_foundation", "(H) Natural comb (without foundation)"),
-  c("foreign_wax", "(G) Purchase wax from outside own operation"),
-  c("migratory_beekeeper", "(B) Migration"),
-  c("mash_bottom_board", "(F) Screened (mesh) bottom board in Winter"),
-  c("insulated_hives", "(E) Insulated hives"),
-  c("plastic_hives", "(D) Hives made from synthetic materials"),
-  c("cert_org_beek", "(A) Certified organic beekeeping"),
-  c("varroatolerant", "(C) Queens bred from Varroa tolerant/resistant stock"),
-  c("small_broodcells", "(I) Small brood cell size (5.1 mm or less)")
+
+L.oList.english = list(
+  c("op_no_foundation", "(H) Natural comb (without foundation)"),
+  c("op_foreign_wax", "(G) Purchase wax from outside own operation"),
+  c("op_migratory_beekeeper", "(B) Migration"),
+  c("op_mash_bottom_board", "(F) Screened (mesh) bottom board in Winter"),
+  c("op_insulated_hives", "(E) Insulated hives"),
+  c("op_plastic_hives", "(D) Hives made from synthetic materials"),
+  c("op_cert_org_beek", "(A) Certified organic beekeeping"),
+  c("op_varroatolerant", "(C) Queens bred from Varroa tolerant/resistant stock"),
+  c("op_small_broodcells", "(I) Small brood cell size (5.1 mm or less)")
 )
 
-# Create dummy Dataframe, to insert rows later
-D.FACTORS <- 
-  setNames( 
-    data.frame( matrix( ncol = 11, nrow = 0)), 
-    c( "ff", "c", "n", "hives_winter", "lost_a", "lost_b", "lost_c", "hives_lost_rate", "lowerlim", "middle", "upperlim")
-    )
+L.oList.german = list(
+  c("op_no_foundation", "(H) Naturwabenbau (ohne Mittelwand)"),
+  c("op_foreign_wax", "(G) Kaufe Wachs zu (kein eigener Wachskreislauf)"),
+  c("op_migratory_beekeeper", "(B) Wanderimker"),
+  c("op_mash_bottom_board", "(F) Offener Gitterboden im Winter"),
+  c("op_insulated_hives", "(E) Isolierte Beuten im Winter"),
+  c("op_plastic_hives", "(D) Kunststoff-Beuten"),
+  c("op_cert_org_beek", "(A) Zertifizierte Bio-Imkerei"),
+  c("op_varroatolerant", "(C) Zucht auf Varroatoleranz"),
+  c("op_small_broodcells", "(I) Kleine Brutzellen (5,1 mm oder weniger)")
+)
+
+# Temporary List
+D.FACTORS = list()
+D.FACTORS.TWO = list()
 
 # Loop through list and create for all factors CI
-for( i in oList){
-  D.FULL_C <- D.FULL
-  CACHE.M <- F_EXTRACT_N( D.FULL_C, i[1], i[2] )
-  CACHE.BIND <- F_GLM_FACTOR( D.FULL_C, i[1], get( i[1], pos = D.FULL_C ), TRUE )
-  CACHE.BIND <- cbind( CACHE.M, CACHE.BIND )
-  D.FACTORS <- rbind( D.FACTORS, CACHE.BIND )
+for( i in L.oList.german){
+  V.COL <- get( i[1], pos = D.FULL )
+  CACHE.M <- F_EXTRACT_N( D.FULL, i[1], i[2], FALSE)
+  CACHE.BIND <- F_GLM_FACTOR( D.FULL, i[1], V.COL, TRUE, FALSE )
+  D.FACTORS[[i[2]]] <- cbind( CACHE.M, CACHE.BIND )
+  
+  D.FULL_C <- D.FULL[V.COL != "Unsicher",]
+  V.COL <- get( i[1], pos = D.FULL_C )
+  CACHE.M <- F_EXTRACT_N( D.FULL_C, i[1], i[2], TRUE)
+  CACHE.BIND <- F_GLM_FACTOR( D.FULL_C, i[1], V.COL, TRUE, TRUE )
+  D.FACTORS.TWO[[i[2]]] <- cbind( CACHE.M, CACHE.BIND )
+  
 }
+rm(i, D.FULL_C, CACHE.M, CACHE.BIND, V.COL)
 
-# Translate Factors into english for plotting
-D.FACTORS.PLOT <- D.FACTORS
-D.FACTORS.PLOT$ff[ D.FACTORS.PLOT$ff == "Ja" ] <- "Yes"
-D.FACTORS.PLOT$ff[ D.FACTORS.PLOT$ff == "Nein" ] <- "No"
-D.FACTORS.PLOT$ff[ D.FACTORS.PLOT$ff == "Unsicher" ] <- "Uncertain"
-# Remove Uncertain values with lower n 30
-D.FACTORS.PLOT <- D.FACTORS.PLOT[!(D.FACTORS.PLOT$ff == "Uncertain" & D.FACTORS.PLOT$n < 30), ]
+D.FACTORS <- bind_rows(D.FACTORS)
+D.FACTORS.TWO <- bind_rows(D.FACTORS.TWO)
 
-D.FACTORS.PLOT$ff <- factor( D.FACTORS.PLOT$ff, 
-                             levels = c( "Yes", "No", "Uncertain"))
+# Ordering
+D.FACTORS$ff[is.na(D.FACTORS$ff)] <- "keine \n Angaben"
+D.FACTORS$ff <- factor( D.FACTORS$ff, 
+                             levels = c( "Ja", "Nein", "Unsicher", "keine \n Angaben"))
 
-#### PLOTTING #####
-p1 <- ggplot( data = D.FACTORS.PLOT ) +
+# Plot Loss Rates
+p1 <- ggplot( data = D.FACTORS.TWO ) +
   aes( x = ff, y = middle ) + 
   geom_crossbar(aes( ymin = lowerlim, ymax = upperlim ), fill = "white") +
-  #geom_bar( colour = "black", alpha = 0, fill = "white", show.legend = FALSE, stat = "identity", linetype = "longdash" ) + 
-  #geom_pointrange( aes( ymin = lowerlim, ymax = upperlim ), size = 0.2 ) + 
   geom_point(size = 3) + 
   geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 2.5 ) +
-  geom_text(data =  D.FACTORS.PLOT[(D.FACTORS.PLOT$chistar == 1 & D.FACTORS.PLOT$ff == 'Yes'),], aes( x = ff, y = 20, label = "*"), angle = 0, vjust = 0, hjust = -3, color = "black", size = 8 ) +
+  #geom_text(data =  D.FACTORS.TWO[(D.FACTORS.TWO$chistar == 1 & D.FACTORS.TWO$ff == 'Ja'),], aes( x = ff, y = 20, label = "*"), angle = 0, vjust = 0, hjust = -3, color = "black", size = 8 ) +
   facet_wrap( ~ c, strip.position = "top", scales = "free_x", ncol = 5, labeller = label_wrap_gen(width=30)  ) +
-  xlab("") + ylab("Loss rate [%]") + 
+  xlab("") + ylab("Verlustrate [%]") + 
   theme_classic() + 
   theme(
     panel.spacing = unit( 1, "lines" ),
@@ -87,17 +100,40 @@ p1 <- ggplot( data = D.FACTORS.PLOT ) +
   scale_x_discrete(
   ) +
   scale_y_continuous(
-    limits = c(0, NA),
+    limits = c(0, max(D.FACTORS.TWO$upperlim)*1.3),
     expand = c( 0 , 0 ),
-    breaks = seq( 0, 25, 5 )
+    breaks = seq( 0, 100, 5 )
   )
 
-#gtitle = textGrob( "Loss rate by operational factors" , gp=gpar(fontsize = 20 , face = "bold" ) )
+D.TEMP <- D.FACTORS.TWO[D.FACTORS.TWO$chistar == 1,]
+D.ANNOTATION <- F_CHISTAR_DF(D.TEMP, "Ja", "Nein", "c")
+if(nrow(D.ANNOTATION)> 0){
+  p1 <- p1 + geom_signif(data=D.ANNOTATION, aes(xmin=start, xmax=end, annotations=label, y_position=y), textsize = 8, manual=TRUE)
+}
 
-lay <- rbind( c( 1 ) )
-p <- arrangeGrob(  p1,
-              #top = gtitle, 
-              layout_matrix = lay)
+ggsave("./img/plot_operational_loss.pdf", p1, width = 12, height = 8, units = "in")
 
-ggsave("./img/Plot_Operational_Losses.pdf", p, width = 11, height = 6, units = "in")
+# Plot Histo
+p2 <- ggplot( data = D.FACTORS ) +
+  aes( x = ff, y = n) + 
+  geom_bar( colour = "black", alpha = 1, fill = "black", show.legend = FALSE, stat = "identity", linetype = "solid") + 
+  geom_text( aes( label = paste(np, "%", sep = "" )), angle = 55, vjust = -0.5, hjust = 0, color = "black", size = 3 ) +
+  facet_wrap( ~ c, strip.position = "top", scales = "free_x", ncol = 5, labeller = label_wrap_gen(width=30)  ) +
+  xlab("") + ylab("Anzahl [n]") + 
+  theme_classic() + 
+  theme(
+    plot.title = element_text(hjust = 0), 
+    axis.title.x = element_text(colour = "black" ), 
+    axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
+    axis.line = element_line( linetype = "solid" )
+  ) +
+  scale_x_discrete(
+  ) +
+  scale_y_continuous(
+    expand = c( 0 , 0 ),
+    breaks = seq( 0, max(D.FACTORS$n)*1.2, 100 ),
+    limits = c( 0, max(D.FACTORS$n)*1.2 )
+  )
+
+ggsave("./img/plot_operational_hist.pdf", p2, width = 12, height = 8, units = "in")
 
