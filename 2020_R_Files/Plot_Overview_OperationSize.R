@@ -31,15 +31,24 @@ D.SIZE.PLOT <- D.FULL %>%
   group_by( size_group ) %>%
   summarise(
     n = n(),
-    np = F_NUMBER_FORMAT(n() / nrow(D.FULL) * 100),
-    n_h = sum( hives_winter ),
-    n_hp = F_NUMBER_FORMAT( sum( hives_winter ) / sum( D.FULL$hives_winter ) * 100 )
+    np = F_NUMBER_FORMAT(n() / nrow(D.FULL) * 100)
+  )
+
+D.SIZE.PLOT.HIVES <- D.FULL %>%
+  group_by( size_group ) %>%
+  summarise(
+    n = sum( hives_winter ),
+    np = F_NUMBER_FORMAT( sum( hives_winter ) / sum( D.FULL$hives_winter ) * 100 )
   )
 
 # rename because funcion uses 'val' as x values
 colnames(D.SIZE.PLOT)[1] = 'val'
+colnames(D.SIZE.PLOT.HIVES)[1] = 'val'
 
-p <- F_HISTO_PLOT(D.SIZE.PLOT, "Völker / Imker", "Teilnehmende Imkereien (n)", "" )
+p1 <- F_HISTO_PLOT(D.SIZE.PLOT, "Völker / Imker", "Teilnehmende Imkereien (n)", "(A) Betriebsgröße der teilnehmenden Imker" )
+p2 <- F_HISTO_PLOT(D.SIZE.PLOT.HIVES, "Völker / Imker", "Bienenvölker (n)", "(B) Völker/Betriebsgröße der teilnehmenden Imker", breaksize = 1000)
 
-ggsave("./img/plot_overview_betrieb.pdf", p, width = 6, height = 3.5, units = "in")
+lay <- rbind( c( 1 ), c( 2 ) )
+p <- arrangeGrob( p1, p2, layout_matrix = lay)
+ggsave("./img/plot_overview_betrieb.pdf", p, width = 11, height = 8, units = "in")
 
