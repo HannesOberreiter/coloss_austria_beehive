@@ -26,34 +26,35 @@ source( "Partials_Header.r" )
 source( "Partials_Functions.r" )
 
 #### Start Code ####
+D.FULL <- D.RAW
 # remove empty ones if there are any
 D.CACHE <- D.FULL %>% drop_na( longitude, latitude )
 
 # select start and end number of row
 # please be careful with hard limit of API for altitude, max. 1_000 per hour and 10_000 per day
 paste("Max rows in our dataframe: ", nrow(D.CACHE))
-      
-start = 10
-end = 20
 
-# create empty vector were we add our values
-v <- character(end-start+1)
+# Start and End Row we want to get elevation
+ROW.START = 1
+ROW.END   = 5
+
+# Create a Named Vector with IDS
+V.IDS    <- D.CACHE$id[ROW.START:ROW.END]
+V.VALUES <- setNames(rep(NA, length(V.IDS)), V.IDS)
 
 # Loop with given limits
-i <- 1
-for (row in start:end) {
-  # fetch altitude from API
-  x <- GNsrtm3(D.CACHE[row, "latitude"],D.CACHE[row, "longitude"])$srtm3
-  print(x)
-  # add to vector
-  v[i] <- x
-  i <- i+1
+for (i in ROW.START:ROW.END) {
+  L.ID        <- D.CACHE$id[i]
+  L.ELEVATION <- GNsrtm3(lat = D.CACHE[i, "latitude"], lng = D.CACHE[i, "longitude"])$srtm3
+  print(paste("ID:", L.ID, " Elevation: ", L.ELEVATION))
+  V.VALUES[L.ID] <- L.ELEVATION
 }
+print("------RESULTS--------")
+V.VALUES
+print("---------------------")
 
-# get rowIds for row names in CSV File
-rowIds <- D.CACHE$id[start:end]
 # save to csv
-write.csv( v, 'altitude.csv', row.names = rowIds )
+write.csv( V.VALUES, 'altitude.csv' )
 
   
 
