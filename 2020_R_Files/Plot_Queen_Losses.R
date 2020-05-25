@@ -93,8 +93,9 @@ D.YOUNG.QUEENS <- D.FULL %>% select(
   hives_spring_queen, lost_a, lost_c ) %>% na.omit()
 D.YOUNG.QUEENS$young_rate <- F_NUMBER_FORMAT(D.YOUNG.QUEENS$young_queens / D.YOUNG.QUEENS$hives_winter * 100 )
 
-# Participants with "wrong" answers
-D.YOUNG.QUEENS <- D.YOUNG.QUEENS %>% filter( young_rate <= 100 )
+# Participants with "wrong" answers, we max at 100%, slack message Robert Brodschneider 25.05.2020
+D.YOUNG.QUEENS$young_rate[D.YOUNG.QUEENS$young_rate > 100] <- 100
+# D.YOUNG.QUEENS <- D.YOUNG.QUEENS %>% filter( young_rate <= 100 )
 
 D.YOUNG.QUEENS$young_rate_group <- cut(
   D.YOUNG.QUEENS$young_rate,
