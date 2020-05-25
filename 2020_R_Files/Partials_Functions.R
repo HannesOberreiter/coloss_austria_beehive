@@ -96,6 +96,7 @@ F_EXTRACT_N <- function( x_df, column, type_name, omit_na = TRUE )
     summarize(
       c = type_name,
       n = n(),
+      np = F_NUMBER_FORMAT(n() / nrow(x_df) * 100),
       hives_winter = sum(hives_winter),
       lost_a = sum(lost_a, na.rm = FALSE),
       lost_b = sum(lost_b, na.rm = FALSE),
