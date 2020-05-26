@@ -41,12 +41,20 @@ D.SIZE.PLOT.HIVES <- D.FULL %>%
     np = F_NUMBER_FORMAT( sum( hives_winter ) / sum( D.FULL$hives_winter ) * 100 )
   )
 
+# Mean and Median Colony
+V.MEAN <- F_NUMBER_FORMAT(mean(D.FULL$hives_winter))
+V.MEDIAN <- F_NUMBER_FORMAT(median(D.FULL$hives_winter))
+V.TEXT <- paste("Mean: ", V.MEAN, " Bienenvölker/TeilnehmerIn\n", "Median: ", V.MEDIAN, " Bienenvölker/TeilnehmerIn", sep = "")
+
 # rename because funcion uses 'val' as x values
 colnames(D.SIZE.PLOT)[1] = 'val'
 colnames(D.SIZE.PLOT.HIVES)[1] = 'val'
 
 p1 <- F_HISTO_PLOT(D.SIZE.PLOT, "Völker / Imker", "Teilnehmende Imkereien (n)", "(A) Betriebsgröße der teilnehmenden Imker" )
 p2 <- F_HISTO_PLOT(D.SIZE.PLOT.HIVES, "Völker / Imker", "Bienenvölker (n)", "(B) Völker/Betriebsgröße der teilnehmenden Imker", breaksize = 1000)
+# Custom Annotation to insert mean and median text
+p1 <- p1 + annotate(
+  geom="text", x="101-110", y=max(D.SIZE.PLOT$n)*0.8, label= V.TEXT, color="black", hjust = "left")
 
 lay <- rbind( c( 1 ), c( 2 ) )
 p <- arrangeGrob( p1, p2, layout_matrix = lay)
