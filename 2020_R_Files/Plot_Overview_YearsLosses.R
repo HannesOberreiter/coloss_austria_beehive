@@ -22,20 +22,24 @@ AUSTRIA.BIND <- F_GLM_SINGLE( D.FULL )
 # all the previous year losses and current year
 D.PLOT <- tibble(
   year     = c("2007/08", "2008/09", "2009/10", "2010/11", "2011/12", "2012/13","2013/14", "2014/15", "2015/16", "2016/17", "2017/18", "2018/19", "2019/20"),
-  middle   = c(     13.3,       9.3,      14.7,      16.4,      25.9,      17.9,     12.8,      28.4,       8.1,      23.0,      11.8,     15.2, AUSTRIA.BIND[,2]),
-  lowerlim = c(     13.3,       9.3,      14.7,      16.4,      25.9,      17.9,     11.7,      27.0,       7.4,      22.1,      11.1,     14.4, AUSTRIA.BIND[,1]),
-  upperlim = c(     13.3,       9.3,      14.7,      16.4,      25.9,      17.9,     14.0,      29.9,       8.8,      24.0,      12.5,     16.1, AUSTRIA.BIND[,3]),
-  n        = c(        0,         0,         0,         0,         0,         0,     1023,      1259,      1289,      1656,      1391,     1534,      nrow(D.FULL)),
-  ncolonies= c(    16217,     18141,      7676,     13179,     32471,     19406,    18794,     22882,     23418,     43852,    28373,     33651, sum(D.FULL$hives_winter)),
+  middle   = c(     13.3,       9.3,      14.7,      16.3,      25.9,      17.3,     12.8,      28.4,       8.1,      23.0,      11.8,     15.2, AUSTRIA.BIND[,2]),
+  lowerlim = c(      9.9,       6.9,      12.7,      14.9,      24.6,      16.1,     11.7,      27.0,       7.4,      22.1,      11.1,     14.4, AUSTRIA.BIND[,1]),
+  upperlim = c(     16.7,      11.6,      16.9,      17.8,      27.2,      18.7,     14.0,      29.9,       8.8,      24.0,      12.5,     16.1, AUSTRIA.BIND[,3]),
+  n        = c(      374,       575,       311,       565,      1537,       997,     1023,      1259,      1289,      1656,      1391,     1534,      nrow(D.FULL)),
+  ncolonies= c(    16217,     18141,      7676,     13179,     32471,     19406,    18794,     22882,     23418,     43852,     28373,     33651, sum(D.FULL$hives_winter)),
 )
+qqline(D.PLOT$middle)
+V.POOLED_MEAN <- sum(D.PLOT$middle * D.PLOT$n) / sum(D.PLOT$n)
+
 p <- ggplot(
     D.PLOT, 
     aes( y = year, x = middle )) +
   geom_crossbar(
     aes( xmin = lowerlim, xmax = upperlim ), fill = "white") +
   geom_point(size = 3) + 
+  geom_vline(xintercept = V.POOLED_MEAN, linetype="dashed", color = "red", size=2) +
   geom_text(
-    aes( y = year, x = 2.5, label = paste("(TN = ", n, "; VÖ = ", ncolonies, ")", sep = "")), 
+    aes( y = year, x = 2, label = paste("(TN = ", n, "; VÖ = ", ncolonies, ")", sep = "")), 
     angle = 0, color = "black", size = 4, hjust = 0 ) +
   ylab("Winter / Jahr") + xlab("Verlustrate [%]") +
   theme_classic() + 
@@ -63,3 +67,5 @@ p <- ggplot(
   )
 
 ggsave("./img/plot_years_losses.pdf", p, width = 12, height = 6.5, units = "in")
+
+
