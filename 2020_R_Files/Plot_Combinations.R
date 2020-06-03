@@ -92,7 +92,7 @@ CACHE.COMB <- F_COMBINATION(D.FULL, V.ColComb1, 1, V.CacheList, V.ColComb1)
 
 # Numer of max. combinations, first round gets jumped because we already have done it before
 # no combinations with at least 15n were found with 4 different treatments
-V.nMaxComb <- 2
+V.nMaxComb <- 3
 
 # create the max runs
 for(i in 2:V.nMaxComb){
@@ -252,9 +252,12 @@ V.threetextcolors   <- c("black", "black", "white")
 D.COMB$circle_color <- V.threecolors[D.COMB$t]
 D.COMB$text_color   <- V.threetextcolors[D.COMB$t]
 D.COMB$t            <- as.factor(D.COMB$t)
-D.COMB$short        <- str_replace(D.COMB$short, "&", "& ")
+D.COMB$short        <- str_replace_all(D.COMB$short, "&", "& ")
 # Austria Total Loss Rate
 AUSTRIA.BIND <- F_GLM_SINGLE( D.RAW )
+
+D.COMB <- D.COMB[order(D.COMB$n, decreasing = TRUE),]
+D.COMB$short <- factor(D.COMB$short, levels = D.COMB$short)
 
 PLOT.LOSS <- 
   ggplot(

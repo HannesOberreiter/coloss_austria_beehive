@@ -53,17 +53,26 @@ D.FACTORS.TWO = list()
 # Loop through list and create for all factors CI
 for( i in L.oList.german){
   V.COL <- get( i[1], pos = D.FULL )
+
   CACHE.M <- F_EXTRACT_N( D.FULL, i[1], i[2], FALSE)
   CACHE.BIND <- F_GLM_FACTOR( D.FULL, i[1], V.COL, TRUE, FALSE )
   D.FACTORS[[i[2]]] <- cbind( CACHE.M, CACHE.BIND )
   
-  D.FULL_C <- D.FULL[V.COL != "Unsicher",]
+  if(length(V.COL[V.COL == "Unsicher" & !is.na(V.COL)])<30){
+    D.FULL_C <- D.FULL[V.COL != "Unsicher",]
+    V.COL_C <- get( i[1], pos = D.FULL_C )
+  } else {
+    D.FULL_C <- D.FULL
+    V.COL_C <- V.COL
+  }
+  
   V.COL <- get( i[1], pos = D.FULL_C )
   CACHE.M <- F_EXTRACT_N( D.FULL_C, i[1], i[2], TRUE)
-  CACHE.BIND <- F_GLM_FACTOR( D.FULL_C, i[1], V.COL, TRUE, TRUE )
+  CACHE.BIND <- F_GLM_FACTOR( D.FULL_C, i[1], V.COL_C, TRUE, TRUE )
   D.FACTORS.TWO[[i[2]]] <- cbind( CACHE.M, CACHE.BIND )
   
 }
+
 rm(i, D.FULL_C, CACHE.M, CACHE.BIND, V.COL)
 
 D.FACTORS <- bind_rows(D.FACTORS)
@@ -106,11 +115,16 @@ p1 <- ggplot( data = D.FACTORS.TWO ) +
   )
 
 D.TEMP <- D.FACTORS.TWO[D.FACTORS.TWO$chistar == 1,]
-D.ANNOTATION <- F_CHISTAR_DF(D.TEMP, "Ja", "Nein", "c")
+# Manual changing of sign. brackets
+D.TEMP_1 <- D.TEMP[D.TEMP$c != "(C) Zucht auf Varroatoleranz",]
+D.TEMP_2 <- D.TEMP[D.TEMP$c == "(C) Zucht auf Varroatoleranz" | D.TEMP$c == "(I) Kleine Brutzellen (5,1 mm oder weniger)",]
+D.ANNOTATION_1 <- F_CHISTAR_DF(D.TEMP_1, "Ja", "Nein", "c")
+D.ANNOTATION_2 <- F_CHISTAR_DF(D.TEMP_2, "Ja", "Unsicher", "c")
+D.ANNOTATION <- rbind(D.ANNOTATION_1, D.ANNOTATION_2)
 if(nrow(D.ANNOTATION)> 0){
   p1 <- p1 + geom_signif(data=D.ANNOTATION, aes(xmin=start, xmax=end, annotations=label, y_position=y), textsize = 8, manual=TRUE)
 }
-
+p1
 ggsave("./img/plot_operational_loss.pdf", p1, width = 12, height = 8, units = "in")
 
 # Plot Histo

@@ -65,7 +65,7 @@ p <- ggplot(
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
   )
-
+p
 ggsave("./img/plot_years_losses.pdf", p, width = 12, height = 6.5, units = "in")
 
 

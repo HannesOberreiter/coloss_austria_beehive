@@ -19,7 +19,6 @@ source( "Partials_Header_map.r" )
 source( "Partials_Functions.r" )
 
 #### START CODE #####
-
 D.FULL <- D.RAW
 
 # List of Factors we want in our Plot
@@ -38,8 +37,8 @@ for( i in oList){
   temp.n <- get( i[1], pos = D.FULL )
   # remove "Unsicher" because AINOVA Test?
   #D.FULL_C <- subset( D.FULL, temp.n != "Unsicher" & D.FULL$op_migratory_beekeeper == "Nein" )
-  #D.FULL_C <- subset( D.FULL, temp.n != "Unsicher" )
-  D.FULL_C <- D.FULL
+  D.FULL_C <- subset( D.FULL, temp.n != "Unsicher" )
+  #D.FULL_C <- D.FULL
   CACHE.M <- F_EXTRACT_N( D.FULL_C, i[1], i[2] )
   CACHE.BIND <- F_GLM_FACTOR( D.FULL_C, i[1], get( i[1], pos = D.FULL_C ), TRUE, TRUE )
   D.FACTORS[[i[1]]] <- cbind( CACHE.M, CACHE.BIND )
@@ -182,19 +181,18 @@ p1 <- ggplot( data = D.FACTORS ) +
   scale_x_discrete(
   ) +
   scale_y_continuous(
-    limits = c(0, max(D.FACTORS$upperlim)+5),
+    limits = c(0, max(D.FACTORS$upperlim)*1.25),
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
   )
-
 # Adding significant stars
-D.ANNOTATION <- F_CHISTAR_DF(D.FACTORS, "Ja", "Unsicher", "c")
-
+D.ANNOTATION <- F_CHISTAR_DF(D.FACTORS, "Ja", "Nein", "c")
+D.ANNOTATION <- D.ANNOTATION[D.ANNOTATION$c != "(F) Waldtracht mit Melezitose",]
 if(nrow(D.ANNOTATION)> 0){
   # using simple text
-  p1 <- p1 + geom_text(data=D.ANNOTATION, aes(x="Nein", y=y, label=label), size=8)
+  #p1 <- p1 + geom_text(data=D.ANNOTATION, aes(x="Nein", y=y, label=label), size=8)
   # using brackets
-  #p1 <- p1 + geom_signif(data=D.ANNOTATION, aes(xmin=start, xmax=end, annotations=label, y_position=y), textsize = 8, manual=TRUE)
+  p1 <- p1 + geom_signif(data=D.ANNOTATION, aes(xmin=start, xmax=end, annotations=label, y_position=y), textsize = 8, manual=TRUE)
 }
 
 # Cleanup
