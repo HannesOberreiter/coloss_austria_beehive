@@ -72,8 +72,9 @@ V.LABELS <- c("0 Monate", "1-3 Monate", ">3 Monate")
 D.SUP    <- D.FULL
 # generate groups
 D.SUP$g  <- V.LABELS[1]
-D.SUP$g[D.SUP$T_drone_total12 > 1] <- V.LABELS[2]
-D.SUP$g[D.SUP$T_drone_total12 > 3] <- V.LABELS[3]
+D.SUP$g[D.SUP$T_drone_total > 0] <- V.LABELS[2]
+D.SUP$g[D.SUP$T_drone_total > 3] <- V.LABELS[3]
+
 # calculate GLM
 CACHE.M <- F_EXTRACT_N( D.SUP, "g", "drone removal" )
 CACHE.BIND <- F_GLM_FACTOR( D.SUP, "g", get( "g", pos = D.SUP), TRUE )
@@ -84,5 +85,4 @@ rm(CACHE.BIND, CACHE.M)
 D.FACTORS$ff <- factor( D.FACTORS$ff, levels = V.LABELS)
 # Generate Plot
 p2 <- F_SINGLE_PLOT(D.FACTORS)
-
 ggsave("./img/plot_treatment_drone_grouped.pdf", p2, width = 5, height = 4, units = "in")
