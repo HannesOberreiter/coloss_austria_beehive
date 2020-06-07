@@ -48,7 +48,22 @@ D.QP$ff <- factor( D.QP$ff, levels = V.label )
 D.QP    <- D.QP[order(factor(D.QP$ff, levels = V.label )),]
 # Plotting
 PLOT.QP1 <- F_SINGLE_PLOT(D.QP[D.QP$c == "Queen Loss Rate",], ptitle = "(A) Verlustrate nur mit Verluste durch Königinnen Probleme")
+D.ANNOTATION <- F_CHISTAR_DF(D.QP[D.QP$c == "Queen Loss Rate",], "Häufiger", "Normal", "c")
+D.ANNOTATION <- rbind(D.ANNOTATION, F_CHISTAR_DF(D.QP[D.QP$c == "Queen Loss Rate",], "Häufiger", "Seltener", "c"))
+D.ANNOTATION <- rbind(D.ANNOTATION, F_CHISTAR_DF(D.QP[D.QP$c == "Queen Loss Rate",], "Häufiger", "Weiß nicht", "c"))
+D.ANNOTATION$y <- D.ANNOTATION$y * c(1, 1.1, 1.2)
+if(nrow(D.ANNOTATION)> 0){
+  PLOT.QP1 <- PLOT.QP1 + geom_signif(data=D.ANNOTATION, aes(xmin=start, xmax=end, annotations=label, y_position=y), textsize = 8, manual=TRUE, vjust=0.5)
+}
+
 PLOT.QP2 <- F_SINGLE_PLOT(D.QP[D.QP$c == "Colony Loss Rate",], ptitle = "(B) Verlustrate ohne Verluste durch Königinnen Probleme")
+D.ANNOTATION <- F_CHISTAR_DF(D.QP[D.QP$c == "Colony Loss Rate",], "Häufiger", "Normal", "c")
+D.ANNOTATION <- rbind(D.ANNOTATION, F_CHISTAR_DF(D.QP[D.QP$c == "Colony Loss Rate",], "Häufiger", "Seltener", "c"))
+D.ANNOTATION$y <- D.ANNOTATION$y * c(1, 1.1)
+if(nrow(D.ANNOTATION)> 0){
+  PLOT.QP2 <- PLOT.QP2 + geom_signif(data=D.ANNOTATION, aes(xmin=start, xmax=end, annotations=label, y_position=y), textsize = 8, manual=TRUE, vjust = 0.5)
+}
+
 lay <- rbind( c( 1 ), c( 2 ) )
 p1 <- arrangeGrob( PLOT.QP1, PLOT.QP2,layout_matrix = lay)
 ggsave("./img/plot_queen_subjectiveproblems.pdf", p1, width = 11, height = 8, units = "in")
@@ -139,6 +154,14 @@ D.YOUNG.GROUP    <- D.YOUNG.GROUP[order(factor(D.YOUNG.GROUP$ff, levels = V.GROU
 # Plotting
 PLOT.QP1 <- F_SINGLE_PLOT(D.YOUNG.GROUP[D.YOUNG.GROUP$c == "Queen Loss Rate",], ptitle = "(A) Verlustrate nur mit Verluste durch Königinnen Probleme")
 PLOT.QP2 <- F_SINGLE_PLOT(D.YOUNG.GROUP[D.YOUNG.GROUP$c == "Colony Loss Rate",], ptitle = "(B) Verlustrate ohne Verluste durch Königinnen Probleme")
+
+D.ANNOTATION <- F_CHISTAR_DF(D.YOUNG.GROUP[D.YOUNG.GROUP$c == "Colony Loss Rate",], "0-25%", "26-50%", "c")
+D.ANNOTATION <- rbind(D.ANNOTATION, F_CHISTAR_DF(D.YOUNG.GROUP[D.YOUNG.GROUP$c == "Colony Loss Rate",], "0-25%", "51-75%", "c"))
+D.ANNOTATION <- rbind(D.ANNOTATION, F_CHISTAR_DF(D.YOUNG.GROUP[D.YOUNG.GROUP$c == "Colony Loss Rate",], "0-25%", "76-100%", "c"))
+D.ANNOTATION$y <- D.ANNOTATION$y * c(0.97, 1.02, 1.07)
+if(nrow(D.ANNOTATION)> 0){
+  PLOT.QP2 <- PLOT.QP2 + geom_signif(data=D.ANNOTATION, aes(xmin=start, xmax=end, annotations=label, y_position=y), textsize = 8, manual=TRUE, vjust = 0.5)
+}
 lay <- rbind( c( 1 ), c( 2 ) )
 p1 <- arrangeGrob( PLOT.QP1, PLOT.QP2,layout_matrix = lay)
 ggsave("./img/plot_queen_exchangerate.pdf", p1, width = 11, height = 8, units = "in")
