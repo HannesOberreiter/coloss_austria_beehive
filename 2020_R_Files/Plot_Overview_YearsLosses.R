@@ -28,16 +28,22 @@ D.PLOT <- tibble(
   n        = c(      374,       575,       311,       565,      1537,       997,     1023,      1259,      1289,      1656,      1391,     1534,      nrow(D.FULL)),
   ncolonies= c(    16217,     18141,      7676,     13179,     32471,     19406,    18794,     22882,     23418,     43852,     28373,     33651, sum(D.FULL$hives_winter)),
 )
-qqline(D.PLOT$middle)
 V.POOLED_MEAN <- sum(D.PLOT$middle * D.PLOT$n) / sum(D.PLOT$n)
+V.POOLED_LOWER <- sum(D.PLOT$lowerlim * D.PLOT$n) / sum(D.PLOT$n)
+V.POOLED_UPPER <- sum(D.PLOT$upperlim * D.PLOT$n) / sum(D.PLOT$n)
 
 p <- ggplot(
     D.PLOT, 
     aes( y = year, x = middle )) +
+  
+  geom_vline(xintercept = V.POOLED_LOWER, linetype="dashed", color = "red", size=1) +
+  geom_vline(xintercept = V.POOLED_UPPER, linetype="dashed", color = "red", size=1) +
+  geom_vline(xintercept = V.POOLED_MEAN, color = "red", size=1) +
+  
   geom_crossbar(
     aes( xmin = lowerlim, xmax = upperlim ), fill = "white") +
   geom_point(size = 3) + 
-  geom_vline(xintercept = V.POOLED_MEAN, linetype="dashed", color = "red", size=2) +
+
   geom_text(
     aes( y = year, x = 2, label = paste("(TN = ", n, "; VÖ = ", ncolonies, ")", sep = "")), 
     angle = 0, color = "black", size = 4, hjust = 0 ) +
