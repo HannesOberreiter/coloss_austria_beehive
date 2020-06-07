@@ -383,8 +383,13 @@ F_CHISTAR_DF <- function(D.INPUT, V.START = "Ja", V.END = "Nein", V.GROUP = FALS
 F_SINGLE_PLOT <- function(
   df, significant = data_frame(empty=numeric()), 
   barfill="white", xangle = 0, xhjust = 0.5,
-  ptitle = FALSE
+  ptitle = FALSE,
+  pylim = FALSE
   ){
+  if(pylim == FALSE){
+    pylim <- max(df$upperlim)+5
+  }
+  
   p <- ggplot(data = df) +
     aes( x = ff, y = middle) +
     geom_crossbar(aes( ymin = lowerlim, ymax = upperlim, fill = I(barfill) )) +
@@ -406,7 +411,7 @@ F_SINGLE_PLOT <- function(
     scale_x_discrete(
     ) +
     scale_y_continuous(
-      limit = c(0, max(df$upperlim)+5),
+      limit = c(0, pylim),
       expand = c( 0 , 0 ),
       breaks = seq( 0, 45, 5 )
     )
@@ -417,6 +422,7 @@ F_SINGLE_PLOT <- function(
   if(ptitle != FALSE){
     p <- p + ggtitle(ptitle)
   }
+
   
   return(p)
 }
