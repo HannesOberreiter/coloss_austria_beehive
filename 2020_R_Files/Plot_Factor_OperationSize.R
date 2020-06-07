@@ -45,8 +45,12 @@ D.SIGN2 <- F_CHISTAR_DF(D.FACTORS[D.FACTORS$c == "operation_size2",], "1-50 Völ
 D.SIGN3 <- F_CHISTAR_DF(D.FACTORS[D.FACTORS$c == "operation_size3",], "1-25 Völker", "> 50 Völker")
 
 #### PLOTTING #####
-p2 <- F_SINGLE_PLOT(D.FACTORS[D.FACTORS$c == "operation_size2",], D.SIGN2)
-p3 <- F_SINGLE_PLOT(D.FACTORS[D.FACTORS$c == "operation_size3",], D.SIGN3)
+p2 <- F_SINGLE_PLOT(D.FACTORS[D.FACTORS$c == "operation_size2",], D.SIGN2, ptitle = "(A) Betriebsgröße: 1-50 und >50 Völker", pylim = 22)
+p3 <- F_SINGLE_PLOT(D.FACTORS[D.FACTORS$c == "operation_size3",], D.SIGN3, ptitle= "(B) Betriebsgröße: 1-20, 21-50 und >50 Völker", pylim = 22)
 
 ggsave("./img/plot_factor_operationsize2.pdf", p2, width = 5, height = 4, units = "in")
 ggsave("./img/plot_factor_operationsize3.pdf", p3, width = 5, height = 4, units = "in")
+
+lay <- rbind( c( 1, 2 ) )
+p1 <- arrangeGrob( p2, p3,layout_matrix = lay)
+ggsave("./img/plot_factor_operationsize_combined.pdf", p1, width = 11, height = 4, units = "in")
