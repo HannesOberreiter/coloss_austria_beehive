@@ -26,7 +26,7 @@ D.PROD <- tibble(
 # Drop rows without answer for spring number of colonies
 D.PROD <- D.PROD[!is.na(D.PROD$spring),]
 
-# calculte net change percentages
+# calculate net change percentages
 D.RETURN <- lapply(D.PROD, sum)
 D.RETURN$summer_percentage <- D.RETURN$winter * 100 / D.RETURN$spring - 100
 D.RETURN$winter_loss_percentage <- D.RETURN$winter_loss * 100 / D.RETURN$winter - 100
@@ -99,12 +99,17 @@ rm(i, V.CALC)
 # idu is used to plot the points on an x axis
 D.POP$idu <- as.numeric(row.names(D.POP))
 D.POP$value <- round(D.POP$value)
+D.POP$labelbottom <- ifelse(D.POP$season == "Frühjahr", D.POP$value, "")
+D.POP$labeltop <- ifelse(D.POP$season == "Herbst", D.POP$value, "")
 
 p <- ggplot(data = D.POP) +
   aes(x = idu, y = value) +
-  geom_point(aes(colour = season), show.legend = FALSE, size = 5) + 
   geom_line(aes(group = 1)) +
-  geom_text(aes(label = value), nudge_x = -0.3, hjust="right", show.legend = FALSE)+
+  geom_point(aes(colour = season), show.legend = FALSE, size = 5) + 
+  #geom_text(aes(label = value), nudge_x = -0.3, hjust="right", show.legend = FALSE)+
+  geom_text(aes(label = labeltop), nudge_y = +20, show.legend = FALSE)+
+  geom_text(aes(label = labelbottom), nudge_y = -20, show.legend = FALSE)+
+  
   geom_text(aes(y = 5, label=season, colour = season), show.legend = FALSE, size = 2.5) +
   ylab("Entwicklung Völkerzahl \n (basierend auf 100 Völkern am Beginn)") + 
   xlab("Zeitverlauf über Jahre") +
@@ -130,5 +135,5 @@ p <- ggplot(data = D.POP) +
     limits = c( 0, max(D.POP$value)+50 )
   )
 
-ggsave("./img/plot_population.pdf", p, width = 6, height = 3.5, units = "in")
+ggsave("./img/plot_population.pdf", p, width = 7, height = 3.5, units = "in")
  
