@@ -111,13 +111,13 @@ for (i in 1:length(V.SEASONS)) {
   D.TEMP <- D.FACTORS[D.FACTORS$season == V.season & D.FACTORS$chistar == 1,]
   D.ANNOTATION <- F_CHISTAR_DF(D.TEMP, "Ja", "Nein", "letter")
   if(nrow(D.ANNOTATION)> 0){
-    L.PLOTS[[V.season]] <- L.PLOTS[[V.season]] + geom_signif(data=D.ANNOTATION, aes(xmin=start, xmax=end, annotations=label, y_position=y), textsize = 8, manual=TRUE)
+    L.PLOTS[[V.season]] <- L.PLOTS[[V.season]] + geom_signif(data=D.ANNOTATION, aes(xmin=start, xmax=end, annotations=label, y_position=y), textsize = 8, manual=TRUE, vjust = 0.5)
   }
 }
 L.PLOTS[[1]]
 L.PLOTS[[2]]
 L.PLOTS[[3]]
 
-ggsave("./img/plot_treatment_spring.pdf", L.PLOTS[[1]], width = 12, height = 8, units = "in")
+ggsave("./img/plot_treatment_spring.pdf", L.PLOTS[[1]], width = 12, height = 4, units = "in")
 ggsave("./img/plot_treatment_summer.pdf", L.PLOTS[[2]], width = 12, height = 8, units = "in")
-ggsave("./img/plot_treatment_winter.pdf", L.PLOTS[[3]], width = 12, height = 8, units = "in")
+ggsave("./img/plot_treatment_winter.pdf", L.PLOTS[[3]], width = 12, height = 4, units = "in")
