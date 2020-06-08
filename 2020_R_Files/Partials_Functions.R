@@ -417,7 +417,7 @@ F_SINGLE_PLOT <- function(
     )
   
   if(nrow(significant)>0){
-    p <- p + geom_signif(data=significant, aes(xmin=start, xmax=end, annotations=label, y_position=y), textsize = 8, manual=TRUE)
+    p <- p + geom_signif(data=significant, aes(xmin=start, xmax=end, annotations=label, y_position=y), textsize = 8, manual=TRUE, vjust = 0.5)
   }
   if(ptitle != FALSE){
     p <- p + ggtitle(ptitle)
