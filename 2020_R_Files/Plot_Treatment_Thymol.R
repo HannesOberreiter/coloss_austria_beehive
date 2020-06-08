@@ -27,8 +27,11 @@ D.SUP <- D.FULL[!is.na(D.FULL$T_amount) | !(D.FULL$T_amount == 0 & D.FULL$varroa
 # generate grouping
 D.SUP$groups <- V.LABELS[1]
 # only use people which did only this treatment
-D.SUP$groups[D.SUP$T_thymol_total12 == 1 & D.SUP$T_amount == 1] <- V.LABELS[2]
-D.SUP$groups[D.SUP$T_thymol_total12 > 1 & (D.SUP$T_amount == D.SUP$T_thymol_total12)] <- V.LABELS[3]
+#D.SUP$groups[D.SUP$T_thymol_total12 == 1 & D.SUP$T_amount == 1] <- V.LABELS[2]
+#D.SUP$groups[D.SUP$T_thymol_total12 > 1 & (D.SUP$T_amount == D.SUP$T_thymol_total12)] <- V.LABELS[3]
+D.SUP$groups[D.SUP$T_thymol_total12 == 1] <- V.LABELS[2]
+D.SUP$groups[D.SUP$T_thymol_total12 > 1] <- V.LABELS[3]
+
 # calculate glm
 CACHE.M    <- F_EXTRACT_N( D.SUP, "groups", "groups" )
 CACHE.BIND <- F_GLM_FACTOR( D.SUP, "groups", get( "groups", pos = D.SUP), TRUE )
