@@ -19,11 +19,10 @@ source( "Partials_Functions.r" )
 
 #### START CODE #####
 
-D.FULL <- D.RAW
+D.FULL <- D.RAW[D.RAW$submitted != "Zeitung",]
 
 # we want the "NA" as no answers
 D.FULL$op_new_frames[is.na(D.FULL$op_new_frames)] <- "keine Angaben"
-
 # rename one factor for more conistense
 D.FULL$op_new_frames[D.FULL$op_new_frames == "mehr als 50%"] <- "51-100%"
 
@@ -35,11 +34,9 @@ D.FACTORS   <- cbind( CACHE.M, CACHE.BIND )
 rm(CACHE.M, CACHE.BIND)
 
 # Ordering
-D.FACTORS$ff <- factor( D.FACTORS$ff, levels = c( "0%", "1-30%", "31-50%", "51-100%", "keine Angaben"))
-
+D.FACTORS$ff <- factor( c( "0%", "1-30%", "31-50%", "51-100%", "keine Angaben"), levels = c( "0%", "1-30%", "31-50%", "51-100%", "keine Angaben"))
+D.FACTORS$latex <- F_LATEX_CONF(D.FACTORS)
 #### PLOTTING #####
-
-# only use > 30 answers for plotting
-p <- F_SINGLE_PLOT(D.FACTORS[D.FACTORS$n >= 30,])
-
+p <- F_SINGLE_PLOT(D.FACTORS)
 ggsave("./img/plot_factor_frames.pdf", p, width = 5, height = 4, units = "in")
+
