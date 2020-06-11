@@ -19,7 +19,7 @@ D.FULL <- D.RAW
 
 #### CREATE MAP CLUSTER ####
 D.MAP.PLOT <- subset( D.FULL, select = c( "latitude", "longitude" ) )
-D.MAP.PLOT <- F_MAP_CLUSTER( D.MAP.PLOT, 4 )
+D.MAP.PLOT <- F_MAP_CLUSTER( D.MAP.PLOT, 5 )
 
 p <- ggplot() + 
   geom_polygon(data = MF_DISTRICTS, aes( x = long, y = lat, group = group ), fill="white", color = "black", size = 0.2 ) + 
@@ -38,8 +38,8 @@ p <- ggplot() +
     axis.ticks = element_blank(),
     panel.grid.major = element_blank()
   )
-
-ggsave("./img/plot_overview_map.pdf", p, width = 6, height = 3.5, units = "in")
+p
+ggsave("./img/plot_overview_map.pdf", p, width = 8, height = 5, units = "in")
 
 #### CREATE STATE LOSS MAP ####
 # Calculate Loss Rate
@@ -89,10 +89,10 @@ CACHE.DIS <- F_GLM_FACTOR( D.FULL.DIS, "district", D.FULL.DIS$district )
 CACHE.DIS <- as_tibble(CACHE.DIS)
 # Combine them, to check if order is correct you can check middle vs hive_lost cols
 D.DISTRICTS <- bind_cols( D.DISTRICTS, CACHE.DIS )
-# We only use data when there are aleast 6n
-D.DISTRICTS <- D.DISTRICTS[ D.DISTRICTS[, "n" ] > 5, ]
+# We only use data when there are min. 5n
+D.DISTRICTS <- D.DISTRICTS[ D.DISTRICTS[, "n" ] >= 5, ]
 # Write file to csv
-write.csv( D.DISTRICTS, file = paste("./", "District_Losses.csv", sep = "" ) )
+#write.csv( D.DISTRICTS, file = paste("./", "District_Losses.csv", sep = "" ) )
 
 # add data to map
 MF_DISTRICTS_TEMP <- MF_DISTRICTS

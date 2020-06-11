@@ -125,6 +125,9 @@ if(nrow(D.ANNOTATION)> 0){
   p1 <- p1 + geom_signif(data=D.ANNOTATION, aes(xmin=start, xmax=end, annotations=label, y_position=y), textsize = 8, manual=TRUE)
 }
 p1
+
+D.FACTORS.TWO$latex <- F_LATEX_CONF(D.FACTORS.TWO)
+
 ggsave("./img/plot_operational_loss.pdf", p1, width = 12, height = 8, units = "in")
 
 # Plot Histo

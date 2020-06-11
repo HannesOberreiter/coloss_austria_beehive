@@ -20,9 +20,6 @@ source( "Partials_Functions.r" )
 #### START CODE #####
 D.FULL <- D.RAW
 
-# Cleanup unlogical entries
-D.FULL$apiary_nearby[D.FULL$apiaries == 1] <- "Ja"
-
 D.FACTORS <- F_EXTRACT_N(D.FULL, "apiary_nearby", "apiary_nearby", FALSE)
 colnames(D.FACTORS)[1] = 'val'
 

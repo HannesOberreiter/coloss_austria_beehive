@@ -28,8 +28,6 @@ rm(CACHE.M, CACHE.BIND)
 
 # Ordering
 D.FACTORS$ff <- factor( D.FACTORS$ff, levels = c("Ja", "Nein", "Unsicher"))
-# only use > 30 answers for plotting
-D.FACTORS <- D.FACTORS[D.FACTORS$n >= 30,]
 D.SIGN <- F_CHISTAR_DF(D.FACTORS, "Ja", "Nein")
 
 #### PLOTTING #####

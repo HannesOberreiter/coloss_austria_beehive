@@ -59,4 +59,3 @@ p1 <- p1 + annotate(
 lay <- rbind( c( 1 ), c( 2 ) )
 p <- arrangeGrob( p1, p2, layout_matrix = lay)
 ggsave("./img/plot_overview_betrieb.pdf", p, width = 11, height = 8, units = "in")
-

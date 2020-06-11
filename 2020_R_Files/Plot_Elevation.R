@@ -32,8 +32,9 @@ D.FACTORS <- cbind( D.FACTORS, CACHE.BIND )
 
 # cleanup
 rm(CACHE.BIND)
+D.SIGN <- F_CHISTAR_DF(D.FACTORS, "201-400m", ">800m")
 
+p <- F_SINGLE_PLOT(D.FACTORS, D.SIGN)
 
-p <- F_SINGLE_PLOT(D.FACTORS)
 ggsave("./img/plot_elevation.pdf", p, width = 5, height = 4, units = "in")
 
