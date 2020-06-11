@@ -38,7 +38,7 @@ D.RAW <- D.RAW[, !grepl("[...]", colnames(D.RAW))] # Remove all cols which were 
 D.RAW <- D.RAW[ rowSums( is.na( D.RAW )) != ncol( D.RAW ), ]
 
 # remove contact string and generate simple 0, 1 for data privacy while working on the dataframe
-D.RAW$contact = ifelse(is.na( D.RAW$contact ), 0, 1)
+# D.RAW$contact = ifelse(is.na( D.RAW$contact ), 0, 1)
 
 #---- Basic Loss Rates ----
 
