@@ -36,4 +36,3 @@ D.SIGN <- F_CHISTAR_DF(D.FACTORS.PLOT, "Anonyme Teilnahme", "Nicht-Anonyme Teiln
 p <- F_SINGLE_PLOT(D.FACTORS.PLOT, D.SIGN)
 
 ggsave("./img/plot_anonymity.pdf", p, width = 5, height = 4, units = "in")
-
