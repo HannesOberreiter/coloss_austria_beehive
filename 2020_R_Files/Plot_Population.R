@@ -21,7 +21,7 @@ D.PROD <- tibble(
     spring = D.FULL$hives_spring_before,
     summer_change = D.FULL$hives_winter - D.FULL$hives_spring_before,
     winter = D.FULL$hives_winter,
-    winter_loss = D.FULL$hives_winter - D.FULL$hives_lost
+    winter_loss = D.FULL$hives_winter - D.FULL$hives_lost_e
 )
 # Drop rows without answer for spring number of colonies
 D.PROD <- D.PROD[!is.na(D.PROD$spring),]
@@ -34,6 +34,7 @@ D.RETURN <- bind_rows(D.RETURN)
 
 D.RETURN$summer_percentage      <- F_NUMBER_FORMAT(D.RETURN$summer_percentage)
 D.RETURN$winter_loss_percentage <- F_NUMBER_FORMAT(D.RETURN$winter_loss_percentage)
+D.RETURN$spring_spring <- F_NUMBER_FORMAT(D.RETURN$winter_loss*100 / D.RETURN$spring - 100)
 
 print("#################")
 print("#####RESULTS#####")
