@@ -427,6 +427,17 @@ F_SINGLE_PLOT <- function(
   return(p)
 }
 
+
+# Custom function to get column with LaTeX confidence interval 
+# %% 95% CI Intervall
+# \newcommand{\confi}[4]{
+#  {#1}\% ({#2}\%~KI:~{#3}-{#4}\%)
+#  }
+F_LATEX_CONF <- function(df, c = 95){
+  latex <- paste("\\confi{",df$middle,"}","{",c,"}","{",df$lower,"}","{",df$upper,"}", sep = "")
+  return(latex)
+}
+
 # Histo Blar Plots
 F_HISTO_PLOT <- function(df, xtext, ytext, ttext, breaksize = 100){
   p <- ggplot( data = df ) +
