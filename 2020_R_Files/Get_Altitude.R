@@ -36,7 +36,7 @@ paste("Max rows in our dataframe: ", nrow(D.CACHE))
 
 # Start and End Row we want to get elevation
 ROW.START = 1
-ROW.END   = 5
+ROW.END   = nrow(D.CACHE)
 
 # Create a Named Vector with IDS
 V.IDS    <- D.CACHE$id[ROW.START:ROW.END]
@@ -48,6 +48,7 @@ for (i in ROW.START:ROW.END) {
   L.ELEVATION <- GNsrtm3(lat = D.CACHE[i, "latitude"], lng = D.CACHE[i, "longitude"])$srtm3
   print(paste("ID:", L.ID, " Elevation: ", L.ELEVATION))
   V.VALUES[L.ID] <- L.ELEVATION
+  Sys.sleep(4) # we prevent overuse (1k : 1 hour)
 }
 print("------RESULTS--------")
 V.VALUES
