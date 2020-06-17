@@ -394,19 +394,21 @@ F_SINGLE_PLOT <- function(
     aes( x = ff, y = middle) +
     geom_crossbar(aes( ymin = lowerlim, ymax = upperlim, fill = I(barfill) )) +
     geom_point(size = 3) + 
-    geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 2.5 ) +
+    geom_text( aes( x = ff, y = 0.5, label = paste("n = ", n )), angle = 0, vjust = 0, color = "black", size = 3 ) +
     xlab("") + ylab("Verlustrate [%]") + 
     theme_classic() + 
     theme(
       panel.spacing = unit( 1, "lines" ),
+      strip.text.x = element_text(size = 11),
       strip.placement = "outside",
-      plot.title = element_text(), 
+      plot.title = element_text(hjust = 0), 
       axis.title.x = element_text(colour = "black" ), 
-      axis.text.x = element_text(angle = xangle, hjust = xhjust, size = 9, face = "bold"),
-      axis.text.y = element_text(size = 10, face = "bold"),
-      axis.line = element_line( linetype = "solid" ),
+      axis.title.y = element_text(colour = "black", size = 11 ), 
+      axis.text.x = element_text(angle = 0, hjust = 0.5, size = 11, face = "bold"),
+      axis.line = element_line( linetype = "solid", size = 0.5 ),
       panel.grid.major.y = element_line( colour = "grey" ),
-      panel.grid.minor.y = element_line( colour = "grey" )
+      panel.grid.minor.y = element_line( colour = "grey" ),
+      axis.text.y = element_text(angle = 0, size = 11)
     ) +
     scale_x_discrete(
     ) +
@@ -435,6 +437,7 @@ F_SINGLE_PLOT <- function(
 #  }
 F_LATEX_CONF <- function(df, c = 95){
   latex <- paste("\\confi{",df$middle,"}","{",c,"}","{",df$lower,"}","{",df$upper,"}", sep = "")
+  latex <- str_replace_all(latex, "[.]", ",")
   return(latex)
 }
 
@@ -448,10 +451,17 @@ F_HISTO_PLOT <- function(df, xtext, ytext, ttext, breaksize = 100){
     ggtitle(ttext) +
     theme_classic() + 
     theme(
+      panel.spacing = unit( 1, "lines" ),
+      strip.text.x = element_text(size = 11),
+      strip.placement = "outside",
       plot.title = element_text(hjust = 0), 
       axis.title.x = element_text(colour = "black" ), 
-      axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
-      axis.line = element_line( linetype = "solid" )
+      axis.title.y = element_text(colour = "black", size = 11 ), 
+      axis.text.x = element_text(angle = -55, hjust = 0, size = 11, face = "bold"),
+      axis.line = element_line( linetype = "solid", size = 0.5 ),
+      panel.grid.major.y = element_blank(),
+      panel.grid.minor.y = element_blank(),
+      axis.text.y = element_text(angle = 0, size = 11)
     ) +
     scale_x_discrete(
     ) +

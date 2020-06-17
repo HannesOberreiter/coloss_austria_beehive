@@ -43,5 +43,6 @@ D.FACTORS$ff <- factor( D.FACTORS$ff, levels = V.LABELS)
 D.SIGN <- F_CHISTAR_DF(D.FACTORS, "0 Monate", "1 Monat")
 # plotting
 p <- F_SINGLE_PLOT(D.FACTORS, D.SIGN)
+D.FACTORS$latex <- F_LATEX_CONF(D.FACTORS)
 
 ggsave("./img/plot_treatment_thymol_grouped.pdf", p, width = 5, height = 4, units = "in")

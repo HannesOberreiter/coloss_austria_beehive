@@ -52,6 +52,7 @@ CACHE.BIND <- F_GLM_FACTOR( D.FULL, "oxalic_trickle_compare", get( "oxalic_trick
 D.FACTORS  <- cbind( CACHE.M, CACHE.BIND )
 # Ordering
 D.FACTORS$ff <- factor( D.FACTORS$ff, levels = V.LABELS)
+D.FACTORS$latex <- F_LATEX_CONF(D.FACTORS)
 
 p <- F_SINGLE_PLOT(D.FACTORS)
 ggsave("./img/plot_treatment_oxalmix.pdf", p, width = 7, height = 4, units = "in")

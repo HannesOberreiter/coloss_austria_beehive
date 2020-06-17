@@ -60,6 +60,9 @@ D.PLOTC$ff <- V.LABELS
 D.PLOTC$ff <- factor( D.PLOTC$ff, levels = V.LABELS )
 D.PLOTC$alpha <- 'white'
 D.PLOTC$alpha[D.PLOTC$negative == 0] <- 'grey'
+D.PLOTC$lower <- D.PLOTC$lowerlim
+D.PLOTC$upper <- D.PLOTC$upperlim
+D.PLOTC$latex <- F_LATEX_CONF(D.PLOTC)
 
 p <- F_SINGLE_PLOT(D.PLOTC, data_frame(empty=numeric()), D.PLOTC$alpha)
 
@@ -83,6 +86,7 @@ D.FACTORS <- cbind( CACHE.M, CACHE.BIND )
 rm(CACHE.BIND, CACHE.M)
 # Ordering
 D.FACTORS$ff <- factor( D.FACTORS$ff, levels = V.LABELS)
+D.FACTORS$latex <- F_LATEX_CONF(D.FACTORS)
 # Generate Plot
 p2 <- F_SINGLE_PLOT(D.FACTORS)
 ggsave("./img/plot_treatment_drone_grouped.pdf", p2, width = 5, height = 4, units = "in")

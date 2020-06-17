@@ -68,6 +68,7 @@ lay <- rbind( c( 1 ), c( 2 ) )
 p1 <- arrangeGrob( PLOT.QP1, PLOT.QP2,layout_matrix = lay)
 ggsave("./img/plot_queen_subjectiveproblems.pdf", p1, width = 11, height = 8, units = "in")
 rm(lay, V.label)
+D.QP$latex <- F_LATEX_CONF(D.QP)
 
 #### TOTAL Lost Queen Rate #####
 # replace our columns with correct values for queen loss as we use our function
@@ -94,7 +95,7 @@ D.STATES <- D.STATES[ order( factor( D.STATES$ff, levels = V.label )),]
 D.STATES$ff <- c("AUT", "Bgld.", "Ktn.", "NÖ", "OÖ", "Sbg.", "Stmk.", "T", "Vbg.", "W")
 p2 <- F_SINGLE_PLOT(D.STATES, barfill = D.STATES$alpha)
 ggsave("./img/plot_queen_states.pdf", p2, width = 6, height = 3.5, units = "in")
-
+D.STATES$latex <- F_LATEX_CONF(D.STATES)
 rm(AUSTRIA.BIND, CACHE.BIND, D.AUSTRIA, D.FULL.AUSTRIA, D.QUEEN.FULL, V.label)
 
 #### New Queens #####
@@ -159,9 +160,11 @@ D.ANNOTATION <- F_CHISTAR_DF(D.YOUNG.GROUP[D.YOUNG.GROUP$c == "Colony Loss Rate"
 D.ANNOTATION <- rbind(D.ANNOTATION, F_CHISTAR_DF(D.YOUNG.GROUP[D.YOUNG.GROUP$c == "Colony Loss Rate",], "0-25%", "51-75%", "c"))
 D.ANNOTATION <- rbind(D.ANNOTATION, F_CHISTAR_DF(D.YOUNG.GROUP[D.YOUNG.GROUP$c == "Colony Loss Rate",], "0-25%", "76-100%", "c"))
 D.ANNOTATION$y <- D.ANNOTATION$y * c(0.97, 1.02, 1.07)
+D.ANNOTATION <- rbind(D.ANNOTATION, F_CHISTAR_DF(D.YOUNG.GROUP[D.YOUNG.GROUP$c == "Colony Loss Rate",], "26-50%", "51-75%", "c"))
 if(nrow(D.ANNOTATION)> 0){
   PLOT.QP2 <- PLOT.QP2 + geom_signif(data=D.ANNOTATION, aes(xmin=start, xmax=end, annotations=label, y_position=y), textsize = 8, manual=TRUE, vjust = 0.5)
 }
 lay <- rbind( c( 1 ), c( 2 ) )
 p1 <- arrangeGrob( PLOT.QP1, PLOT.QP2,layout_matrix = lay)
 ggsave("./img/plot_queen_exchangerate.pdf", p1, width = 11, height = 8, units = "in")
+D.YOUNG.GROUP$latex <- F_LATEX_CONF(D.YOUNG.GROUP)

@@ -33,6 +33,7 @@ rm(CACHE.BIND, CACHE.M)
 
 # Ordering
 D.FACTORS$ff <- factor( D.FACTORS$ff, levels = c("Ja", "Nein", "Unsicher"))
+D.FACTORS$latex <- F_LATEX_CONF(D.FACTORS)
 D.SIGN <- F_CHISTAR_DF(D.FACTORS)
 p1 <- F_SINGLE_PLOT(D.FACTORS, D.SIGN)
 ggsave("./img/plot_treatment_varroa_checked.pdf", p1, width = 5, height = 4, units = "in")
@@ -95,8 +96,10 @@ D.FACTORS  <- cbind( CACHE.M, CACHE.BIND )
 rm(CACHE.BIND, CACHE.M)
 # Ordering
 D.FACTORS$ff <- factor( D.FACTORS$ff, levels = V.LABELS)
+D.FACTORS$latex <- F_LATEX_CONF(D.FACTORS)
 # plotting
 p3 <- F_SINGLE_PLOT(D.FACTORS)
+p3
 ggsave("./img/plot_treatment_varroa_grouped.pdf", p3, width = 5, height = 4, units = "in")
 # cleanup
 rm(D.FACTORS, V.LABELS, V.PERCENT, D.SUP)
@@ -132,12 +135,12 @@ L.CACHE[[4]]$short <- "Keine \n Kontrolle"
 L.CACHE[[3]] <- F_COMBINATION(D.SUPC, V.ColComb3, 3, L.CacheList, V.ColComb1, 1)
 L.CACHE[[2]] <- F_COMBINATION(D.SUPC, V.ColComb2, 2, L.CacheList, V.ColComb1, 1)
 L.CACHE[[1]] <- F_COMBINATION(D.SUPC, V.ColComb1, 1, L.CacheList, V.ColComb1, 1)
-L.CACHE[[1]]$short <- paste("Nur ", L.CACHE[[1]]$short, sep = "")
+L.CACHE[[1]]$short <- paste("Nur\n", L.CACHE[[1]]$short, sep = "")
 # automatically generate tibble from list
 D.PLOTC <- bind_rows(L.CACHE)
 
 V.LABELS <- D.PLOTC$short
-V.LABELS <- str_replace_all(V.LABELS, "&", " & \n")
+V.LABELS <- str_replace_all(V.LABELS, "&", "\n")
 D.PLOTC$ff <- V.LABELS
 D.PLOTC$ff <- factor( D.PLOTC$ff, levels = V.LABELS )
 D.PLOTC$alpha <- 'white'
@@ -147,3 +150,4 @@ D.PLOTC$alpha[D.PLOTC$negative == 0] <- 'grey'
 D.PLOTC15 <- D.PLOTC[D.PLOTC$n > 15,]
 p4 <- F_SINGLE_PLOT(D.PLOTC15, data_frame(), D.PLOTC15$alpha)
 ggsave("./img/plot_treatment_varroa_combination.pdf", p4, width = 6, height = 3.5, units = "in")
+

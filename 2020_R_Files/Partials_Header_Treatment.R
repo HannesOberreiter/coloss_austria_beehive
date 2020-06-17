@@ -7,16 +7,16 @@
 # List of Factors we want in our Plot
 treatmentList = list(
   c("T_vcount_", "T_vcount_total", "Varroa Kontrolle"),
-  c("T_drone_", "T_drone_total", "Drone brood removal"),
+  c("T_drone_", "T_drone_total", "Drohnenbrutentnahme"),
   c("T_hyperthermia_", "T_hyperthermia_total", "Hyperthermia"),
-  c("T_biotechnical_", "T_biotechnical_total", "Other biotechnical method"),
-  c("T_formic_short_", "T_formic_short_total", "Formic acid - short term"),
-  c("T_formic_long_", "T_formic_long_total", "Formic acid - long term"),
-  c("T_lactic_", "T_lactic_total", "Lactic acid"),
+  c("T_biotechnical_", "T_biotechnical_total", "Andere biotechnische\nMethode"),
+  c("T_formic_short_", "T_formic_short_total", "Ameisensäure - Kurzzeit"),
+  c("T_formic_long_", "T_formic_long_total", "Ameisensäure - Langzeit"),
+  c("T_lactic_", "T_lactic_total", "Milchsäure"),
   #c("T_oxalic_trickle_pure_", "T_oxalic_trickle_pure_total", "Oxalic acid - trickling pure"),
-  c("T_oxalic_vapo_", "T_oxalic_vapo_total", "Oxalic acid - sublimation"),
+  c("T_oxalic_vapo_", "T_oxalic_vapo_total", "Oxalsäure - Verdampfen"),
   #c("T_oxalic_trickle_mix_", "T_oxalic_trickle_mix_total", "Oxalic acid mixture"),
-  c("T_oxalic_trickle_", "T_oxalic_trickle_total", "Oxalic acid - trickling"),
+  c("T_oxalic_trickle_", "T_oxalic_trickle_total", "Oxalsäure - Träufeln oder\nSprühen inkl. Mischung(*)"),
   c("T_thymol_", "T_thymol_total", "Thymol"),
   #c("T_synthetic_apistan_", "T_apistan_total", "Tau-fluvalinat"),
   #c("T_synthetic_flumethrin_", "T_flumethrin_total", "Flumethrin"),
@@ -25,21 +25,21 @@ treatmentList = list(
   #c("T_synthetic_coumaphos_p_", "T_coumaphos_p_total", "Coumaphos - Perizin"),
   #c("T_synthetic_coumaphos_c_", "T_coumaphos_c_total", "Coumaphos - Checkmite+"),
   #c("T_synthetic_synother_", "T_chemical_total", "Other Synthetic"),
-  c("T_synthetic_", "T_synthetic_total", "Synthetic methods"),
-  c("T_other_", "T_other_total", "Another method")
+  c("T_synthetic_", "T_synthetic_total", "Chemische Methoden(+)"),
+  c("T_other_", "T_other_total", "Andere Methode")
 )
 
 # Second List were Mix is not combined with trickle
 treatmentListwMix = list(
   c("T_drone_", "T_drone_total", "Drone brood removal"),
-  c("T_hyperthermia_", "T_hyperthermia_total", "Hyperthermia"),
+  c("T_hyperthermia_", "T_hyperthermia_total", "Hyperthermie - Anwendung"),
   c("T_biotechnical_", "T_biotechnical_total", "Other biotechnical method"),
-  c("T_formic_short_", "T_formic_short_total", "Formic acid - short term"),
-  c("T_formic_long_", "T_formic_long_total", "Formic acid - long term"),
-  c("T_lactic_", "T_lactic_total", "Lactic acid"),
+  c("T_formic_short_", "T_formic_short_total", "Ameisensäure - Kurzzeit"),
+  c("T_formic_long_", "T_formic_long_total", "Ameisensäure - Langzeit"),
+  c("T_lactic_", "T_lactic_total", "Milchsäure"),
   #c("T_oxalic_trickle_pure_", "T_oxalic_trickle_pure_total", "Oxalic acid - trickling pure"),
-  c("T_oxalic_vapo_", "T_oxalic_vapo_total", "Oxalic acid - sublimation"),
-  c("T_oxalic_trickle_mix_", "T_oxalic_trickle_mix_total", "Oxalic acid mixture"),
+  c("T_oxalic_vapo_", "T_oxalic_vapo_total", "Oxalsäure - Verdampfen"),
+  c("T_oxalic_trickle_mix_", "T_oxalic_trickle_mix_total", "Oxalsäure - Mischung(*)"),
   c("T_oxalic_trickle_", "T_oxalic_trickle_total", "Oxalic acid - trickling"),
   c("T_thymol_", "T_thymol_total", "Thymol"),
   #c("T_synthetic_apistan_", "T_apistan_total", "Tau-fluvalinat"),
@@ -49,7 +49,7 @@ treatmentListwMix = list(
   #c("T_synthetic_coumaphos_p_", "T_coumaphos_p_total", "Coumaphos - Perizin"),
   #c("T_synthetic_coumaphos_c_", "T_coumaphos_c_total", "Coumaphos - Checkmite+"),
   #c("T_synthetic_synother_", "T_chemical_total", "Other Synthetic"),
-  c("T_synthetic_", "T_synthetic_total", "Synthetic methods"),
+  c("T_synthetic_", "T_synthetic_total", "Chemische Methoden(+)"),
   c("T_other_", "T_other_total", "Another method")
 )
 

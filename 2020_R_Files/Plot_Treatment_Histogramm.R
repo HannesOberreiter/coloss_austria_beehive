@@ -101,15 +101,17 @@ for( i in D.SUM$ff){
     theme_classic() + 
     facet_wrap(. ~ t, strip.position = "top") +
     theme(
-      plot.title = element_text(hjust = 0, size = 10), 
+      panel.spacing = unit( 1, "lines" ),
+      strip.text.x = element_text(size = 10),
       strip.placement = "outside",
+      plot.title = element_text(hjust = 0), 
       axis.title.x = element_text(colour = "black" ), 
-      axis.text.x = element_text(angle = -55, hjust = 0, size = 8, face = "bold"),
-      #axis.line = element_line( linetype = "solid" ),
-      panel.grid.major.y = element_line( colour = "grey" ),
-      panel.grid.minor.y = element_line( colour = "grey" ),
-      panel.border = element_rect( fill = NA, linetype = "solid", colour = "black", size = 1 ), 
-      axis.line = element_blank()
+      axis.title.y = element_text(colour = "black", size = 11 ), 
+      axis.text.x = element_text(angle = -55, hjust = 0, size = 11, face = "bold"),
+      axis.line = element_line( linetype = "solid", size = 0.5 ),
+      panel.grid.major.y = element_blank(),
+      panel.grid.minor.y = element_blank(),
+      axis.text.y = element_text(angle = 0, size = 11)
     ) +
     scale_x_discrete(
       limits = c( V.LABEL )
@@ -134,7 +136,7 @@ p <- arrangeGrob( L.PLOTS[[1]], L.PLOTS[[2]], L.PLOTS[[3]], L.PLOTS[[4]], L.PLOT
                    layout_matrix = lay)
 
 # Save File
-ggsave("./img/plot_treatment_histogramm.pdf", p, width = 12, height = 8, units = "in")
+ggsave("./img/plot_treatment_histogramm.pdf", p, width = 12.5, height = 8, units = "in")
 
 # cleanup
 #rm(count, i, title, TitleLettersTemp, treatmentexp, V.COLOR, V.LABEL, ylab.text, D.CACHE, loopPlot, p_cache)

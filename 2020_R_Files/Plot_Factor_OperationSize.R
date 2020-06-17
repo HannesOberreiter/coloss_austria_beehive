@@ -57,3 +57,4 @@ ggsave("./img/plot_factor_operationsize3.pdf", p3, width = 5, height = 4, units 
 lay <- rbind( c( 1, 2 ) )
 p1 <- arrangeGrob( p2, p3,layout_matrix = lay)
 ggsave("./img/plot_factor_operationsize_combined.pdf", p1, width = 11, height = 4, units = "in")
+

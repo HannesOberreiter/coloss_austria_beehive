@@ -259,6 +259,8 @@ AUSTRIA.BIND <- F_GLM_SINGLE( D.RAW )
 D.COMB <- D.COMB[order(D.COMB$n, decreasing = TRUE),]
 D.COMB$short <- factor(D.COMB$short, levels = D.COMB$short)
 
+D.COMB$latex <- F_LATEX_CONF(D.COMB)
+
 PLOT.LOSS <- 
   ggplot(
     D.COMB, 
@@ -302,5 +304,7 @@ PLOT.LOSS <-
     expand = c( 0 , 0 ),
     breaks = seq( 0, 100, 5 )
   )
+
+write_excel_csv2(D.COMB, "comb.csv")
 
 ggsave("./img/plot_combination_loss.pdf", PLOT.LOSS, width = 12, height = 6.5, units = "in")
