@@ -57,7 +57,7 @@ p1 <- ggplot() +
   geom_polygon(data = MF_STATES_TEMP, aes(x = long, y = lat, group = group, fill = middle)) + 
   geom_path(data = MF_STATES_TEMP, aes(x = long, y = lat, group = group), color = "Black", size = 0.2 ) + 
   coord_quickmap() +
-  scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white", limits = c(0, max(MF_STATES_TEMP$middle)), breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100) ) +
+  scale_fill_continuous_sequential( palette = "Heat 2", aesthetics = "fill", na.value = "white", limits = c(min(MF_STATES_TEMP$middle), max(MF_STATES_TEMP$middle)), breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100) ) +
   xlab( "" ) + ylab( "" ) + labs( fill = "Verlustrate [%]") +
   #ggtitle("(C) Districts - Loss rate (white = n < 6)") +
   theme_void() +

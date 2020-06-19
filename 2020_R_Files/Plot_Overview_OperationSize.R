@@ -44,7 +44,7 @@ D.SIZE.PLOT.HIVES <- D.FULL %>%
 # Mean and Median Colony
 V.MEAN <- F_NUMBER_FORMAT(mean(D.FULL$hives_winter))
 V.MEDIAN <- F_NUMBER_FORMAT(median(D.FULL$hives_winter))
-V.TEXT <- paste("Mean: ", V.MEAN, " Bienenvölker/TeilnehmerIn\n", "Median: ", V.MEDIAN, " Bienenvölker/TeilnehmerIn", sep = "")
+V.TEXT <- paste("Mittelwert: ", V.MEAN, " Bienenvölker/TeilnehmerIn\n", "Median: ", V.MEDIAN, " Bienenvölker/TeilnehmerIn", sep = "")
 
 # rename because funcion uses 'val' as x values
 colnames(D.SIZE.PLOT)[1] = 'val'
