@@ -52,5 +52,4 @@ D.TREAT <- rbind(D.TREAT, c(name = "Ameisensäure (Kurz oder Lang) + Oxalsäure"
 
 rm(t, x)
 
-write.csv( D.TREAT, file = paste("./", "Treatment_List.csv", sep = "" ) )
-
+write_excel_csv2( D.TREAT, path = paste("./", "Treatment_List.csv", sep = "" ) )

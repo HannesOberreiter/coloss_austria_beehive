@@ -55,7 +55,7 @@ V.VALUES
 print("---------------------")
 
 # save to csv
-write.csv( V.VALUES, 'altitude.csv' )
+write_excel_csv2( V.VALUES, path = 'altitude.csv' )
 
   
 

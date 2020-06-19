@@ -26,5 +26,5 @@ D.FACTOR <- D.FULL %>% group_by(state, district) %>% summarize(
 D.FACTOR$text <- paste("(",D.FACTOR$n,"; ",D.FACTOR$n_hives,")", sep = "")
 D.FACTOR <- D.FACTOR[D.FACTOR$n >= 5,]
 
-write.csv( D.FACTOR, file = paste("./", "District_Losses.csv", sep = "" ) )
+write_excel_csv2( D.FACTOR, path = paste("./", "District_Losses.csv", sep = "" ) )
 
