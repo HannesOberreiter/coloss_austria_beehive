@@ -147,7 +147,7 @@ D.SUM.Q = tibble(
   young_rate = 0)
 D.SUM.Q$young_rate <- F_NUMBER_FORMAT(D.SUM.Q$young_queens / D.SUM.Q$hives_winter * 100 )
 
-write.csv( D.SUM.Q, file = "Young_Queens_Total.csv" )
+write_excel_csv2( D.SUM.Q, path = "Young_Queens_Total.csv" )
 
 # Ordering
 D.YOUNG.GROUP$ff <- factor( D.YOUNG.GROUP$ff, levels = V.GROUPS )
