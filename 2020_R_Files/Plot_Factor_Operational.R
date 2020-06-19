@@ -54,9 +54,9 @@ D.FACTORS.TWO = list()
 
 # Loop through list and create for all factors CI
 for( i in L.oList.german){
-  # Question is not in Newspaper
+  # Question is not in Newspaper or Paper Form
   if(i[1] == "colonies_merged"){
-    D.TEMP <- D.FULL[D.FULL$submitted != "Zeitung",]
+    D.TEMP <- D.FULL[D.FULL$submitted == "Internet" | D.FULL$id == "P91",]
   } else {
     D.TEMP <- D.FULL
   }
@@ -65,13 +65,16 @@ for( i in L.oList.german){
   CACHE.BIND <- F_GLM_FACTOR( D.TEMP, i[1], V.COL, TRUE, FALSE )
   D.FACTORS[[i[2]]] <- cbind( CACHE.M, CACHE.BIND )
   
-  if(length(V.COL[V.COL == "Unsicher" & !is.na(V.COL)])<30){
-    D.FULL_C <- D.TEMP[V.COL != "Unsicher",]
-    V.COL_C <- get( i[1], pos = D.FULL_C )
-  } else {
-    D.FULL_C <- D.TEMP
-    V.COL_C <- V.COL
+  D.FULL_C <- D.TEMP
+  V.COL_C <- V.COL
+  
+  if("Unsicher" %in% V.COL){
+    if(length(V.COL[V.COL == "Unsicher" & !is.na(V.COL)])<30){
+      D.FULL_C <- D.TEMP[V.COL != "Unsicher",]
+      V.COL_C <- get( i[1], pos = D.FULL_C )
+    }
   }
+
   
   V.COL <- get( i[1], pos = D.FULL_C )
   CACHE.M <- F_EXTRACT_N( D.FULL_C, i[1], i[2], TRUE)
