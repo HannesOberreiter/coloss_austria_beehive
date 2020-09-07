@@ -70,7 +70,7 @@ for( i in L.oList.german){
   
   if("Unsicher" %in% V.COL){
     if(length(V.COL[V.COL == "Unsicher" & !is.na(V.COL)])<30){
-      D.FULL_C <- D.TEMP[V.COL != "Unsicher",]
+      D.FULL_C <- D.TEMP[V.COL != "Unsicher" | is.na(V.COL),]
       V.COL_C <- get( i[1], pos = D.FULL_C )
     }
   }
@@ -170,6 +170,8 @@ p2 <- ggplot( data = D.FACTORS ) +
     breaks = seq( 0, max(D.FACTORS$n)*1.2, 100 ),
     limits = c( 0, max(D.FACTORS$n)*1.2 )
   )
+
+p2
 
 ggsave("./img/plot_operational_hist.pdf", p2, width = 12, height = 8, units = "in")
  
