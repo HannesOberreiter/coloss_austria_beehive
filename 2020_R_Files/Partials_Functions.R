@@ -436,7 +436,7 @@ F_SINGLE_PLOT <- function(
 #  {#1}\% ({#2}\%~KI:~{#3}-{#4}\%)
 #  }
 F_LATEX_CONF <- function(df, c = 95){
-  latex <- paste("\\confi{",round(df$middle,1),"}","{",c,"}","{",round(df$lower,1),"}","{",round(df$upper,1),"}", sep = "")
+  latex <- paste("\\confi{",format(round(df$middle,1),nsmall = 1),"}","{",c,"}","{",format(round(df$lower,1),nsmall = 1),"}","{",format(round(df$upper,1),nsmall = 1),"}", sep = "")
   latex <- str_replace_all(latex, "[.]", ",")
   return(latex)
 }
