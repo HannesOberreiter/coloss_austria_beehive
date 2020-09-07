@@ -229,6 +229,8 @@ PLOT.LOSS <-
 
 PLOT.LOSS
 
+knitr::kable(D.FACTORS[D.FACTORS$n > 14,c(1,3,18)], format="latex", booktabs=T)
+
 write_excel_csv2(D.FACTORS, "comb_new.csv")
 
 D.FACTORS <- D.FACTORS[D.FACTORS$n > 14,]
