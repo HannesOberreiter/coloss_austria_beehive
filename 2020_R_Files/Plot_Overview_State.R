@@ -4,8 +4,8 @@
 ####### STATE Losses ###########
 
 # Set Working directory (uses API of RStudio)
-SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
-setwd( SCRIPT.DIR )
+#SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
+#setwd( SCRIPT.DIR )
 
 # ---- Import ----
 source( "Partials_Header.r" )
@@ -38,9 +38,11 @@ D.STATES$ff <- factor( D.STATES$ff, levels = OrderVector )
 D.STATES <- D.STATES[ order( factor( D.STATES$ff, levels = OrderVector )),]
 D.STATES$ff <- c("AUT", "Bgld.", "Ktn.", "NÖ", "OÖ", "Sbg.", "Stmk.", "T", "Vbg.", "W")
 
+D.STATES$latex <- F_LATEX_CONF(D.STATES)
+
 D.STATES$chistar = 1
 D.SIGN <- F_CHISTAR_DF(D.STATES, "AUT", "W")
 p <- F_SINGLE_PLOT(D.STATES, D.SIGN, D.STATES$alpha)
-
+p
 ggsave("./img/plot_overview_states.pdf", p, width = 6, height = 3.5, units = "in")
 

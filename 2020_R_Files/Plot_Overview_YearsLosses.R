@@ -8,8 +8,8 @@
 ####### Overview of the yearly loss rates ###########
 
 # Set Working directory (uses API of RStudio)
-SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
-setwd( SCRIPT.DIR )
+#SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
+#setwd( SCRIPT.DIR )
 
 # ---- Import ----
 source( "Partials_Header.r" )

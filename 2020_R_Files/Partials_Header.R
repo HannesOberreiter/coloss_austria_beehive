@@ -6,8 +6,8 @@
 # ---- Clear Enviroment  ----
 rm(list=ls()[!ls() %in% c("MAP_AUSTRIA", "MF_DISTRICTS", "MF_STATES")])
 # Set Working directory (uses API of RStudio)
-SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
-setwd( SCRIPT.DIR )
+#SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
+#setwd( SCRIPT.DIR )
 
 # ---- Set Packrat Working directory ----
 # We are using renv for package management and reproducible
@@ -16,6 +16,7 @@ renv::activate()
 
 # ---- Load Library's ----
 library( tidyverse )
+library( here )
 library( ggsignif )
 library( readxl )
 library( gridExtra )

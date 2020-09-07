@@ -8,8 +8,8 @@
 ####### Operation Size on Hive Mortality ###########
 
 # Set Working directory (uses API of RStudio)
-SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
-setwd( SCRIPT.DIR )
+#SCRIPT.DIR <- dirname( rstudioapi::getActiveDocumentContext()$path )
+#setwd( SCRIPT.DIR )
 
 # Import Header
 source( "Partials_Header.r" )
