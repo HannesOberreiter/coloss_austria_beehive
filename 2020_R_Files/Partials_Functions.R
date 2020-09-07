@@ -381,7 +381,7 @@ F_CHISTAR_DF <- function(D.INPUT, V.START = "Ja", V.END = "Nein", V.GROUP = FALS
 # Simple function to generate a single plot
 # we use this to make easier changes on all plots if necessary
 F_SINGLE_PLOT <- function(
-  df, significant = data_frame(empty=numeric()), 
+  df, significant = tibble(empty=numeric()), 
   barfill="white", xangle = 0, xhjust = 0.5,
   ptitle = FALSE,
   pylim = FALSE
