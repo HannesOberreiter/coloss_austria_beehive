@@ -49,7 +49,13 @@ D.TREAT <- rbind(D.TREAT, c(name = "Ameisensäure (Kurz oder Lang)", yes = sum(x
 t <- D.FULL[x,]
 t <- t[t$T_oxalic_trickle_total12 > 0 | t$T_oxalic_vapo_total12 > 0,]
 D.TREAT <- rbind(D.TREAT, c(name = "Ameisensäure (Kurz oder Lang) + Oxalsäure", yes = nrow(t), no = nrow(D.FULL)-nrow(t)))
+D.TREAT$yes.sum <- as.numeric(D.TREAT$yes.sum)
+D.TREAT$no.sum <- as.numeric(D.TREAT$no.sum)
+
+D.TREAT$yes.per <- round(D.TREAT$yes.sum / (D.TREAT$yes.sum + D.TREAT$no.sum) * 100,1)
+D.TREAT$no.per <- 100 - D.TREAT$yes.per
+D.TREAT <- D.TREAT[, c(1, 2, 4, 3, 5)]
 
 rm(t, x)
-
+knitr::kable(D.TREAT, format="latex", booktabs=TRUE)
 write_excel_csv2( D.TREAT, path = paste("./", "Treatment_List.csv", sep = "" ) )
