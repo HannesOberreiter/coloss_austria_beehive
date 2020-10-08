@@ -35,18 +35,18 @@ V.COLORS  <- c("cornflowerblue", "forestgreen", "azure3")
 # temporary list
 D.FACTORS = list()
 
-for( i in treatmentList[-1]){
+for(i in 2:nrow(treatmentList)){
   for(j in V.SEASONS){
-    V.REGEX <- paste( i[2], "yn_", j, sep = "")
+    V.REGEX <- paste( treatmentList$ttotal[i], "yn_", j, sep = "")
     # Check if there is only "no", means this treatment was not used at this time, next jumps to next iternation
     if( length( unique( get( V.REGEX, pos = D.FULL ))) == 1) next
-    CACHE.M <- F_EXTRACT_N( D.FULL, V.REGEX, i[3] )
+    CACHE.M <- F_EXTRACT_N( D.FULL, V.REGEX, treatmentList$tname[i] )
     # If there are not over 19 n we skip it
     if( (CACHE.M$n[CACHE.M$ff == "1"]) < 20) next
     # add season column to later split it
     CACHE.M$season <- j  
     CACHE.BIND <- F_GLM_FACTOR( D.FULL, V.REGEX, get( V.REGEX, pos = D.FULL ), TRUE )
-    D.FACTORS[[paste(i[3], j, sep="-")]] <- cbind( CACHE.M, CACHE.BIND )
+    D.FACTORS[[paste(treatmentList$tname[i], j, sep="-")]] <- cbind( CACHE.M, CACHE.BIND )
   }
 }
 # Change List to tibble
