@@ -48,9 +48,9 @@ treatmentList = tibble(
     "AS-LZ",
     "Milchs.",
     #"Ox-pure",
-    "Ox-sub",
+    "Ox-Sub.",
     #"Ox-mix",
-    "Ox-trickle",
+    "Ox-Träu.",
     "Thy",
     "chem. Pr.",
     "Andere"
@@ -106,11 +106,10 @@ fulltreatmentList = list(
   c("T_other_", "T_other_total", "Andere Methode")
 )
 
-
 seasons <- tibble(
   name = c("spring", "summer", "winter"),
   rcol = c("0[1-2]", "0[3-7]", "0[8-9]"),
-  short = c("SP", "SU", "WI"),
+  short = c("F", "S", "W"),
   desc = c("SPRING", "SUMMER", "WINTER")
 )
 
