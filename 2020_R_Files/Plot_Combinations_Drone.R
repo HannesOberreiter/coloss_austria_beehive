@@ -21,51 +21,26 @@ source( "Partials_Functions.r" )
 #### START CODE #####
 D.FULL <- D.RAW
 # Remove participants which did not answer varroa_treated (this includes eg. beekeeping journal without given question)
-D.FULL <- D.FULL[!is.na(D.FULL$varroa_treated)]
+D.FULL <- D.FULL[!is.na(D.FULL$varroa_treated),]
 
 #### COMBINATION #####
 
-# List of Factors we want in our Plot
-L.oList = list(
-  c("A", "SPRING", "Drone brood removal", "Frühling"),
-  c("B", "SUMMER", "Drone brood removal", "Sommer"),
-  c("C", "WINTER", "Drone brood removal", "Herbst")
-)
+D.FACTORS <- F_EXTRACT_N(D.FULL, "c_short_drone", "c_short_drone", FALSE)
+CACHE.BIND <- F_GLM_FACTOR( D.FULL, "c_short_drone", D.FULL$c_short_drone, TRUE, FALSE)
+D.FACTORS <- cbind( D.FACTORS, CACHE.BIND )
 
-# Get column number with yn_* in it
-V.ColComb1 <- grep("T_drone_totalyn_", colnames(D.FULL), fixed = TRUE)
-# Calculate every possible combination
-V.ColComb2 <- combn( V.ColComb1 , 2, simplify = FALSE )
-V.ColComb3 <- combn( V.ColComb1 , 3, simplify = FALSE )
+V.LABELS = c("Nur Frühling", "Nur Sommer", "Frühling & \n Sommer", "Kein \n entfernen der \n Drohnenbrut")
+D.FACTORS$ff <- c(V.LABELS[1], V.LABELS[3], V.LABELS[2], V.LABELS[4])
+D.FACTORS$ff <- factor( D.FACTORS$ff, levels = V.LABELS )
 
-# Add to our oList with the names the ColNumber for better inserting later
-L.CacheList <- data.frame(t(sapply(L.oList, c)))
-L.CacheList <- cbind(L.CacheList, V.ColComb1)
+D.FACTORS$alpha <- 'white'
+D.FACTORS$alpha[4] <- 'grey'
+D.FACTORS$lower <- D.FACTORS$lowerlim
+D.FACTORS$upper <- D.FACTORS$upperlim
+D.FACTORS$latex <- F_LATEX_CONF(D.FACTORS)
 
-L.CACHE = list()
-# negative logic, participants which did not 
-L.CACHE[[4]] <- F_COMBINATION(D.FULL, V.ColComb3, 3, L.CacheList, V.ColComb1, 0)
-L.CACHE[[4]]$short <- "Kein \n entfernen der \n Drohnenbrut"
-# positive combinations
-L.CACHE[[3]] <- F_COMBINATION(D.FULL, V.ColComb3, 3, L.CacheList, V.ColComb1, 1)
-L.CACHE[[2]] <- F_COMBINATION(D.FULL, V.ColComb2, 2, L.CacheList, V.ColComb1, 1)
-L.CACHE[[1]] <- F_COMBINATION(D.FULL, V.ColComb1, 1, L.CacheList, V.ColComb1, 1)
-L.CACHE[[1]]$short <- paste("Nur ", L.CACHE[[1]]$short, sep = "")
-# automatically generate tibble from list
-D.PLOTC <- bind_rows(L.CACHE)
-
-V.LABELS <- D.PLOTC$short
-V.LABELS <- str_replace_all(V.LABELS, "&", " & \n")
-D.PLOTC$ff <- V.LABELS
-D.PLOTC$ff <- factor( D.PLOTC$ff, levels = V.LABELS )
-D.PLOTC$alpha <- 'white'
-D.PLOTC$alpha[D.PLOTC$negative == 0] <- 'grey'
-D.PLOTC$lower <- D.PLOTC$lowerlim
-D.PLOTC$upper <- D.PLOTC$upperlim
-D.PLOTC$latex <- F_LATEX_CONF(D.PLOTC)
-
-p <- F_SINGLE_PLOT(D.PLOTC, data_frame(empty=numeric()), D.PLOTC$alpha)
-
+p <- F_SINGLE_PLOT(D.FACTORS, data_frame(empty=numeric()), D.FACTORS$alpha)
+p
 ggsave("./img/plot_treatment_drone_combination.pdf", p, width = 6, height = 3.5, units = "in")
 
 rm(L.oList, V.ColComb1, V.ColComb2, V.ColComb3, V.LABELS, L.CACHE, L.CacheList)

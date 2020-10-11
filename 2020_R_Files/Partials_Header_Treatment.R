@@ -115,6 +115,7 @@ seasons <- tibble(
 
 # Temporary for Combinations
 D.RAW$c_short <- NA
+D.RAW$c_short_drone <- NA
 D.RAW$c_desc  <- NA
 
 for(i in 1:nrow(seasons)){
@@ -157,10 +158,20 @@ for(i in 1:nrow(seasons)){
       sep = " & "
     )
     
+    # For Drone Combination
+    if(j == 2){
+      D.RAW$c_short_drone[vlogical] <- paste(
+        D.RAW$c_short_drone[vlogical],
+        colshort, 
+        sep = " & "
+      )
+    }
+    
   }
 }
 
 D.RAW$c_short <- stringr::str_replace(D.RAW$c_short, "NA &", "")
+D.RAW$c_short_drone <- stringr::str_replace(D.RAW$c_short_drone, "NA &", "")
 D.RAW$c_desc  <- stringr::str_replace(D.RAW$c_desc, "NA &", "")
 
 
