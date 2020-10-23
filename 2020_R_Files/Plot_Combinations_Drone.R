@@ -29,7 +29,7 @@ D.FACTORS <- F_EXTRACT_N(D.FULL, "c_short_drone", "c_short_drone", FALSE)
 CACHE.BIND <- F_GLM_FACTOR( D.FULL, "c_short_drone", D.FULL$c_short_drone, TRUE, FALSE)
 D.FACTORS <- cbind( D.FACTORS, CACHE.BIND )
 
-V.LABELS = c("Nur Frühling", "Nur Sommer", "Frühling & \n Sommer", "Kein \n entfernen der \n Drohnenbrut")
+V.LABELS = c("Nur Frühling", "Nur Sommer", "Frühling & \n Sommer", "Kein \n Entfernen der \n Drohnenbrut")
 D.FACTORS$ff <- c(V.LABELS[1], V.LABELS[3], V.LABELS[2], V.LABELS[4])
 D.FACTORS$ff <- factor( D.FACTORS$ff, levels = V.LABELS )
 
@@ -43,20 +43,19 @@ p <- F_SINGLE_PLOT(D.FACTORS, data_frame(empty=numeric()), D.FACTORS$alpha)
 p
 ggsave("./img/plot_treatment_drone_combination.pdf", p, width = 6, height = 3.5, units = "in")
 
-rm(L.oList, V.ColComb1, V.ColComb2, V.ColComb3, V.LABELS, L.CACHE, L.CacheList)
+rm(V.LABELS, p, D.FACTORS, CACHE.BIND)
 
 #### MULTIPLE MONTHS ####
 V.LABELS <- c("0 Monate", "1-3 Monate", ">3 Monate")
-D.SUP    <- D.FULL
 # generate groups
-D.SUP$g  <- V.LABELS[1]
-D.SUP$g[D.SUP$T_drone_total > 0] <- V.LABELS[2]
-D.SUP$g[D.SUP$T_drone_total > 3] <- V.LABELS[3]
+D.FULL$g  <- V.LABELS[1]
+D.FULL$g[D.FULL$T_drone_total > 0] <- V.LABELS[2]
+D.FULL$g[D.FULL$T_drone_total > 3] <- V.LABELS[3]
 
 # calculate GLM
-CACHE.M <- F_EXTRACT_N( D.SUP, "g", "drone removal" )
-CACHE.BIND <- F_GLM_FACTOR( D.SUP, "g", get( "g", pos = D.SUP), TRUE )
-D.FACTORS <- cbind( CACHE.M, CACHE.BIND )
+CACHE.M    <- F_EXTRACT_N( D.FULL, "g", "drone removal" )
+CACHE.BIND <- F_GLM_FACTOR( D.FULL, "g", get( "g", pos = D.FULL), TRUE )
+D.FACTORS  <- cbind( CACHE.M, CACHE.BIND )
 # cleanup
 rm(CACHE.BIND, CACHE.M)
 # Ordering
