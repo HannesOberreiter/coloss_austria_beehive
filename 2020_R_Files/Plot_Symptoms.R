@@ -80,7 +80,7 @@ D.PLOT_T = tibble(
 # label strings
 #V.string_a  = paste("Symptome bezogen auf \n tote Völker (Völker ohne \n Königinnen Probleme) \n n =", nrow(D.LOSS_CORRECT), "Imker,", sum(V.symptomes_C), "Symptome \n", V.total_lost_C, "Völker verloren", sep = " ")
 #V.string_ac = paste("Symptome bezogen auf \n Gesamtverlust (verlorene \n Völker und Völker mit \n Königinnen Problemen) \n n =", nrow(D.LOSS_TOTAL), "Imker", sum(V.symptomes_T), "Symptome \n", V.total_lost_T, "Völker verloren", sep = " ")
-V.string_w  = paste("Alle Symptomnennungen \n (inkl. Mehrfachnennungen sowie unvollständige Angaben) \n n =", nrow(D.LOSS_WRONG), "Imker,", sum(V.symptomes_W), "Symptome,", V.total_lost_W, "Völker verloren", sep = " ")
+V.string_w  = paste("Alle Symptomnennungen \n (inkl. Mehrfachnennungen sowie \n unvollständige Angaben) \n n =", nrow(D.LOSS_WRONG), "Imker,", sum(V.symptomes_W), "Symptome,", V.total_lost_W, "Völker verloren", sep = " ")
 # transform dataframe to long format
 D.PLOT_P.LONG <- pivot_longer(D.PLOT_P, cols=-"symptomes", names_to ='variable', values_to = "value")
 D.PLOT_T.LONG <- pivot_longer(D.PLOT_T, cols=-"symptomes", names_to ='variable', values_to = "totals")
@@ -108,7 +108,8 @@ p <- ggplot(D.PLOT, aes(symptomes, totals)) +
   scale_fill_grey(start = 0, end = 1) +  
   theme_classic() + 
   annotate(
-    geom="text", x="c)", y=max(D.PLOT$totals)*0.8, label= V.string_w, color="black", hjust = "left") +
+    geom="text", x=2.5, y=max(D.PLOT$totals)*0.8, label= V.string_w, color="black", hjust = "left", 
+    size = 3) +
   theme(
     plot.title = element_text(hjust = 0), 
     axis.title.x = element_text(colour = "black" ), 
@@ -123,4 +124,4 @@ p <- ggplot(D.PLOT, aes(symptomes, totals)) +
     limits = c( 0, max(D.PLOT$totals)*1.1 )
   )
 p
-ggsave("./img/plot_symptome.pdf", p, width = 10, height = 5, units = "in")
+ggsave("./img/plot_symptome.pdf", p, width = 6, height = 3.5, units = "in")
