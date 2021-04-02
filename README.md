@@ -1,5 +1,7 @@
 # Coloss - Austria honey bee colony winter mortality evaluation
 
+**Repo is archived, similar more recent and more indepth analysis can be found here:** [HannesOberreiter/coloss_austria_colony_losses_zukunftbiene2](https://github.com/HannesOberreiter/coloss_austria_colony_losses_zukunftbiene2)
+
 Code pieces, mostly R to help with the yearly bee colony winter mortality evaluation. This evaluation is done since 2008, by the Institute of Biology of the University of Graz.
 
 Most years (folder) have the same build up:
